@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pourquoi la Lune change de forme ? — Petit labo d'astronomie</title>
+  <meta name="description" content="Un petit labo pour les enfants : fais tourner la Lune autour de la Terre et découvre pourquoi elle change de forme chaque soir.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%99%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <p class="kicker">Petit labo d'astronomie <span class="episode">épisode 4</span></p>
+    <h1>Pourquoi la Lune change de forme ?</h1>
+    <p class="tagline">
+      Certains soirs elle est toute ronde, d'autres soirs c'est un petit sourire…
+      et parfois elle disparaît ! Attrape la Lune, fais-la tourner autour de la
+      Terre, et regarde ce qui se passe dans le ciel.
+    </p>
+  </header>
+
+  <main>
+
+    <!-- Le cœur interactif : les deux vues, toujours synchronisées. -->
+    <section class="vues">
+      <div class="carte carte-orbite">
+        <h2>🛰 La vue du ciel</h2>
+        <p class="sous-titre">La Terre et la Lune, vues de très haut. Le Soleil éclaire depuis la gauche.</p>
+        <div class="cadre-canvas">
+          <canvas id="canvas-orbite"
+            aria-label="La Terre au centre, la Lune sur son orbite, le Soleil fixe à gauche. La moitié de la Lune tournée vers le Soleil est toujours éclairée. Glisse la Lune avec le doigt ou la souris pour la faire tourner autour de la Terre."></canvas>
+        </div>
+        <p class="astuce" id="astuce-geste">✋ Attrape la Lune et fais-la tourner !</p>
+      </div>
+
+      <div class="carte carte-hublot">
+        <h2>🌙 Ce soir, dans le ciel</h2>
+        <p class="sous-titre">La même Lune, vue depuis ton jardin.</p>
+        <div class="cadre-canvas">
+          <canvas id="canvas-hublot"
+            aria-label="La Lune telle qu'on la voit ce soir depuis le jardin : sa forme change selon sa position sur l'orbite. Utilise le curseur des soirs du mois pour changer de soir."></canvas>
+        </div>
+        <p class="phrase-soir" id="phrase-soir" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- Le grand curseur maître : les soirs du mois. -->
+    <section class="carte carte-curseur">
+      <h2 id="titre-curseur">📅 Les soirs du mois</h2>
+      <div class="piste-emojis" aria-hidden="true">
+        <span>🌑</span><span>🌓</span><span>🌕</span><span>🌗</span><span>🌑</span>
+      </div>
+      <input type="range" id="curseur-jours" min="0" max="29.5" step="0.05" value="0"
+        aria-label="Choisis le soir du mois, de 0 à 29 : la Lune avance sur son orbite et change de forme.">
+      <p class="legende-curseur">Fais glisser pour passer les soirs, un par un ou d'un coup !</p>
+    </section>
+
+    <!-- Les boutons-scénarios. -->
+    <section class="carte carte-scenarios">
+      <div class="titre-avec-bouton">
+        <h2>🎲 Joue avec la Lune</h2>
+        <button id="bouton-son-scenarios" class="bouton-son" type="button" hidden
+          aria-pressed="false" aria-label="Activer la version sonore des histoires">🔇</button>
+      </div>
+      <div class="grille-scenarios" id="grille-scenarios"></div>
+      <div class="histoire" id="histoire-scenario" aria-live="polite" hidden></div>
+    </section>
+
+    <!-- La boîte d'explication. -->
+    <section class="carte carte-explication">
+      <div class="titre-avec-bouton">
+        <h2>💡 Pourquoi la Lune change de forme ?</h2>
+        <div class="boutons-voix">
+          <button id="bouton-ecouter" class="bouton-son bouton-ecouter" type="button" hidden>🔊 Écouter l'histoire</button>
+          <select id="menu-voix" class="menu-voix" hidden aria-label="Choisir la voix du conteur"></select>
+        </div>
+      </div>
+      <div id="texte-explication">
+        <p>La Lune ne brille pas toute seule. C'est le Soleil qui l'éclaire, comme une lampe géante.</p>
+        <p>Le Soleil éclaire toujours une moitié de la Lune. L'autre moitié reste dans le noir, comme la nuit chez nous.</p>
+        <p>La Lune fait le tour de la Terre. Son grand voyage dure presque un mois.</p>
+        <p>Chaque soir, on la regarde d'un endroit un peu différent. Alors on voit un petit bout de sa moitié éclairée, ou la moitié, ou tout en entier !</p>
+        <p>La Lune ne change donc jamais vraiment de forme. C'est la lumière du Soleil qui joue à cache-cache avec nous…</p>
+      </div>
+      <p class="conseil-voix" id="conseil-voix" hidden>
+        🗣 Pour une plus jolie voix, ouvre cette page dans Chrome ou Edge, ou installe une voix
+        française « améliorée » dans les réglages de l'appareil.
+      </p>
+    </section>
+
+    <!-- Le jeu d'exploration libre. -->
+    <section class="carte carte-jeu">
+      <div class="titre-avec-bouton">
+        <h2>🎯 Attrape la bonne Lune !</h2>
+        <button id="bouton-jouer" class="bouton-jeu" type="button">Jouer</button>
+      </div>
+      <div id="zone-jeu" hidden>
+        <p class="consigne-jeu">Fais tourner la Lune dans la vue du ciel pour fabriquer…</p>
+        <p class="defi" id="defi-jeu" aria-live="polite"></p>
+        <p class="bravo" id="bravo-jeu" aria-live="polite" hidden></p>
+        <button id="bouton-encore" class="bouton-jeu" type="button" hidden>Encore une !</button>
+      </div>
+    </section>
+
+    <!-- La note aux parents. -->
+    <details class="note-parents">
+      <summary>📖 La note aux parents (ce que le site simplifie)</summary>
+      <ul>
+        <li><strong>Le cycle dure ici 29,5 jours.</strong> Le vrai mois synodique (de nouvelle lune à
+          nouvelle lune) dure 29,53 jours en moyenne — on arrondit pour que le curseur reste simple.</li>
+        <li><strong>L'orbite est dessinée ronde et plate.</strong> La vraie orbite est légèrement ovale
+          (excentricité ≈ 0,055) et inclinée d'environ 5° — c'est cette inclinaison qui explique
+          qu'il n'y a pas une éclipse à chaque nouvelle ou pleine lune. Les éclipses ont leur propre
+          épisode : <a href="https://davidb-prog.github.io/eclipse-explorer/">La mécanique des éclipses</a>.</li>
+        <li><strong>Les tailles et les distances ne sont pas à l'échelle.</strong> En vrai, la Lune est
+          à environ 384 000 km de la Terre — à l'échelle du dessin, elle serait à plusieurs mètres
+          de l'écran !</li>
+        <li><strong>Le ciel du hublot est celui de l'hémisphère nord.</strong> La Lune qui grossit y montre
+          son côté droit (le fameux « D »), celle qui rapetisse son côté gauche. Dans l'hémisphère
+          sud, c'est l'inverse.</li>
+        <li><strong>On ignore les heures de lever et de coucher de la Lune.</strong> En vrai, la pleine lune
+          se voit toute la nuit, mais le premier croissant seulement en début de soirée — le hublot
+          montre la forme, pas l'heure. (Le mot savant pour « presque pleine » est
+          « lune gibbeuse ».)</li>
+        <li><strong>La Lune montre toujours la même face à la Terre</strong> (rotation synchrone) — le site
+          ne l'aborde pas, c'est une belle question pour un prochain épisode.</li>
+      </ul>
+    </details>
+
+  </main>
+
+  <footer class="pied-serie">
+    <p>Petit labo d'astronomie 🌌</p>
+    <ol>
+      <li><a href="https://davidb-prog.github.io/eclipse-explorer/">La mécanique des éclipses</a></li>
+      <li><a href="https://davidb-prog.github.io/ou-va-le-soleil/">Où va le Soleil la nuit ?</a></li>
+      <li><a href="https://davidb-prog.github.io/la-terre-tourne/">Quelle heure est-il là-bas ?</a></li>
+      <li aria-current="page">Pourquoi la Lune change de forme ?</li>
+    </ol>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
