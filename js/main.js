@@ -52,8 +52,14 @@ var defiJeu = document.getElementById('defi-jeu');
 var bravoJeu = document.getElementById('bravo-jeu');
 var boutonEncore = document.getElementById('bouton-encore');
 
+var canvasOrbiteJeu = document.getElementById('canvas-orbite-jeu');
+var canvasHublotJeu = document.getElementById('canvas-hublot-jeu');
+
 var vueOrbite = creerVueOrbite(canvasOrbite);
 var vueHublot = creerVueHublot(canvasHublot);
+/* Les mêmes vues, en petit, sous le jeu — synchronisées sur le même jour. */
+var vueOrbiteJeu = creerVueOrbite(canvasOrbiteJeu);
+var vueHublotJeu = creerVueHublot(canvasHublotJeu);
 
 /* ------------------------------------------------------------------ */
 /* Changer de jour                                                     */
@@ -127,6 +133,12 @@ function boucle(maintenant) {
     var halo = etat.glisse ? 1 : (mouvementReduit ? 0.4 : 0.4 + 0.35 * Math.sin(maintenant / 550));
     vueOrbite.rendre(etat.jour, halo);
     vueHublot.rendre(etat.jour);
+    if (!zoneJeu.hidden) {
+      ajusterCanvas(canvasOrbiteJeu);
+      ajusterCanvas(canvasHublotJeu);
+      vueOrbiteJeu.rendre(etat.jour, halo);
+      vueHublotJeu.rendre(etat.jour);
+    }
     surveillerDefi();
   } finally {
     window.requestAnimationFrame(boucle);
@@ -145,30 +157,35 @@ function coordonneesCanvas(canvas, e) {
   };
 }
 
-canvasOrbite.addEventListener('pointerdown', function (e) {
-  var c = coordonneesCanvas(canvasOrbite, e);
-  if (!vueOrbite.attrapeLune(c.x, c.y, etat.jour)) return;
-  etat.glisse = true;
-  reprendreLaMain();
-  canvasOrbite.classList.add('attrape');
-  if (canvasOrbite.setPointerCapture) canvasOrbite.setPointerCapture(e.pointerId);
-  e.preventDefault();
-});
+function brancherGesteLune(canvas, vue) {
+  canvas.addEventListener('pointerdown', function (e) {
+    var c = coordonneesCanvas(canvas, e);
+    if (!vue.attrapeLune(c.x, c.y, etat.jour)) return;
+    etat.glisse = true;
+    reprendreLaMain();
+    canvas.classList.add('attrape');
+    if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
 
-canvasOrbite.addEventListener('pointermove', function (e) {
-  if (!etat.glisse) return;
-  var c = coordonneesCanvas(canvasOrbite, e);
-  fixerJour(vueOrbite.jourDepuisPointeur(c.x, c.y));
-  e.preventDefault();
-});
+  canvas.addEventListener('pointermove', function (e) {
+    if (!etat.glisse) return;
+    var c = coordonneesCanvas(canvas, e);
+    fixerJour(vue.jourDepuisPointeur(c.x, c.y));
+    e.preventDefault();
+  });
 
-function lacherLaLune() {
-  etat.glisse = false;
-  canvasOrbite.classList.remove('attrape');
+  function lacherLaLune() {
+    etat.glisse = false;
+    canvas.classList.remove('attrape');
+  }
+
+  canvas.addEventListener('pointerup', lacherLaLune);
+  canvas.addEventListener('pointercancel', lacherLaLune);
 }
 
-canvasOrbite.addEventListener('pointerup', lacherLaLune);
-canvasOrbite.addEventListener('pointercancel', lacherLaLune);
+brancherGesteLune(canvasOrbite, vueOrbite);
+brancherGesteLune(canvasOrbiteJeu, vueOrbiteJeu);
 
 /* ------------------------------------------------------------------ */
 /* Le curseur maître                                                    */

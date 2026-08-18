@@ -105,6 +105,31 @@ export function creerVueOrbite(canvas) {
     ctx.strokeStyle = 'rgba(233, 237, 248, 0.35)';
     ctx.lineWidth = 1.5;
     ctx.stroke();
+    /* Chez nous : une petite maison plantée sur le côté nuit de la Terre
+     * (à l'opposé du Soleil) — c'est de là qu'on regarde la Lune. */
+    dessinerMaison(ctx, g.cx + g.rTerre, g.cy, Math.PI / 2, g.rTerre * 0.58);
+  }
+
+  /* Une petite maison éclairée, posée en (x, y), « debout » selon rotation
+   * (0 = vers le haut du canvas). */
+  function dessinerMaison(ctx, x, y, rotation, s) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.beginPath();
+    ctx.rect(-s * 0.5, -s * 0.62, s, s * 0.62);
+    ctx.moveTo(-s * 0.64, -s * 0.62);
+    ctx.lineTo(0, -s * 1.15);
+    ctx.lineTo(s * 0.64, -s * 0.62);
+    ctx.closePath();
+    ctx.fillStyle = '#cdd5ea';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(7, 11, 23, 0.8)';
+    ctx.lineWidth = Math.max(1, s * 0.06);
+    ctx.stroke();
+    ctx.fillStyle = '#ffcf5c';
+    ctx.fillRect(-s * 0.17, -s * 0.48, s * 0.34, s * 0.32);
+    ctx.restore();
   }
 
   function dessinerLune(ctx, g, jour, halo) {

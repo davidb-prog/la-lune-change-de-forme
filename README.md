@@ -15,12 +15,14 @@ L'idée centrale, celle que l'enfant doit retenir :
 
 ## Fonctionnalités
 
+- **Le hublot « Ce soir, dans le ciel »**, en ouverture : la Lune vue du jardin
+  (petite maison à la fenêtre allumée, sapins), avec sa forme du soir et la
+  petite phrase du soir en dessous.
 - **La vue du ciel** : la Terre et la Lune vues de très haut, le Soleil fixe à
-  gauche. Le geste-signature de l'épisode : **attraper la Lune au doigt et la
-  faire tourner** sur son orbite.
-- **Le hublot « Ce soir, dans le ciel »** : la même Lune, vue du jardin, avec sa
-  forme du soir — toujours synchronisé avec la vue du ciel, avec la petite
-  phrase du soir en dessous.
+  gauche, et une petite maison plantée sur le côté nuit de la Terre — c'est de
+  là qu'on regarde. Le geste-signature de l'épisode : **attraper la Lune au
+  doigt et la faire tourner** sur son orbite. Les deux vues restent toujours
+  synchronisées.
 - **Le grand curseur des soirs du mois** (0 → 29,5) pour faire défiler le cycle.
 - **4 boutons-scénarios « 🎲 Joue avec la Lune »** : nouvelle lune, premier
   croissant, pleine lune, dernier quartier — l'animation rejoint le moment
@@ -29,7 +31,9 @@ L'idée centrale, celle que l'enfant doit retenir :
 - **La boîte d'explication** à lire ou à **écouter** (synthèse vocale hors
   ligne, bouton « 🔊 Écouter l'histoire », menu de voix 🗣).
 - **Le jeu « 🎯 Attrape la bonne Lune ! »** : le site demande une phase,
-  l'enfant la fabrique en manœuvrant la Lune.
+  l'enfant la fabrique en manœuvrant la Lune — directement dans les deux
+  mini-vues reprises sous le jeu (synchronisées avec celles du haut), sans
+  remonter en haut de la page.
 - **La note aux parents**, repliable, qui documente honnêtement chaque
   simplification.
 

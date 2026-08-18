@@ -24,24 +24,24 @@
 
     <!-- Le cœur interactif : les deux vues, toujours synchronisées. -->
     <section class="vues">
-      <div class="carte carte-orbite">
-        <h2>🛰 La vue du ciel</h2>
-        <p class="sous-titre">La Terre et la Lune, vues de très haut. Le Soleil éclaire depuis la gauche.</p>
-        <div class="cadre-canvas">
-          <canvas id="canvas-orbite"
-            aria-label="La Terre au centre, la Lune sur son orbite, le Soleil fixe à gauche. La moitié de la Lune tournée vers le Soleil est toujours éclairée. Glisse la Lune avec le doigt ou la souris pour la faire tourner autour de la Terre."></canvas>
-        </div>
-        <p class="astuce" id="astuce-geste">✋ Attrape la Lune et fais-la tourner !</p>
-      </div>
-
       <div class="carte carte-hublot">
         <h2>🌙 Ce soir, dans le ciel</h2>
-        <p class="sous-titre">La même Lune, vue depuis ton jardin.</p>
+        <p class="sous-titre">La Lune, vue depuis ton jardin.</p>
         <div class="cadre-canvas">
           <canvas id="canvas-hublot"
             aria-label="La Lune telle qu'on la voit ce soir depuis le jardin : sa forme change selon sa position sur l'orbite. Utilise le curseur des soirs du mois pour changer de soir."></canvas>
         </div>
         <p class="phrase-soir" id="phrase-soir" aria-live="polite"></p>
+      </div>
+
+      <div class="carte carte-orbite">
+        <h2>🛰 La vue du ciel</h2>
+        <p class="sous-titre">La même Lune, vue de très haut. Le Soleil éclaire depuis la gauche ; la petite maison, c'est chez nous, du côté nuit.</p>
+        <div class="cadre-canvas">
+          <canvas id="canvas-orbite"
+            aria-label="La Terre au centre, la Lune sur son orbite, le Soleil fixe à gauche. La moitié de la Lune tournée vers le Soleil est toujours éclairée. La petite maison sur la Terre montre où nous sommes, du côté nuit. Glisse la Lune avec le doigt ou la souris pour la faire tourner autour de la Terre."></canvas>
+        </div>
+        <p class="astuce" id="astuce-geste">✋ Attrape la Lune et fais-la tourner !</p>
       </div>
     </section>
 
@@ -79,7 +79,7 @@
       <div id="texte-explication">
         <p>La Lune ne brille pas toute seule. C'est le Soleil qui l'éclaire, comme une lampe géante.</p>
         <p>Le Soleil éclaire toujours une moitié de la Lune. L'autre moitié reste dans le noir, comme la nuit chez nous.</p>
-        <p>La Lune fait le tour de la Terre. Son grand voyage dure presque un mois.</p>
+        <p>La Lune tourne autour de la Terre. Son grand voyage dure presque un mois.</p>
         <p>Chaque soir, on la regarde d'un endroit un peu différent. Alors on voit un petit bout de sa moitié éclairée, ou la moitié, ou tout en entier !</p>
         <p>La Lune ne change donc jamais vraiment de forme. C'est la lumière du Soleil qui joue à cache-cache avec nous…</p>
       </div>
@@ -96,8 +96,18 @@
         <button id="bouton-jouer" class="bouton-jeu" type="button">Jouer</button>
       </div>
       <div id="zone-jeu" hidden>
-        <p class="consigne-jeu">Fais tourner la Lune dans la vue du ciel pour fabriquer…</p>
+        <p class="consigne-jeu">Attrape la Lune ici et fais-la tourner pour fabriquer…</p>
         <p class="defi" id="defi-jeu" aria-live="polite"></p>
+        <div class="vues-jeu">
+          <div class="cadre-canvas">
+            <canvas id="canvas-orbite-jeu"
+              aria-label="La même vue du ciel que plus haut, synchronisée : glisse la Lune ici pour la faire tourner autour de la Terre."></canvas>
+          </div>
+          <div class="cadre-canvas">
+            <canvas id="canvas-hublot-jeu"
+              aria-label="Le même ciel du jardin que plus haut, synchronisé : la forme de la Lune que tu fabriques."></canvas>
+          </div>
+        </div>
         <p class="bravo" id="bravo-jeu" aria-live="polite" hidden></p>
         <button id="bouton-encore" class="bouton-jeu" type="button" hidden>Encore une !</button>
       </div>

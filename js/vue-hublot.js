@@ -109,32 +109,44 @@ export function creerVueHublot(canvas) {
       }
       dessinerDisqueLune(ctx, cx, cy, R, forme);
 
-      /* Les toits endormis, en bas du hublot. */
+      /* Le jardin endormi, en bas du hublot — silhouettes plus claires que le
+       * ciel et détourées, pour que la maison et les sapins se lisent bien. */
       var sol = h * 0.86;
-      ctx.fillStyle = '#0e1530';
+      ctx.fillStyle = '#16204a';
       ctx.fillRect(0, sol, w, h - sol);
+      ctx.strokeStyle = 'rgba(169, 139, 255, 0.5)';
+      ctx.lineWidth = Math.max(1.5, h * 0.004);
       ctx.beginPath();
+      ctx.moveTo(0, sol);
+      ctx.lineTo(w, sol);
+      ctx.stroke();
       /* Une petite maison… */
       var mx = w * 0.22;
-      ctx.rect(mx - w * 0.06, sol - h * 0.07, w * 0.12, h * 0.07);
-      ctx.moveTo(mx - w * 0.08, sol - h * 0.07);
-      ctx.lineTo(mx, sol - h * 0.13);
-      ctx.lineTo(mx + w * 0.08, sol - h * 0.07);
+      ctx.beginPath();
+      ctx.rect(mx - w * 0.07, sol - h * 0.085, w * 0.14, h * 0.085);
+      ctx.moveTo(mx - w * 0.09, sol - h * 0.085);
+      ctx.lineTo(mx, sol - h * 0.155);
+      ctx.lineTo(mx + w * 0.09, sol - h * 0.085);
       ctx.closePath();
+      ctx.fillStyle = '#2e3a6e';
       ctx.fill();
+      ctx.strokeStyle = 'rgba(233, 237, 248, 0.45)';
+      ctx.stroke();
       /* …sa fenêtre allumée… */
       ctx.fillStyle = '#ffcf5c';
-      ctx.fillRect(mx - w * 0.015, sol - h * 0.05, w * 0.03, h * 0.03);
+      ctx.fillRect(mx - w * 0.022, sol - h * 0.062, w * 0.044, h * 0.038);
       /* …et deux sapins. */
-      ctx.fillStyle = '#0e1530';
       [0.68, 0.82].forEach(function (fx) {
         var sx = w * fx;
         ctx.beginPath();
-        ctx.moveTo(sx - w * 0.05, sol);
-        ctx.lineTo(sx, sol - h * 0.12);
-        ctx.lineTo(sx + w * 0.05, sol);
+        ctx.moveTo(sx - w * 0.055, sol);
+        ctx.lineTo(sx, sol - h * 0.14);
+        ctx.lineTo(sx + w * 0.055, sol);
         ctx.closePath();
+        ctx.fillStyle = '#26437a';
         ctx.fill();
+        ctx.strokeStyle = 'rgba(233, 237, 248, 0.4)';
+        ctx.stroke();
       });
     }
   };

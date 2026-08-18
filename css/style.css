@@ -91,7 +91,7 @@ main, header.entete, footer.pied-serie {
 @media (min-width: 880px) {
   .vues {
     display: grid;
-    grid-template-columns: 1.25fr 1fr;
+    grid-template-columns: 1fr 1.25fr;
     gap: 18px;
     align-items: stretch;
   }
@@ -310,6 +310,31 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
 .bouton-jeu:hover { background: #ff87b0; }
 
 .consigne-jeu { color: var(--muted); }
+
+.vues-jeu {
+  display: block;
+  margin: 12px 0;
+}
+
+.vues-jeu .cadre-canvas { margin-bottom: 12px; }
+
+.vues-jeu .cadre-canvas { height: 0; padding-bottom: 78%; }
+
+@supports (aspect-ratio: 1 / 1) {
+  .vues-jeu .cadre-canvas { height: auto; padding-bottom: 0; aspect-ratio: 9 / 7; }
+}
+
+@media (min-width: 720px) {
+  .vues-jeu {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 12px;
+  }
+  .vues-jeu .cadre-canvas { margin-bottom: 0; }
+}
+
+#canvas-orbite-jeu { cursor: grab; }
+#canvas-orbite-jeu.attrape { cursor: grabbing; }
 
 .defi {
   font-size: 1.3rem;
