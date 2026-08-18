@@ -339,6 +339,46 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   margin: 8px 0;
 }
 
+/* ---------- Le médaillon flottant (mobile) ---------- */
+
+.medaillon-lune {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--violet);
+  background: #070b17;
+  box-shadow: 0 6px 18px rgba(2, 5, 15, 0.65);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.medaillon-lune canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* Jamais sur ordinateur : le hublot y est toujours à portée d'œil. */
+@media (min-width: 880px) {
+  .medaillon-lune { display: none !important; }
+}
+
+/* ---------- Le jeu sur mobile : une seule vue, tout tient à l'écran ---------- */
+
+@media (max-width: 879px) {
+  .vues-jeu > .cadre-canvas:last-child { display: none; }
+  .carte-jeu { padding: 14px 14px 12px; }
+  .consigne-jeu { font-size: 0.88rem; }
+  .defi { font-size: 1.15rem; margin: 6px 0; }
+  .bravo { font-size: 1.1rem; margin: 6px 0; }
+  .vues-jeu { margin: 10px 0; }
+}
+
 /* ---------- Note aux parents ---------- */
 
 .note-parents {

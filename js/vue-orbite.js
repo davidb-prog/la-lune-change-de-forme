@@ -3,7 +3,8 @@
  * gauche, la Terre au centre, la Lune sur son orbite. C'est ici que vit le
  * geste-signature : attraper la Lune et la faire tourner.
  */
-import { TAU, angleOrbite, CYCLE_JOURS, positionLune } from './model.js';
+import { TAU, angleOrbite, CYCLE_JOURS, positionLune, formeLune } from './model.js';
+import { dessinerDisqueLune } from './vue-hublot.js';
 
 var CIEL = '#070b17';
 var COULEUR_ORBITE = 'rgba(154, 165, 195, 0.35)';
@@ -163,8 +164,10 @@ export function creerVueOrbite(canvas) {
   }
 
   return {
-    /* Rendu complet. `halo` dans [0, 1] fait respirer l'anneau « attrape-moi ». */
-    rendre: function (jour, halo) {
+    /* Rendu complet. `halo` dans [0, 1] fait respirer l'anneau « attrape-moi ».
+     * `avecMedaillon` incruste la Lune du soir (vue du jardin) dans un coin —
+     * utilisé par le jeu sur mobile, où le mini hublot est masqué. */
+    rendre: function (jour, halo, avecMedaillon) {
       var g = geometrie();
       ctx.fillStyle = CIEL;
       ctx.fillRect(0, 0, g.w, g.h);
@@ -199,6 +202,21 @@ export function creerVueOrbite(canvas) {
       ctx.stroke();
       ctx.setLineDash([]);
       dessinerLune(ctx, g, jour, halo);
+      /* Le médaillon « ce soir, du jardin », incrusté en haut à droite. */
+      if (avecMedaillon) {
+        var dpr = window.devicePixelRatio || 1;
+        var rM = Math.min(g.w, g.h) * 0.15;
+        var mX = g.w - rM - 12 * dpr;
+        var mY = rM + 12 * dpr;
+        ctx.beginPath();
+        ctx.arc(mX, mY, rM + 5 * dpr, 0, TAU);
+        ctx.fillStyle = 'rgba(7, 11, 23, 0.94)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(169, 139, 255, 0.65)';
+        ctx.lineWidth = Math.max(1.5, 2 * dpr);
+        ctx.stroke();
+        dessinerDisqueLune(ctx, mX, mY, rM * 0.76, formeLune(jour));
+      }
       /* Les petites étiquettes (pas en mode compact). */
       if (!g.compact) {
         var taille = Math.round(Math.min(g.w, g.h) * 0.035);

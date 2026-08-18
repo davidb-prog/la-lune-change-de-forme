@@ -5,11 +5,11 @@
  * que brancher.
  */
 import {
-  CYCLE_JOURS, jourNormalise, phraseDuSoir,
+  CYCLE_JOURS, jourNormalise, phraseDuSoir, formeLune,
   SCENARIOS, DEFIS, defiReussi
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
-import { creerVueHublot } from './vue-hublot.js';
+import { creerVueHublot, dessinerDisqueLune } from './vue-hublot.js';
 
 /* ------------------------------------------------------------------ */
 /* L'état                                                              */
@@ -31,6 +31,14 @@ if (window.matchMedia) {
   if (mq.addEventListener) mq.addEventListener('change', function (e) { mouvementReduit = !!e.matches; });
 }
 
+/* Petit écran ? (même seuil que la grille CSS : 880 px) */
+var estMobile = false;
+if (window.matchMedia) {
+  var mqMobile = window.matchMedia('(max-width: 879px)');
+  estMobile = !!mqMobile.matches;
+  if (mqMobile.addEventListener) mqMobile.addEventListener('change', function (e) { estMobile = !!e.matches; });
+}
+
 /* ------------------------------------------------------------------ */
 /* Les éléments                                                        */
 /* ------------------------------------------------------------------ */
@@ -47,6 +55,8 @@ var menuVoix = document.getElementById('menu-voix');
 var conseilVoix = document.getElementById('conseil-voix');
 var texteExplication = document.getElementById('texte-explication');
 var boutonJouer = document.getElementById('bouton-jouer');
+var medaillon = document.getElementById('medaillon-lune');
+var canvasMedaillon = document.getElementById('canvas-medaillon');
 var zoneJeu = document.getElementById('zone-jeu');
 var defiJeu = document.getElementById('defi-jeu');
 var bravoJeu = document.getElementById('bravo-jeu');
@@ -135,15 +145,57 @@ function boucle(maintenant) {
     vueHublot.rendre(etat.jour);
     if (!zoneJeu.hidden) {
       ajusterCanvas(canvasOrbiteJeu);
-      ajusterCanvas(canvasHublotJeu);
-      vueOrbiteJeu.rendre(etat.jour, halo);
-      vueHublotJeu.rendre(etat.jour);
+      /* Sur mobile, le jeu n'a qu'une vue : la Lune du soir s'y incruste
+       * en médaillon (le mini hublot est masqué par la feuille de style). */
+      vueOrbiteJeu.rendre(etat.jour, halo, estMobile);
+      if (canvasHublotJeu.offsetWidth > 0) {
+        ajusterCanvas(canvasHublotJeu);
+        vueHublotJeu.rendre(etat.jour);
+      }
     }
+    gererMedaillon();
     surveillerDefi();
   } finally {
     window.requestAnimationFrame(boucle);
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Le médaillon flottant (mobile) : la Lune du soir, toujours visible   */
+/* ------------------------------------------------------------------ */
+
+function canvasHorsEcran(canvas) {
+  var rect = canvas.getBoundingClientRect();
+  var hauteur = window.innerHeight || document.documentElement.clientHeight;
+  return rect.bottom < 80 || rect.top > hauteur - 80;
+}
+
+function gererMedaillon() {
+  var visible = false;
+  if (estMobile && canvasHorsEcran(canvasHublot)) {
+    visible = true;
+    /* Si la vue du jeu (avec sa Lune incrustée) est à l'écran, elle suffit. */
+    if (!zoneJeu.hidden && !canvasHorsEcran(canvasOrbiteJeu)) visible = false;
+  }
+  medaillon.hidden = !visible;
+  if (!visible) return;
+  ajusterCanvas(canvasMedaillon);
+  var ctx = canvasMedaillon.getContext('2d');
+  var w = canvasMedaillon.width;
+  var h = canvasMedaillon.height;
+  ctx.fillStyle = '#070b17';
+  ctx.fillRect(0, 0, w, h);
+  dessinerDisqueLune(ctx, w / 2, h / 2, Math.min(w, h) * 0.38, formeLune(etat.jour));
+}
+
+/* Un tap sur le médaillon remonte à la vue du jardin. */
+medaillon.addEventListener('click', function () {
+  try {
+    canvasHublot.scrollIntoView({ behavior: mouvementReduit ? 'auto' : 'smooth', block: 'center' });
+  } catch (e) {
+    canvasHublot.scrollIntoView(true);
+  }
+});
 
 /* ------------------------------------------------------------------ */
 /* Le geste-signature : attraper la Lune                                */

@@ -66,6 +66,11 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   la micro-histoire du scénario et désarme son `aria-pressed`.
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
   de scénario).
+- **Sur mobile (< 880 px) seulement** : un médaillon flottant (bas droit)
+  montre la Lune du soir dès que le hublot sort de l'écran — un tap y ramène ;
+  le jeu n'affiche qu'une seule vue (l'espace), la Lune du soir s'y incruste
+  en médaillon, et le médaillon flottant s'efface quand cette vue est à
+  l'écran. Rien de tout cela n'existe sur grand écran.
 
 ## Le conteur (synthèse vocale)
 
