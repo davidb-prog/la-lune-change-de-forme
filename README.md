@@ -1,6 +1,6 @@
 # Pourquoi la Lune change de forme ? 🌙
 
-**Petit labo d'astronomie — épisode 4.** Un site d'une page, en français, pour
+**Petit labo d'astronomie.** Un site d'une page, en français, pour
 expliquer les phases de la Lune à un enfant d'environ 5 ans. Le parent lit à
 voix haute ; l'enfant attrape la Lune, la fait tourner autour de la Terre, et
 regarde sa forme changer dans le ciel.
@@ -18,7 +18,7 @@ L'idée centrale, celle que l'enfant doit retenir :
 - **Le hublot « Ce soir, dans le ciel »**, en ouverture : la Lune vue du jardin
   (petite maison à la fenêtre allumée, sapins), avec sa forme du soir et la
   petite phrase du soir en dessous.
-- **La vue du ciel** : la Terre et la Lune vues de très haut, le Soleil fixe à
+- **La vue « Depuis l'espace »** : la Terre et la Lune vues de très haut, le Soleil fixe à
   gauche, et une petite maison plantée sur le côté nuit de la Terre — c'est de
   là qu'on regarde. Le geste-signature de l'épisode : **attraper la Lune au
   doigt et la faire tourner** sur son orbite. Les deux vues restent toujours
@@ -70,7 +70,7 @@ Les tests verrouillent les « vérités à préserver » de l'épisode :
 - **L'orbite est ronde et plate** — la vraie est légèrement elliptique
   (e ≈ 0,055) et inclinée d'environ 5° sur l'écliptique ; c'est cette
   inclinaison qui évite une éclipse à chaque nouvelle ou pleine lune (voir
-  l'épisode 1, [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/)).
+  [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/)).
 - **Tailles et distances ne sont pas à l'échelle** (la Lune est à ~384 000 km).
 - **Le hublot montre le ciel de l'hémisphère nord** : la Lune qui grossit y est
   éclairée à droite, celle qui rapetisse à gauche (l'inverse dans l'hémisphère
@@ -98,7 +98,7 @@ docs/               les captures d'écran
 
 **Petit labo d'astronomie 🌌**
 
-1. [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/)
-2. [Où va le Soleil la nuit ?](https://davidb-prog.github.io/ou-va-le-soleil/)
-3. [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
-4. **Pourquoi la Lune change de forme ?** (cet épisode)
+- [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/)
+- [Où va le Soleil la nuit ?](https://davidb-prog.github.io/ou-va-le-soleil/)
+- [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
+- **Pourquoi la Lune change de forme ?** (cet épisode)

@@ -1,6 +1,6 @@
 # CLAUDE.md — Pourquoi la Lune change de forme ?
 
-**Petit labo d'astronomie — épisode 4.** Site statique d'une page, en français,
+**Petit labo d'astronomie.** Site statique d'une page, en français,
 qui explique les phases de la Lune à un enfant d'environ 5 ans. Le parent lit à
 voix haute ; l'enfant attrape la Lune et la fait tourner autour de la Terre.
 
@@ -104,6 +104,8 @@ lumineux à la pleine lune, sombre à la nouvelle). Servir avant :
 
 ## La série
 
-Pieds de page croisés avec : `eclipse-explorer` (ép. 1), `ou-va-le-soleil`
-(ép. 2), `la-terre-tourne` (ép. 3). En publiant cet épisode, ajouter son lien
-dans les pieds de page des trois voisins.
+Pieds de page croisés avec : `eclipse-explorer`, `ou-va-le-soleil`,
+`la-terre-tourne`. En publiant cet épisode, ajouter son lien dans les pieds de
+page des trois voisins. Les épisodes ne sont **pas numérotés** (ni kicker, ni
+pieds de page) : l'ordre de publication vit dans le registre du skill, pas dans
+l'interface.
