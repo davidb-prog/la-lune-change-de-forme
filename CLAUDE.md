@@ -67,11 +67,11 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
   de scénario).
 - **Sur mobile (< 880 px) seulement** : un médaillon flottant (haut droit,
-  hors du chemin du pouce qui fait tourner la Lune)
-  montre la Lune du soir dès que le hublot sort de l'écran — un tap y ramène ;
-  le jeu n'affiche qu'une seule vue (l'espace), la Lune du soir s'y incruste
-  en médaillon, et le médaillon flottant s'efface quand cette vue est à
-  l'écran. Rien de tout cela n'existe sur grand écran.
+  hors du chemin du pouce qui fait tourner la Lune) montre la Lune du soir dès
+  que le hublot sort de l'écran — un tap y ramène. Le jeu n'affiche qu'une
+  seule vue (l'espace), sans rien d'incrusté dans le canvas : c'est le
+  médaillon flottant qui montre le résultat, il reste donc visible pendant le
+  jeu. Rien de tout cela n'existe sur grand écran.
 
 ## Le conteur (synthèse vocale)
 

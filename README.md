@@ -33,8 +33,8 @@ L'idée centrale, celle que l'enfant doit retenir :
 - **Le jeu « 🎯 Attrape la bonne Lune ! »** : le site demande une phase,
   l'enfant la fabrique en manœuvrant la Lune — directement dans les mini-vues
   reprises sous le jeu (synchronisées avec celles du haut), sans remonter en
-  haut de la page. Sur mobile, le jeu tient sur un écran : une seule vue, avec
-  la Lune du soir incrustée en médaillon.
+  haut de la page. Sur mobile, le jeu tient sur un écran : une seule vue, et
+  c'est le médaillon flottant qui montre la Lune du soir.
 - **Sur mobile**, un médaillon flottant montre la Lune du soir dès que le
   hublot sort de l'écran (scénarios, curseur, jeu…) — un tap y ramène.
 - **La note aux parents**, repliable, qui documente honnêtement chaque

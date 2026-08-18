@@ -145,9 +145,9 @@ function boucle(maintenant) {
     vueHublot.rendre(etat.jour);
     if (!zoneJeu.hidden) {
       ajusterCanvas(canvasOrbiteJeu);
-      /* Sur mobile, le jeu n'a qu'une vue : la Lune du soir s'y incruste
-       * en médaillon (le mini hublot est masqué par la feuille de style). */
-      vueOrbiteJeu.rendre(etat.jour, halo, estMobile);
+      /* Sur mobile, le jeu n'a qu'une vue (le mini hublot est masqué par la
+       * feuille de style) : c'est le médaillon flottant qui montre le soir. */
+      vueOrbiteJeu.rendre(etat.jour, halo);
       if (canvasHublotJeu.offsetWidth > 0) {
         ajusterCanvas(canvasHublotJeu);
         vueHublotJeu.rendre(etat.jour);
@@ -171,12 +171,9 @@ function canvasHorsEcran(canvas) {
 }
 
 function gererMedaillon() {
-  var visible = false;
-  if (estMobile && canvasHorsEcran(canvasHublot)) {
-    visible = true;
-    /* Si la vue du jeu (avec sa Lune incrustée) est à l'écran, elle suffit. */
-    if (!zoneJeu.hidden && !canvasHorsEcran(canvasOrbiteJeu)) visible = false;
-  }
+  /* Dès que le hublot sort de l'écran, la Lune du soir suit l'enfant —
+   * y compris pendant le jeu : c'est elle qui montre le résultat. */
+  var visible = estMobile && canvasHorsEcran(canvasHublot);
   medaillon.hidden = !visible;
   if (!visible) return;
   ajusterCanvas(canvasMedaillon);
