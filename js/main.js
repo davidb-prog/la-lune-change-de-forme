@@ -5,11 +5,11 @@
  * que brancher.
  */
 import {
-  CYCLE_JOURS, jourNormalise, phraseDuSoir, formeLune,
+  CYCLE_JOURS, jourNormalise, phraseDuSoir,
   SCENARIOS, DEFIS, defiReussi
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
-import { creerVueHublot, dessinerDisqueLune } from './vue-hublot.js';
+import { creerVueHublot } from './vue-hublot.js';
 
 /* ------------------------------------------------------------------ */
 /* L'état                                                              */
@@ -70,6 +70,9 @@ var vueHublot = creerVueHublot(canvasHublot);
 /* Les mêmes vues, en petit, sous le jeu — synchronisées sur le même jour. */
 var vueOrbiteJeu = creerVueOrbite(canvasOrbiteJeu);
 var vueHublotJeu = creerVueHublot(canvasHublotJeu);
+/* Le médaillon est un mini hublot (ciel, Lune, jardin) : une fenêtre sur le
+ * soir, impossible à confondre avec la Lune attrapable de la vue de l'espace. */
+var vueMedaillon = creerVueHublot(canvasMedaillon);
 
 /* ------------------------------------------------------------------ */
 /* Changer de jour                                                     */
@@ -181,12 +184,7 @@ function gererMedaillon() {
   medaillon.hidden = !visible;
   if (!visible) return;
   ajusterCanvas(canvasMedaillon);
-  var ctx = canvasMedaillon.getContext('2d');
-  var w = canvasMedaillon.width;
-  var h = canvasMedaillon.height;
-  ctx.fillStyle = '#070b17';
-  ctx.fillRect(0, 0, w, h);
-  dessinerDisqueLune(ctx, w / 2, h / 2, Math.min(w, h) * 0.38, formeLune(etat.jour));
+  vueMedaillon.rendre(etat.jour);
 }
 
 /* Un tap sur le médaillon remonte à la vue du jardin — sauf pendant le jeu,

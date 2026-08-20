@@ -66,15 +66,21 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   la micro-histoire du scénario et désarme son `aria-pressed`.
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
   de scénario).
-- **Sur mobile (< 880 px) seulement** : un médaillon flottant (haut droit,
-  hors du chemin du pouce qui fait tourner la Lune) montre la Lune du soir dès
-  que la **carte** du hublot est entièrement sortie de l'écran (jamais avant :
-  il recouvrirait la phrase du soir) — un tap y ramène, sauf pendant le jeu où
-  il n'est qu'un afficheur (remonter sortirait l'enfant du jeu). Le jeu
-  n'affiche qu'une seule vue (l'espace), sans rien d'incrusté dans le canvas :
-  c'est le médaillon flottant qui montre le résultat, il reste donc visible
-  pendant le jeu. La vue de l'espace passe en carré sur mobile (l'orbite plus
-  grande sous le doigt). Rien de tout cela n'existe sur grand écran.
+- **Sur mobile (< 880 px) seulement** : le hublot se compacte en bandeau
+  paysage (13/6, la Lune au-dessus du jardin) et, si l'écran fait au moins
+  600 px de haut, reste **collé en haut** pendant la section des deux vues —
+  l'enfant voit la forme changer pendant qu'il fait tourner la Lune. La vue
+  de l'espace passe en carré (l'orbite plus grande sous le doigt). Plus bas
+  dans la page, un médaillon flottant (haut droit, hors du chemin du pouce)
+  prend le relais dès que la **carte** du hublot est entièrement sortie de
+  l'écran (jamais avant : il recouvrirait la phrase du soir). Le médaillon est
+  un **mini hublot** (ciel, Lune, jardin) cerclé d'or — le violet reste
+  réservé à la Lune attrapable, pour qu'on ne les confonde pas. Un tap y
+  ramène au jardin, sauf pendant le jeu où il n'est qu'un afficheur (remonter
+  sortirait l'enfant du jeu). Le jeu n'affiche qu'une seule vue (l'espace),
+  sans rien d'incrusté dans le canvas : c'est le médaillon qui montre le
+  résultat, il reste donc visible pendant le jeu. Rien de tout cela n'existe
+  sur grand écran.
 
 ## Le conteur (synthèse vocale)
 

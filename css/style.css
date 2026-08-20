@@ -349,7 +349,9 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   height: 60px;
   padding: 0;
   border-radius: 50%;
-  border: 2px solid var(--violet);
+  /* Anneau doré (la couleur du récit du soir) : le violet reste réservé à la
+   * Lune qu'on attrape dans la vue de l'espace. */
+  border: 2px solid var(--sun);
   background: #070b17;
   box-shadow: 0 6px 18px rgba(2, 5, 15, 0.65);
   cursor: pointer;
@@ -407,6 +409,32 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
 
   .pied-serie ul { gap: 2px 12px; }
   .pied-serie a { display: inline-block; padding: 8px 6px; }
+
+  /* Les deux vues sur le même écran : le hublot se compacte en bandeau
+   * paysage (la Lune au-dessus du jardin) au-dessus de la vue de l'espace. */
+  .carte-hublot { padding: 12px 14px 10px; }
+
+  .carte-hublot h2 { font-size: 1rem; }
+  .carte-hublot .sous-titre { margin: 2px 0 8px; }
+
+  .carte-hublot .cadre-canvas { padding-bottom: 46%; }
+
+  @supports (aspect-ratio: 1 / 1) {
+    .carte-hublot .cadre-canvas { padding-bottom: 0; aspect-ratio: 13 / 6; }
+  }
+
+  .phrase-soir { font-size: 0.95rem; margin-top: 8px; min-height: 1.5em; }
+
+  /* Et il reste collé en haut pendant qu'on manœuvre la Lune — seulement si
+   * l'écran est assez haut pour que la vue de l'espace respire dessous. */
+  @media (min-height: 600px) {
+    .carte-hublot {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 8px;
+      z-index: 5;
+    }
+  }
 }
 
 /* ---------- Note aux parents ---------- */
