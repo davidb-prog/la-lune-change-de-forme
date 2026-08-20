@@ -202,6 +202,27 @@ medaillon.addEventListener('click', function () {
 /* Le geste-signature : attraper la Lune                                */
 /* ------------------------------------------------------------------ */
 
+/* Les écouteurs tactiles doivent être non passifs pour pouvoir bloquer le
+ * défilement (détection du support des options d'addEventListener). */
+var supporteEcouteurPassif = false;
+try {
+  var optionsTest = Object.defineProperty({}, 'passive', {
+    get: function () { supporteEcouteurPassif = true; return false; }
+  });
+  window.addEventListener('test-passif', null, optionsTest);
+  window.removeEventListener('test-passif', null, optionsTest);
+} catch (e) { /* vieux navigateur : les options sont un booléen */ }
+
+/* Toucher un canvas ne doit JAMAIS faire défiler ni zoomer la page : le CSS
+ * pose touch-action: none, mais les vieux mobiles et certaines WebViews
+ * l'ignorent — on bloque aussi le geste à la main. */
+function bloquerDefilementTactile(canvas) {
+  function bloquer(e) { e.preventDefault(); }
+  var options = supporteEcouteurPassif ? { passive: false } : false;
+  canvas.addEventListener('touchstart', bloquer, options);
+  canvas.addEventListener('touchmove', bloquer, options);
+}
+
 function coordonneesCanvas(canvas, e) {
   var rect = canvas.getBoundingClientRect();
   return {
@@ -211,6 +232,8 @@ function coordonneesCanvas(canvas, e) {
 }
 
 function brancherGesteLune(canvas, vue) {
+  bloquerDefilementTactile(canvas);
+
   canvas.addEventListener('pointerdown', function (e) {
     var c = coordonneesCanvas(canvas, e);
     if (!vue.attrapeLune(c.x, c.y, etat.jour)) return;

@@ -12,7 +12,9 @@ voix haute ; l'enfant attrape la Lune et la fait tourner autour de la Terre.
 - **Compat mobiles anciens** : pas d'optional chaining `?.` ni de nullish `??`,
   pas de lookbehind regex, repli `@supports` pour `aspect-ratio`,
   `top/right/bottom/left` plutôt qu'`inset`, `touch-action: none` sur le canvas
-  interactif. Tester à 390 px de large.
+  interactif **doublé d'un repli JS** (`touchstart`/`touchmove` non passifs qui
+  font `preventDefault` — les vieux mobiles ignorent `touch-action` et volent
+  le geste pour défiler). Tester à 390 px de large.
 - **`js/model.js` est pur** (aucun accès DOM) : toutes les constantes du récit
   (cycle, seuils de phases, scénarios, défis, phrases générées) vivent dedans.
   Il se teste avec `node test/model.test.mjs`.

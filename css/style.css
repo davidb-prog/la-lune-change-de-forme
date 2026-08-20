@@ -112,6 +112,9 @@ main, header.entete, footer.pied-serie {
   height: 100%;
   display: block;
   touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .carte-orbite canvas { cursor: grab; }
