@@ -20,6 +20,10 @@ export var CYCLE_JOURS = 29.5;
 /* Jour de la pleine lune : à mi-chemin du cycle. */
 export var JOUR_PLEINE = CYCLE_JOURS / 2;
 
+/* Soir affiché à l'arrivée sur la page : un premier croissant — on voit une
+ * Lune dès le début (au jour 0, nouvelle lune, le ciel serait vide). */
+export var JOUR_DEPART = 2.5;
+
 /* Direction du Soleil (unitaire, constante) : l'objet-repère fixe. */
 export var SOLEIL_DIR = { x: -1, y: 0 };
 
@@ -159,7 +163,7 @@ export var SCENARIOS = [
     sousTitre: 'premier croissant',
     histoire: 'La Lune a un peu avancé sur son chemin. On aperçoit un tout petit bout de sa moitié éclairée : ' +
       'un fin croissant, comme un sourire dans le ciel ! Chaque soir, il va grossir un peu.',
-    oral: 'Deux ou trois soirs plus tard, la Lune a un peu avancé sur son chemin. ' +
+    oral: 'Deux ou trois soirs après la nouvelle lune, la Lune a un peu avancé sur son chemin. ' +
       'On aperçoit un tout petit bout de sa moitié éclairée : un fin croissant, comme un sourire dans le ciel ! ' +
       'Chaque soir, il va grossir un peu.'
   },
@@ -172,7 +176,7 @@ export var SCENARIOS = [
     histoire: 'Cette nuit, la Lune est de l’autre côté de la Terre, juste en face du Soleil. ' +
       'On voit toute sa moitié éclairée d’un coup : un grand rond brillant ! ' +
       'C’est la pleine lune.',
-    oral: 'Deux semaines ont passé. Cette nuit, la Lune est de l’autre côté de la Terre, juste en face du Soleil. ' +
+    oral: 'Deux semaines après la nouvelle lune, la Lune est arrivée de l’autre côté de la Terre, juste en face du Soleil. ' +
       'On voit toute sa moitié éclairée d’un coup : un grand rond brillant ! ' +
       'C’est la pleine lune.'
   },
@@ -185,7 +189,8 @@ export var SCENARIOS = [
     histoire: 'La Lune est sur le chemin du retour. On ne voit plus que la moitié de sa moitié éclairée : ' +
       'on dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
       'jusqu’à disparaître… et tout recommencera.',
-    oral: 'Maintenant, la Lune est sur le chemin du retour. On ne voit plus que la moitié de sa moitié éclairée : ' +
+    oral: 'Trois semaines après la nouvelle lune, la Lune est sur le chemin du retour. ' +
+      'On ne voit plus que la moitié de sa moitié éclairée : ' +
       'on dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
       'jusqu’à disparaître… et tout recommencera.'
   }
@@ -202,4 +207,19 @@ export var DEFIS = [
 
 export function defiReussi(cible, jour) {
   return phaseInfo(jour).cle === cible;
+}
+
+/* Il faut RESTER un instant sur la bonne forme : un grand coup de glisser qui
+ * traverse la fenêtre ne gagne pas « en passant ». Plus long que chez
+ * ou-va-le-soleil (350 ms) : les fenêtres de phases sont larges (le croissant
+ * couvre ~15 % de l'orbite), un tour tranquille les traverse en ~500 ms. */
+export var DEFI_ATTENTE_MS = 650;
+
+/* La consigne et le bravo d'un défi — pour l'écran et pour le conteur. */
+export function consigneDefi(defi) {
+  return 'Fabrique ' + defi.nom + ' !';
+}
+
+export function bravoDefi(defi) {
+  return 'Bravo ! Tu as fabriqué ' + defi.nom + ' !';
 }

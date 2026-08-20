@@ -12,7 +12,9 @@ voix haute ; l'enfant attrape la Lune et la fait tourner autour de la Terre.
 - **Compat mobiles anciens** : pas d'optional chaining `?.` ni de nullish `??`,
   pas de lookbehind regex, repli `@supports` pour `aspect-ratio`,
   `top/right/bottom/left` plutôt qu'`inset`, `touch-action: none` sur le canvas
-  interactif. Tester à 390 px de large.
+  interactif **doublé d'un repli JS** (`touchstart`/`touchmove` non passifs qui
+  font `preventDefault` — les vieux mobiles ignorent `touch-action` et volent
+  le geste pour défiler). Tester à 390 px de large.
 - **`js/model.js` est pur** (aucun accès DOM) : toutes les constantes du récit
   (cycle, seuils de phases, scénarios, défis, phrases générées) vivent dedans.
   Il se teste avec `node test/model.test.mjs`.
@@ -46,7 +48,9 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - Coordonnées **mathématiques** (y vers le haut) dans le modèle ; les vues font
   la bascule canvas (y vers le bas).
 - Le Soleil est **fixe**, très loin, direction `SOLEIL_DIR = (−1, 0)` (à gauche).
-- Jour 0 = nouvelle lune. `positionLune(jour) = (−cos θ, −sin θ)` avec
+- Jour 0 = nouvelle lune. La page démarre au soir `JOUR_DEPART` (2,5 —
+  premier croissant) : une Lune visible d'emblée, le ciel du jour 0 serait
+  vide. `positionLune(jour) = (−cos θ, −sin θ)` avec
   `θ = jour / 29,5 · τ` (sens trigonométrique, le vrai sens vu du pôle Nord).
 - Fraction éclairée vue de la Terre : `(1 − cos θ) / 2`.
 - Forme du disque (hublot) : `formeLune(jour)` → `{ fraction, cote, k }` avec
@@ -61,17 +65,37 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   orbite ; le curseur maître fait la même chose. Les deux vues (ciel + hublot)
   restent **synchronisées en permanence** sur le même `etat.jour`.
 - **Les scénarios vont au moment choisi en douceur, toujours vers l'avant**
-  (le vrai sens de l'orbite) ; en `prefers-reduced-motion`, saut sec.
+  (le vrai sens de l'orbite) ; en `prefers-reduced-motion`, saut sec. Sur
+  mobile, taper une vignette **remonte doucement la page à la vue de
+  l'espace** pour regarder le voyage (défilement sec en mouvement réduit,
+  rien sur grand écran où les deux vues sont déjà sous les yeux).
 - **Reprendre la main efface l'histoire** : bouger le curseur ou la Lune ferme
   la micro-histoire du scénario et désarme son `aria-pressed`.
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
-  de scénario).
-- **Sur mobile (< 880 px) seulement** : un médaillon flottant (haut droit,
-  hors du chemin du pouce qui fait tourner la Lune) montre la Lune du soir dès
-  que le hublot sort de l'écran — un tap y ramène. Le jeu n'affiche qu'une
-  seule vue (l'espace), sans rien d'incrusté dans le canvas : c'est le
-  médaillon flottant qui montre le résultat, il reste donc visible pendant le
-  jeu. Rien de tout cela n'existe sur grand écran.
+  de scénario), et il faut **rester un instant sur la bonne forme**
+  (`DEFI_ATTENTE_MS`) : un tour de Lune qui traverse la fenêtre sans
+  s'arrêter ne gagne pas « en passant ». Le bravo **ne ment jamais** : il
+  s'efface quand l'enfant
+  repart faire tourner la Lune, revient si la bonne forme est refabriquée ;
+  « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
+  🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
+  `consigneDefi`/`bravoDefi` du modèle).
+- **Sur mobile (< 880 px) seulement** : le hublot se compacte en bandeau
+  paysage (13/6, la Lune au-dessus du jardin) — jamais collant : épinglé en
+  haut, il cacherait la vue de l'espace au niveau des boutons-scénarios. La
+  vue de l'espace passe en carré (l'orbite plus grande sous le doigt). Un
+  médaillon flottant (haut droit, hors du chemin du pouce) prend le relais
+  dès que la **carte** du hublot est entièrement sortie de l'écran (jamais
+  avant : il recouvrirait la phrase du soir). Le médaillon est
+  un **mini hublot** (ciel, Lune, jardin) cerclé d'or — le violet reste
+  réservé à la Lune attrapable, pour qu'on ne les confonde pas. Un tap y
+  ramène au jardin, sauf pendant le jeu où il n'est qu'un afficheur (remonter
+  sortirait l'enfant du jeu). Le jeu n'affiche qu'une seule vue (l'espace),
+  sans rien d'incrusté dans le canvas : c'est le médaillon qui montre le
+  résultat, il reste donc visible pendant le jeu. La boîte « Pourquoi la Lune
+  change de forme ? » se **replie** sur mobile (repliée au chargement, comme
+  la note aux parents ; toujours ouverte sur ordinateur, `main.js` y veille).
+  Rien de tout cela n'existe sur grand écran.
 
 ## Le conteur (synthèse vocale)
 

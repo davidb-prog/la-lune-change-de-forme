@@ -5,11 +5,11 @@
  * que brancher.
  */
 import {
-  CYCLE_JOURS, jourNormalise, phraseDuSoir, formeLune,
-  SCENARIOS, DEFIS, defiReussi
+  CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
+  SCENARIOS, DEFIS, defiReussi, consigneDefi, bravoDefi, DEFI_ATTENTE_MS
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
-import { creerVueHublot, dessinerDisqueLune } from './vue-hublot.js';
+import { creerVueHublot } from './vue-hublot.js';
 
 /* ------------------------------------------------------------------ */
 /* L'état                                                              */
@@ -21,6 +21,8 @@ var etat = {
   scenarioActif: null,  /* id du scénario affiché, ou null */
   defi: null,           /* le défi du jeu en cours, ou null */
   defiGagne: false,
+  bravoVisible: false,  /* le bravo s'efface quand on repart tourner la Lune */
+  defiEntreMs: null,    /* entrée dans la fenêtre (anti « gagné en passant ») */
   glisse: false
 };
 
@@ -70,6 +72,9 @@ var vueHublot = creerVueHublot(canvasHublot);
 /* Les mêmes vues, en petit, sous le jeu — synchronisées sur le même jour. */
 var vueOrbiteJeu = creerVueOrbite(canvasOrbiteJeu);
 var vueHublotJeu = creerVueHublot(canvasHublotJeu);
+/* Le médaillon est un mini hublot (ciel, Lune, jardin) : une fenêtre sur le
+ * soir, impossible à confondre avec la Lune attrapable de la vue de l'espace. */
+var vueMedaillon = creerVueHublot(canvasMedaillon);
 
 /* ------------------------------------------------------------------ */
 /* Changer de jour                                                     */
@@ -154,7 +159,7 @@ function boucle(maintenant) {
       }
     }
     gererMedaillon();
-    surveillerDefi();
+    surveillerDefi(maintenant);
   } finally {
     window.requestAnimationFrame(boucle);
   }
@@ -164,29 +169,30 @@ function boucle(maintenant) {
 /* Le médaillon flottant (mobile) : la Lune du soir, toujours visible   */
 /* ------------------------------------------------------------------ */
 
-function canvasHorsEcran(canvas) {
-  var rect = canvas.getBoundingClientRect();
+var carteHublot = document.querySelector('.carte-hublot');
+
+/* La carte entière est-elle sortie de l'écran ? (Pas seulement le canvas :
+ * tant que la phrase du soir se lit encore, le médaillon la recouvrirait.) */
+function carteHorsEcran(element) {
+  var rect = element.getBoundingClientRect();
   var hauteur = window.innerHeight || document.documentElement.clientHeight;
-  return rect.bottom < 80 || rect.top > hauteur - 80;
+  return rect.bottom < 0 || rect.top > hauteur;
 }
 
 function gererMedaillon() {
   /* Dès que le hublot sort de l'écran, la Lune du soir suit l'enfant —
    * y compris pendant le jeu : c'est elle qui montre le résultat. */
-  var visible = estMobile && canvasHorsEcran(canvasHublot);
+  var visible = estMobile && carteHorsEcran(carteHublot);
   medaillon.hidden = !visible;
   if (!visible) return;
   ajusterCanvas(canvasMedaillon);
-  var ctx = canvasMedaillon.getContext('2d');
-  var w = canvasMedaillon.width;
-  var h = canvasMedaillon.height;
-  ctx.fillStyle = '#070b17';
-  ctx.fillRect(0, 0, w, h);
-  dessinerDisqueLune(ctx, w / 2, h / 2, Math.min(w, h) * 0.38, formeLune(etat.jour));
+  vueMedaillon.rendre(etat.jour);
 }
 
-/* Un tap sur le médaillon remonte à la vue du jardin. */
+/* Un tap sur le médaillon remonte à la vue du jardin — sauf pendant le jeu,
+ * où il sert d'afficheur de résultat : remonter sortirait l'enfant du jeu. */
 medaillon.addEventListener('click', function () {
+  if (!zoneJeu.hidden) return;
   try {
     canvasHublot.scrollIntoView({ behavior: mouvementReduit ? 'auto' : 'smooth', block: 'center' });
   } catch (e) {
@@ -198,6 +204,27 @@ medaillon.addEventListener('click', function () {
 /* Le geste-signature : attraper la Lune                                */
 /* ------------------------------------------------------------------ */
 
+/* Les écouteurs tactiles doivent être non passifs pour pouvoir bloquer le
+ * défilement (détection du support des options d'addEventListener). */
+var supporteEcouteurPassif = false;
+try {
+  var optionsTest = Object.defineProperty({}, 'passive', {
+    get: function () { supporteEcouteurPassif = true; return false; }
+  });
+  window.addEventListener('test-passif', null, optionsTest);
+  window.removeEventListener('test-passif', null, optionsTest);
+} catch (e) { /* vieux navigateur : les options sont un booléen */ }
+
+/* Toucher un canvas ne doit JAMAIS faire défiler ni zoomer la page : le CSS
+ * pose touch-action: none, mais les vieux mobiles et certaines WebViews
+ * l'ignorent — on bloque aussi le geste à la main. */
+function bloquerDefilementTactile(canvas) {
+  function bloquer(e) { e.preventDefault(); }
+  var options = supporteEcouteurPassif ? { passive: false } : false;
+  canvas.addEventListener('touchstart', bloquer, options);
+  canvas.addEventListener('touchmove', bloquer, options);
+}
+
 function coordonneesCanvas(canvas, e) {
   var rect = canvas.getBoundingClientRect();
   return {
@@ -207,6 +234,8 @@ function coordonneesCanvas(canvas, e) {
 }
 
 function brancherGesteLune(canvas, vue) {
+  bloquerDefilementTactile(canvas);
+
   canvas.addEventListener('pointerdown', function (e) {
     var c = coordonneesCanvas(canvas, e);
     if (!vue.attrapeLune(c.x, c.y, etat.jour)) return;
@@ -251,6 +280,19 @@ curseur.addEventListener('input', function () {
 
 var boutonsScenarios = [];
 
+/* Sur mobile, le voyage de la Lune se joue hors écran quand on tape une
+ * vignette : on remonte doucement à la vue de l'espace pour le regarder —
+ * le bandeau du jardin, juste au-dessus, montre l'effet en même temps.
+ * (Sur grand écran les deux vues sont déjà sous les yeux : on ne bouge pas.) */
+function montrerLeVoyage() {
+  if (!estMobile) return;
+  try {
+    canvasOrbite.scrollIntoView({ behavior: mouvementReduit ? 'auto' : 'smooth', block: 'center' });
+  } catch (e) {
+    canvasOrbite.scrollIntoView(true);
+  }
+}
+
 function rafraichirBoutonsScenarios() {
   boutonsScenarios.forEach(function (b) {
     b.el.setAttribute('aria-pressed', etat.scenarioActif === b.id ? 'true' : 'false');
@@ -273,6 +315,7 @@ SCENARIOS.forEach(function (s) {
     histoireScenario.hidden = false;
     histoireScenario.textContent = s.histoire;
     if (sonScenariosActif) narrateur.raconter(s.oral);
+    montrerLeVoyage();
   });
   grilleScenarios.appendChild(bouton);
   boutonsScenarios.push({ id: s.id, el: bouton });
@@ -366,7 +409,7 @@ var narrateur = (function () {
       fr.forEach(function (v) {
         var opt = document.createElement('option');
         opt.value = v.name;
-        opt.textContent = '🗣 ' + v.name;
+        opt.textContent = '🗣️ ' + v.name;
         if (voixChoisie && v.name === voixChoisie.name) opt.selected = true;
         menuVoix.appendChild(opt);
       });
@@ -497,21 +540,46 @@ function nouveauDefi() {
   }
   etat.defi = candidats[Math.floor(Math.random() * candidats.length)];
   etat.defiGagne = false;
+  etat.bravoVisible = false;
+  etat.defiEntreMs = null;
   defiJeu.textContent = etat.defi.emoji + ' ' + etat.defi.nom + ' !';
   defiJeu.hidden = false;
   bravoJeu.hidden = true;
   boutonEncore.hidden = true;
+  /* La version sonore du jeu suit le même bouton 🔇/🔊 que les scénarios. */
+  if (sonScenariosActif) narrateur.raconter(consigneDefi(etat.defi));
 }
 
-function surveillerDefi() {
-  if (!etat.defi || etat.defiGagne) return;
-  /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation). */
-  if (etat.animation) return;
-  if (defiReussi(etat.defi.cible, etat.jour)) {
+function surveillerDefi(ms) {
+  if (!etat.defi) return;
+  var dessus = defiReussi(etat.defi.cible, etat.jour);
+  /* Le bravo ne ment jamais : il s'efface quand l'enfant repart faire
+   * tourner la Lune, et revient s'il refabrique la bonne forme (sans
+   * relire la voix). « Encore une ! » reste acquis. */
+  if (etat.bravoVisible) {
+    if (!dessus) {
+      etat.bravoVisible = false;
+      etat.defiEntreMs = null;
+      bravoJeu.hidden = true;
+    }
+    return;
+  }
+  /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation), et
+   * il faut RESTER sur la forme : la traverser d'un grand coup de glisser
+   * ne compte pas. */
+  if (!dessus || etat.animation) {
+    etat.defiEntreMs = null;
+    return;
+  }
+  if (etat.defiEntreMs === null) { etat.defiEntreMs = ms; return; }
+  if (ms - etat.defiEntreMs < DEFI_ATTENTE_MS) return;
+  etat.bravoVisible = true;
+  bravoJeu.hidden = false;
+  if (!etat.defiGagne) {
     etat.defiGagne = true;
-    bravoJeu.textContent = '⭐ Bravo ! Tu as fabriqué ' + etat.defi.nom + ' !';
-    bravoJeu.hidden = false;
+    bravoJeu.textContent = '⭐ ' + bravoDefi(etat.defi);
     boutonEncore.hidden = false;
+    if (sonScenariosActif) narrateur.raconter(bravoDefi(etat.defi));
   }
 }
 
@@ -520,10 +588,14 @@ boutonJouer.addEventListener('click', function () {
   if (ouvert) {
     zoneJeu.hidden = true;
     etat.defi = null;
+    etat.bravoVisible = false;
+    etat.defiEntreMs = null;
     boutonJouer.textContent = 'Jouer';
+    medaillon.setAttribute('aria-label', 'La Lune de ce soir — remonter à la vue du jardin');
   } else {
     zoneJeu.hidden = false;
     boutonJouer.textContent = 'Ranger le jeu';
+    medaillon.setAttribute('aria-label', 'La Lune de ce soir — le résultat de ta manœuvre');
     nouveauDefi();
   }
 });
@@ -531,8 +603,26 @@ boutonJouer.addEventListener('click', function () {
 boutonEncore.addEventListener('click', nouveauDefi);
 
 /* ------------------------------------------------------------------ */
+/* La boîte d'explication se replie sur mobile (raccourcit la page)     */
+/* ------------------------------------------------------------------ */
+
+var pliExplication = document.getElementById('pli-explication');
+
+function synchroniserPliExplication() {
+  if (estMobile) return; /* sur mobile, l'enfant plie et déplie librement */
+  pliExplication.open = true; /* sur ordinateur, toujours ouverte */
+}
+
+if (estMobile) pliExplication.open = false; /* au chargement : repliée */
+pliExplication.addEventListener('toggle', synchroniserPliExplication);
+if (typeof mqMobile !== 'undefined' && mqMobile) {
+  if (mqMobile.addEventListener) mqMobile.addEventListener('change', synchroniserPliExplication);
+  else if (mqMobile.addListener) mqMobile.addListener(synchroniserPliExplication); /* vieux Safari */
+}
+
+/* ------------------------------------------------------------------ */
 /* Démarrage                                                            */
 /* ------------------------------------------------------------------ */
 
-fixerJour(0);
+fixerJour(JOUR_DEPART); /* un premier croissant : une Lune visible d'emblée */
 window.requestAnimationFrame(boucle);

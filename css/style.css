@@ -112,6 +112,9 @@ main, header.entete, footer.pied-serie {
   height: 100%;
   display: block;
   touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .carte-orbite canvas { cursor: grab; }
@@ -282,6 +285,36 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
 
 .conseil-voix { color: var(--muted); font-size: 0.88rem; }
 
+/* Le résumé repliable ne sert que sur mobile : sur ordinateur il est masqué
+ * et main.js garde la boîte ouverte (le titre reste celui de la rangée). */
+.resume-explication { display: none; }
+
+@media (max-width: 879px) {
+  .carte-explication { padding: 6px 18px 8px; }
+  .carte-explication[open] { padding-bottom: 16px; }
+
+  .resume-explication {
+    display: block;
+    cursor: pointer;
+    padding: 12px 0;
+    list-style: none;
+  }
+  .resume-explication::-webkit-details-marker { display: none; }
+  .resume-explication::before { content: '▸ '; color: var(--sun); font-weight: 700; }
+  .carte-explication[open] .resume-explication::before { content: '▾ '; }
+  .resume-explication h2 { display: inline; font-size: 1.1rem; }
+
+  .indice-pli {
+    display: block;
+    margin: 3px 0 0 1.4em;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* Sur mobile, le titre vit dans le résumé : celui de la rangée disparaît. */
+  .carte-explication .titre-avec-bouton h2 { display: none; }
+}
+
 /* ---------- Jeu ---------- */
 
 .bouton-jeu {
@@ -345,11 +378,13 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   position: fixed;
   right: 14px;
   top: 14px;
-  width: 72px;
-  height: 72px;
+  width: 60px;
+  height: 60px;
   padding: 0;
   border-radius: 50%;
-  border: 2px solid var(--violet);
+  /* Anneau doré (la couleur du récit du soir) : le violet reste réservé à la
+   * Lune qu'on attrape dans la vue de l'espace. */
+  border: 2px solid var(--sun);
   background: #070b17;
   box-shadow: 0 6px 18px rgba(2, 5, 15, 0.65);
   cursor: pointer;
@@ -377,6 +412,52 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   .defi { font-size: 1.15rem; margin: 6px 0; }
   .bravo { font-size: 1.1rem; margin: 6px 0; }
   .vues-jeu { margin: 10px 0; }
+
+  /* La scène du geste-signature en carré : l'orbite gagne ~27 % de rayon,
+   * les petits doigts visent plus large. */
+  .carte-orbite .cadre-canvas,
+  .vues-jeu .cadre-canvas { padding-bottom: 100%; }
+
+  @supports (aspect-ratio: 1 / 1) {
+    .carte-orbite .cadre-canvas,
+    .vues-jeu .cadre-canvas { padding-bottom: 0; aspect-ratio: 1 / 1; }
+  }
+
+  /* Cibles tactiles généreuses (public : des doigts de 5 ans). */
+  .bouton-son,
+  .bouton-jeu { min-height: 44px; }
+
+  input[type="range"] { height: 44px; }
+
+  input[type="range"]::-webkit-slider-thumb {
+    width: 36px;
+    height: 36px;
+    margin-top: -13px;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 32px;
+    height: 32px;
+  }
+
+  .pied-serie ul { gap: 2px 12px; }
+  .pied-serie a { display: inline-block; padding: 8px 6px; }
+
+  /* Le hublot se compacte en bandeau paysage (la Lune au-dessus du jardin) :
+   * la vue de l'espace arrive plus tôt sous le pouce, et le médaillon-fenêtre
+   * prend le relais dès que le bandeau sort de l'écran. */
+  .carte-hublot { padding: 12px 14px 10px; }
+
+  .carte-hublot h2 { font-size: 1rem; }
+  .carte-hublot .sous-titre { margin: 2px 0 8px; }
+
+  .carte-hublot .cadre-canvas { padding-bottom: 46%; }
+
+  @supports (aspect-ratio: 1 / 1) {
+    .carte-hublot .cadre-canvas { padding-bottom: 0; aspect-ratio: 13 / 6; }
+  }
+
+  .phrase-soir { font-size: 0.95rem; margin-top: 8px; min-height: 1.5em; }
 }
 
 /* ---------- Note aux parents ---------- */
@@ -429,6 +510,17 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
 .pied-serie li[aria-current="page"] { color: var(--sun); font-weight: 600; }
 
 /* ---------- Divers ---------- */
+
+/* Pas de flash gris au tap, pas de texte sélectionné en tapotant vite. */
+button, summary {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.bouton-scenario:active { border-color: var(--violet); }
+.bouton-son:active { border-color: var(--violet); }
+.bouton-jeu:active { background: #ff87b0; }
 
 [hidden] { display: none !important; }
 
