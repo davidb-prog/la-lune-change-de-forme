@@ -52,7 +52,7 @@
       <div class="piste-emojis" aria-hidden="true">
         <span>🌑</span><span>🌓</span><span>🌕</span><span>🌗</span><span>🌑</span>
       </div>
-      <input type="range" id="curseur-jours" min="0" max="29.5" step="0.05" value="0"
+      <input type="range" id="curseur-jours" min="0" max="29.5" step="0.05" value="2.5"
         aria-label="Choisis le soir du mois, de 0 à 29 : la Lune avance sur son orbite et change de forme.">
       <p class="legende-curseur">Fais glisser pour passer les soirs, un par un ou d’un coup !</p>
     </section>
@@ -68,8 +68,14 @@
       <div class="histoire" id="histoire-scenario" aria-live="polite" hidden></div>
     </section>
 
-    <!-- La boîte d’explication. -->
-    <section class="carte carte-explication">
+    <!-- La boîte d’explication. Sur mobile, elle se replie comme la note aux
+         parents (le résumé ne s’affiche qu’en < 880 px ; sur ordinateur,
+         main.js la garde ouverte). -->
+    <details class="carte carte-explication" id="pli-explication" open>
+      <summary class="resume-explication">
+        <h2>💡 Pourquoi la Lune change de forme ?</h2>
+        <span class="indice-pli">appuie ici pour lire ou écouter l’histoire</span>
+      </summary>
       <div class="titre-avec-bouton">
         <h2>💡 Pourquoi la Lune change de forme ?</h2>
         <div class="boutons-voix">
@@ -88,7 +94,7 @@
         🗣️ Pour une plus jolie voix, ouvre cette page dans Chrome ou Edge, ou installe une voix
         française « améliorée » dans les réglages de l’appareil.
       </p>
-    </section>
+    </details>
 
     <!-- Le jeu d’exploration libre. -->
     <section class="carte carte-jeu">

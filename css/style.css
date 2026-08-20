@@ -285,6 +285,36 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
 
 .conseil-voix { color: var(--muted); font-size: 0.88rem; }
 
+/* Le résumé repliable ne sert que sur mobile : sur ordinateur il est masqué
+ * et main.js garde la boîte ouverte (le titre reste celui de la rangée). */
+.resume-explication { display: none; }
+
+@media (max-width: 879px) {
+  .carte-explication { padding: 6px 18px 8px; }
+  .carte-explication[open] { padding-bottom: 16px; }
+
+  .resume-explication {
+    display: block;
+    cursor: pointer;
+    padding: 12px 0;
+    list-style: none;
+  }
+  .resume-explication::-webkit-details-marker { display: none; }
+  .resume-explication::before { content: '▸ '; color: var(--sun); font-weight: 700; }
+  .carte-explication[open] .resume-explication::before { content: '▾ '; }
+  .resume-explication h2 { display: inline; font-size: 1.1rem; }
+
+  .indice-pli {
+    display: block;
+    margin: 3px 0 0 1.4em;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* Sur mobile, le titre vit dans le résumé : celui de la rangée disparaît. */
+  .carte-explication .titre-avec-bouton h2 { display: none; }
+}
+
 /* ---------- Jeu ---------- */
 
 .bouton-jeu {

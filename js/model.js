@@ -20,6 +20,10 @@ export var CYCLE_JOURS = 29.5;
 /* Jour de la pleine lune : à mi-chemin du cycle. */
 export var JOUR_PLEINE = CYCLE_JOURS / 2;
 
+/* Soir affiché à l'arrivée sur la page : un premier croissant — on voit une
+ * Lune dès le début (au jour 0, nouvelle lune, le ciel serait vide). */
+export var JOUR_DEPART = 2.5;
+
 /* Direction du Soleil (unitaire, constante) : l'objet-repère fixe. */
 export var SOLEIL_DIR = { x: -1, y: 0 };
 
@@ -203,4 +207,13 @@ export var DEFIS = [
 
 export function defiReussi(cible, jour) {
   return phaseInfo(jour).cle === cible;
+}
+
+/* La consigne et le bravo d'un défi — pour l'écran et pour le conteur. */
+export function consigneDefi(defi) {
+  return 'Fabrique ' + defi.nom + ' !';
+}
+
+export function bravoDefi(defi) {
+  return 'Bravo ! Tu as fabriqué ' + defi.nom + ' !';
 }

@@ -9,7 +9,7 @@ import {
   jourNormalise, angleOrbite, positionLune, directionEclairee,
   fractionEclairee, luneCroissante, coteEclaire, formeLune,
   ORDRE_PHASES, phaseInfo, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi
+  SCENARIOS, DEFIS, defiReussi, JOUR_DEPART, consigneDefi, bravoDefi
 } from '../js/model.js';
 
 var tests = [];
@@ -183,6 +183,22 @@ test('un défi réussit sur sa phase et échoue ailleurs', function () {
   assert.ok(defiReussi('croissant-1', 2.5));
   assert.ok(!defiReussi('croissant-1', 27));
   assert.ok(defiReussi('croissant-2', 27));
+});
+
+test('la page démarre sur un premier croissant : une Lune visible dès l’arrivée', function () {
+  var info = phaseInfo(JOUR_DEPART);
+  assert.equal(info.cle, 'croissant-1');
+  assert.ok(fractionEclairee(JOUR_DEPART) > 0.04, 'la Lune du départ doit se voir');
+});
+
+test('la consigne et le bravo du défi nomment la forme, sans émoji', function () {
+  DEFIS.forEach(function (d) {
+    var consigne = consigneDefi(d);
+    var bravo = bravoDefi(d);
+    assert.ok(consigne.indexOf(d.nom) !== -1, 'consigne muette sur : ' + d.nom);
+    assert.ok(bravo.indexOf(d.nom) !== -1, 'bravo muet sur : ' + d.nom);
+    assert.ok(!/[\u{1F000}-\u{1FAFF}]/u.test(consigne + bravo), 'émoji dans les textes du défi');
+  });
 });
 
 /* ------------------------------------------------------------------ */

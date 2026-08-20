@@ -5,8 +5,8 @@
  * que brancher.
  */
 import {
-  CYCLE_JOURS, jourNormalise, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi
+  CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
+  SCENARIOS, DEFIS, defiReussi, consigneDefi, bravoDefi
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
 import { creerVueHublot } from './vue-hublot.js';
@@ -21,6 +21,7 @@ var etat = {
   scenarioActif: null,  /* id du scénario affiché, ou null */
   defi: null,           /* le défi du jeu en cours, ou null */
   defiGagne: false,
+  bravoVisible: false,  /* le bravo s'efface quand on repart tourner la Lune */
   glisse: false
 };
 
@@ -538,21 +539,40 @@ function nouveauDefi() {
   }
   etat.defi = candidats[Math.floor(Math.random() * candidats.length)];
   etat.defiGagne = false;
+  etat.bravoVisible = false;
   defiJeu.textContent = etat.defi.emoji + ' ' + etat.defi.nom + ' !';
   defiJeu.hidden = false;
   bravoJeu.hidden = true;
   boutonEncore.hidden = true;
+  /* La version sonore du jeu suit le même bouton 🔇/🔊 que les scénarios. */
+  if (sonScenariosActif) narrateur.raconter(consigneDefi(etat.defi));
 }
 
 function surveillerDefi() {
-  if (!etat.defi || etat.defiGagne) return;
+  if (!etat.defi) return;
+  if (etat.defiGagne) {
+    /* Le bravo ne ment jamais : il s'efface quand l'enfant repart faire
+     * tourner la Lune, et revient si la bonne forme est refabriquée.
+     * « Encore une ! » reste acquis. */
+    var dessus = defiReussi(etat.defi.cible, etat.jour);
+    if (etat.bravoVisible && !dessus) {
+      etat.bravoVisible = false;
+      bravoJeu.hidden = true;
+    } else if (!etat.bravoVisible && dessus && !etat.animation) {
+      etat.bravoVisible = true;
+      bravoJeu.hidden = false;
+    }
+    return;
+  }
   /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation). */
   if (etat.animation) return;
   if (defiReussi(etat.defi.cible, etat.jour)) {
     etat.defiGagne = true;
-    bravoJeu.textContent = '⭐ Bravo ! Tu as fabriqué ' + etat.defi.nom + ' !';
+    etat.bravoVisible = true;
+    bravoJeu.textContent = '⭐ ' + bravoDefi(etat.defi);
     bravoJeu.hidden = false;
     boutonEncore.hidden = false;
+    if (sonScenariosActif) narrateur.raconter(bravoDefi(etat.defi));
   }
 }
 
@@ -561,6 +581,7 @@ boutonJouer.addEventListener('click', function () {
   if (ouvert) {
     zoneJeu.hidden = true;
     etat.defi = null;
+    etat.bravoVisible = false;
     boutonJouer.textContent = 'Jouer';
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — remonter à la vue du jardin');
   } else {
@@ -574,8 +595,26 @@ boutonJouer.addEventListener('click', function () {
 boutonEncore.addEventListener('click', nouveauDefi);
 
 /* ------------------------------------------------------------------ */
+/* La boîte d'explication se replie sur mobile (raccourcit la page)     */
+/* ------------------------------------------------------------------ */
+
+var pliExplication = document.getElementById('pli-explication');
+
+function synchroniserPliExplication() {
+  if (estMobile) return; /* sur mobile, l'enfant plie et déplie librement */
+  pliExplication.open = true; /* sur ordinateur, toujours ouverte */
+}
+
+if (estMobile) pliExplication.open = false; /* au chargement : repliée */
+pliExplication.addEventListener('toggle', synchroniserPliExplication);
+if (typeof mqMobile !== 'undefined' && mqMobile) {
+  if (mqMobile.addEventListener) mqMobile.addEventListener('change', synchroniserPliExplication);
+  else if (mqMobile.addListener) mqMobile.addListener(synchroniserPliExplication); /* vieux Safari */
+}
+
+/* ------------------------------------------------------------------ */
 /* Démarrage                                                            */
 /* ------------------------------------------------------------------ */
 
-fixerJour(0);
+fixerJour(JOUR_DEPART); /* un premier croissant : une Lune visible d'emblée */
 window.requestAnimationFrame(boucle);

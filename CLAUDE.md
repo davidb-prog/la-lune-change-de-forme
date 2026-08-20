@@ -48,7 +48,9 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - Coordonnées **mathématiques** (y vers le haut) dans le modèle ; les vues font
   la bascule canvas (y vers le bas).
 - Le Soleil est **fixe**, très loin, direction `SOLEIL_DIR = (−1, 0)` (à gauche).
-- Jour 0 = nouvelle lune. `positionLune(jour) = (−cos θ, −sin θ)` avec
+- Jour 0 = nouvelle lune. La page démarre au soir `JOUR_DEPART` (2,5 —
+  premier croissant) : une Lune visible d'emblée, le ciel du jour 0 serait
+  vide. `positionLune(jour) = (−cos θ, −sin θ)` avec
   `θ = jour / 29,5 · τ` (sens trigonométrique, le vrai sens vu du pôle Nord).
 - Fraction éclairée vue de la Terre : `(1 − cos θ) / 2`.
 - Forme du disque (hublot) : `formeLune(jour)` → `{ fraction, cote, k }` avec
@@ -70,7 +72,11 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **Reprendre la main efface l'histoire** : bouger le curseur ou la Lune ferme
   la micro-histoire du scénario et désarme son `aria-pressed`.
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
-  de scénario).
+  de scénario). Le bravo **ne ment jamais** : il s'efface quand l'enfant
+  repart faire tourner la Lune, revient si la bonne forme est refabriquée ;
+  « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
+  🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
+  `consigneDefi`/`bravoDefi` du modèle).
 - **Sur mobile (< 880 px) seulement** : le hublot se compacte en bandeau
   paysage (13/6, la Lune au-dessus du jardin) — jamais collant : épinglé en
   haut, il cacherait la vue de l'espace au niveau des boutons-scénarios. La
@@ -83,8 +89,10 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   ramène au jardin, sauf pendant le jeu où il n'est qu'un afficheur (remonter
   sortirait l'enfant du jeu). Le jeu n'affiche qu'une seule vue (l'espace),
   sans rien d'incrusté dans le canvas : c'est le médaillon qui montre le
-  résultat, il reste donc visible pendant le jeu. Rien de tout cela n'existe
-  sur grand écran.
+  résultat, il reste donc visible pendant le jeu. La boîte « Pourquoi la Lune
+  change de forme ? » se **replie** sur mobile (repliée au chargement, comme
+  la note aux parents ; toujours ouverte sur ordinateur, `main.js` y veille).
+  Rien de tout cela n'existe sur grand écran.
 
 ## Le conteur (synthèse vocale)
 
