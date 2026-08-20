@@ -72,7 +72,10 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **Reprendre la main efface l'histoire** : bouger le curseur ou la Lune ferme
   la micro-histoire du scénario et désarme son `aria-pressed`.
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
-  de scénario). Le bravo **ne ment jamais** : il s'efface quand l'enfant
+  de scénario), et il faut **rester un instant sur la bonne forme**
+  (`DEFI_ATTENTE_MS`) : un tour de Lune qui traverse la fenêtre sans
+  s'arrêter ne gagne pas « en passant ». Le bravo **ne ment jamais** : il
+  s'efface quand l'enfant
   repart faire tourner la Lune, revient si la bonne forme est refabriquée ;
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —

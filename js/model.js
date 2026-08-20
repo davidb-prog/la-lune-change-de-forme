@@ -209,6 +209,12 @@ export function defiReussi(cible, jour) {
   return phaseInfo(jour).cle === cible;
 }
 
+/* Il faut RESTER un instant sur la bonne forme : un grand coup de glisser qui
+ * traverse la fenêtre ne gagne pas « en passant ». Plus long que chez
+ * ou-va-le-soleil (350 ms) : les fenêtres de phases sont larges (le croissant
+ * couvre ~15 % de l'orbite), un tour tranquille les traverse en ~500 ms. */
+export var DEFI_ATTENTE_MS = 650;
+
 /* La consigne et le bravo d'un défi — pour l'écran et pour le conteur. */
 export function consigneDefi(defi) {
   return 'Fabrique ' + defi.nom + ' !';

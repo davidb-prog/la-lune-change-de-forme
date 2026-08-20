@@ -9,7 +9,8 @@ import {
   jourNormalise, angleOrbite, positionLune, directionEclairee,
   fractionEclairee, luneCroissante, coteEclaire, formeLune,
   ORDRE_PHASES, phaseInfo, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, JOUR_DEPART, consigneDefi, bravoDefi
+  SCENARIOS, DEFIS, defiReussi, JOUR_DEPART, consigneDefi, bravoDefi,
+  DEFI_ATTENTE_MS
 } from '../js/model.js';
 
 var tests = [];
@@ -189,6 +190,13 @@ test('la page démarre sur un premier croissant : une Lune visible dès l’arri
   var info = phaseInfo(JOUR_DEPART);
   assert.equal(info.cle, 'croissant-1');
   assert.ok(fractionEclairee(JOUR_DEPART) > 0.04, 'la Lune du départ doit se voir');
+});
+
+test('gagner demande de s’arrêter : la temporisation existe et reste vive', function () {
+  /* Assez longue pour qu'un tour continu ne gagne pas en passant, assez
+   * courte pour qu'un vrai arrêt semble instantané. */
+  assert.ok(DEFI_ATTENTE_MS >= 400, 'trop courte : un tour la traverserait');
+  assert.ok(DEFI_ATTENTE_MS <= 1200, 'trop longue : l’arrêt semblerait ignoré');
 });
 
 test('la consigne et le bravo du défi nomment la forme, sans émoji', function () {

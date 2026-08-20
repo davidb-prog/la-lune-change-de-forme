@@ -6,7 +6,7 @@
  */
 import {
   CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, consigneDefi, bravoDefi
+  SCENARIOS, DEFIS, defiReussi, consigneDefi, bravoDefi, DEFI_ATTENTE_MS
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
 import { creerVueHublot } from './vue-hublot.js';
@@ -22,6 +22,7 @@ var etat = {
   defi: null,           /* le défi du jeu en cours, ou null */
   defiGagne: false,
   bravoVisible: false,  /* le bravo s'efface quand on repart tourner la Lune */
+  defiEntreMs: null,    /* entrée dans la fenêtre (anti « gagné en passant ») */
   glisse: false
 };
 
@@ -158,7 +159,7 @@ function boucle(maintenant) {
       }
     }
     gererMedaillon();
-    surveillerDefi();
+    surveillerDefi(maintenant);
   } finally {
     window.requestAnimationFrame(boucle);
   }
@@ -540,6 +541,7 @@ function nouveauDefi() {
   etat.defi = candidats[Math.floor(Math.random() * candidats.length)];
   etat.defiGagne = false;
   etat.bravoVisible = false;
+  etat.defiEntreMs = null;
   defiJeu.textContent = etat.defi.emoji + ' ' + etat.defi.nom + ' !';
   defiJeu.hidden = false;
   bravoJeu.hidden = true;
@@ -548,29 +550,34 @@ function nouveauDefi() {
   if (sonScenariosActif) narrateur.raconter(consigneDefi(etat.defi));
 }
 
-function surveillerDefi() {
+function surveillerDefi(ms) {
   if (!etat.defi) return;
-  if (etat.defiGagne) {
-    /* Le bravo ne ment jamais : il s'efface quand l'enfant repart faire
-     * tourner la Lune, et revient si la bonne forme est refabriquée.
-     * « Encore une ! » reste acquis. */
-    var dessus = defiReussi(etat.defi.cible, etat.jour);
-    if (etat.bravoVisible && !dessus) {
+  var dessus = defiReussi(etat.defi.cible, etat.jour);
+  /* Le bravo ne ment jamais : il s'efface quand l'enfant repart faire
+   * tourner la Lune, et revient s'il refabrique la bonne forme (sans
+   * relire la voix). « Encore une ! » reste acquis. */
+  if (etat.bravoVisible) {
+    if (!dessus) {
       etat.bravoVisible = false;
+      etat.defiEntreMs = null;
       bravoJeu.hidden = true;
-    } else if (!etat.bravoVisible && dessus && !etat.animation) {
-      etat.bravoVisible = true;
-      bravoJeu.hidden = false;
     }
     return;
   }
-  /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation). */
-  if (etat.animation) return;
-  if (defiReussi(etat.defi.cible, etat.jour)) {
+  /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation), et
+   * il faut RESTER sur la forme : la traverser d'un grand coup de glisser
+   * ne compte pas. */
+  if (!dessus || etat.animation) {
+    etat.defiEntreMs = null;
+    return;
+  }
+  if (etat.defiEntreMs === null) { etat.defiEntreMs = ms; return; }
+  if (ms - etat.defiEntreMs < DEFI_ATTENTE_MS) return;
+  etat.bravoVisible = true;
+  bravoJeu.hidden = false;
+  if (!etat.defiGagne) {
     etat.defiGagne = true;
-    etat.bravoVisible = true;
     bravoJeu.textContent = '⭐ ' + bravoDefi(etat.defi);
-    bravoJeu.hidden = false;
     boutonEncore.hidden = false;
     if (sonScenariosActif) narrateur.raconter(bravoDefi(etat.defi));
   }
@@ -582,6 +589,7 @@ boutonJouer.addEventListener('click', function () {
     zoneJeu.hidden = true;
     etat.defi = null;
     etat.bravoVisible = false;
+    etat.defiEntreMs = null;
     boutonJouer.textContent = 'Jouer';
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — remonter à la vue du jardin');
   } else {
