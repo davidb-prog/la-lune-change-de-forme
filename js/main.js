@@ -278,6 +278,19 @@ curseur.addEventListener('input', function () {
 
 var boutonsScenarios = [];
 
+/* Sur mobile, le voyage de la Lune se joue hors écran quand on tape une
+ * vignette : on remonte doucement à la vue de l'espace pour le regarder —
+ * le bandeau du jardin, juste au-dessus, montre l'effet en même temps.
+ * (Sur grand écran les deux vues sont déjà sous les yeux : on ne bouge pas.) */
+function montrerLeVoyage() {
+  if (!estMobile) return;
+  try {
+    canvasOrbite.scrollIntoView({ behavior: mouvementReduit ? 'auto' : 'smooth', block: 'center' });
+  } catch (e) {
+    canvasOrbite.scrollIntoView(true);
+  }
+}
+
 function rafraichirBoutonsScenarios() {
   boutonsScenarios.forEach(function (b) {
     b.el.setAttribute('aria-pressed', etat.scenarioActif === b.id ? 'true' : 'false');
@@ -300,6 +313,7 @@ SCENARIOS.forEach(function (s) {
     histoireScenario.hidden = false;
     histoireScenario.textContent = s.histoire;
     if (sonScenariosActif) narrateur.raconter(s.oral);
+    montrerLeVoyage();
   });
   grilleScenarios.appendChild(bouton);
   boutonsScenarios.push({ id: s.id, el: bouton });
