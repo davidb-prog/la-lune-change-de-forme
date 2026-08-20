@@ -410,8 +410,9 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   .pied-serie ul { gap: 2px 12px; }
   .pied-serie a { display: inline-block; padding: 8px 6px; }
 
-  /* Les deux vues sur le même écran : le hublot se compacte en bandeau
-   * paysage (la Lune au-dessus du jardin) au-dessus de la vue de l'espace. */
+  /* Le hublot se compacte en bandeau paysage (la Lune au-dessus du jardin) :
+   * la vue de l'espace arrive plus tôt sous le pouce, et le médaillon-fenêtre
+   * prend le relais dès que le bandeau sort de l'écran. */
   .carte-hublot { padding: 12px 14px 10px; }
 
   .carte-hublot h2 { font-size: 1rem; }
@@ -424,17 +425,6 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   }
 
   .phrase-soir { font-size: 0.95rem; margin-top: 8px; min-height: 1.5em; }
-
-  /* Et il reste collé en haut pendant qu'on manœuvre la Lune — seulement si
-   * l'écran est assez haut pour que la vue de l'espace respire dessous. */
-  @media (min-height: 600px) {
-    .carte-hublot {
-      position: -webkit-sticky;
-      position: sticky;
-      top: 8px;
-      z-index: 5;
-    }
-  }
 }
 
 /* ---------- Note aux parents ---------- */

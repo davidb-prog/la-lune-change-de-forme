@@ -67,13 +67,12 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
   de scénario).
 - **Sur mobile (< 880 px) seulement** : le hublot se compacte en bandeau
-  paysage (13/6, la Lune au-dessus du jardin) et, si l'écran fait au moins
-  600 px de haut, reste **collé en haut** pendant la section des deux vues —
-  l'enfant voit la forme changer pendant qu'il fait tourner la Lune. La vue
-  de l'espace passe en carré (l'orbite plus grande sous le doigt). Plus bas
-  dans la page, un médaillon flottant (haut droit, hors du chemin du pouce)
-  prend le relais dès que la **carte** du hublot est entièrement sortie de
-  l'écran (jamais avant : il recouvrirait la phrase du soir). Le médaillon est
+  paysage (13/6, la Lune au-dessus du jardin) — jamais collant : épinglé en
+  haut, il cacherait la vue de l'espace au niveau des boutons-scénarios. La
+  vue de l'espace passe en carré (l'orbite plus grande sous le doigt). Un
+  médaillon flottant (haut droit, hors du chemin du pouce) prend le relais
+  dès que la **carte** du hublot est entièrement sortie de l'écran (jamais
+  avant : il recouvrirait la phrase du soir). Le médaillon est
   un **mini hublot** (ciel, Lune, jardin) cerclé d'or — le violet reste
   réservé à la Lune attrapable, pour qu'on ne les confonde pas. Un tap y
   ramène au jardin, sauf pendant le jeu où il n'est qu'un afficheur (remonter
