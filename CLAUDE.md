@@ -68,10 +68,13 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   de scénario).
 - **Sur mobile (< 880 px) seulement** : un médaillon flottant (haut droit,
   hors du chemin du pouce qui fait tourner la Lune) montre la Lune du soir dès
-  que le hublot sort de l'écran — un tap y ramène. Le jeu n'affiche qu'une
-  seule vue (l'espace), sans rien d'incrusté dans le canvas : c'est le
-  médaillon flottant qui montre le résultat, il reste donc visible pendant le
-  jeu. Rien de tout cela n'existe sur grand écran.
+  que la **carte** du hublot est entièrement sortie de l'écran (jamais avant :
+  il recouvrirait la phrase du soir) — un tap y ramène, sauf pendant le jeu où
+  il n'est qu'un afficheur (remonter sortirait l'enfant du jeu). Le jeu
+  n'affiche qu'une seule vue (l'espace), sans rien d'incrusté dans le canvas :
+  c'est le médaillon flottant qui montre le résultat, il reste donc visible
+  pendant le jeu. La vue de l'espace passe en carré sur mobile (l'orbite plus
+  grande sous le doigt). Rien de tout cela n'existe sur grand écran.
 
 ## Le conteur (synthèse vocale)
 

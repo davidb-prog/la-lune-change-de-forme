@@ -164,16 +164,20 @@ function boucle(maintenant) {
 /* Le médaillon flottant (mobile) : la Lune du soir, toujours visible   */
 /* ------------------------------------------------------------------ */
 
-function canvasHorsEcran(canvas) {
-  var rect = canvas.getBoundingClientRect();
+var carteHublot = document.querySelector('.carte-hublot');
+
+/* La carte entière est-elle sortie de l'écran ? (Pas seulement le canvas :
+ * tant que la phrase du soir se lit encore, le médaillon la recouvrirait.) */
+function carteHorsEcran(element) {
+  var rect = element.getBoundingClientRect();
   var hauteur = window.innerHeight || document.documentElement.clientHeight;
-  return rect.bottom < 80 || rect.top > hauteur - 80;
+  return rect.bottom < 0 || rect.top > hauteur;
 }
 
 function gererMedaillon() {
   /* Dès que le hublot sort de l'écran, la Lune du soir suit l'enfant —
    * y compris pendant le jeu : c'est elle qui montre le résultat. */
-  var visible = estMobile && canvasHorsEcran(canvasHublot);
+  var visible = estMobile && carteHorsEcran(carteHublot);
   medaillon.hidden = !visible;
   if (!visible) return;
   ajusterCanvas(canvasMedaillon);
@@ -185,8 +189,10 @@ function gererMedaillon() {
   dessinerDisqueLune(ctx, w / 2, h / 2, Math.min(w, h) * 0.38, formeLune(etat.jour));
 }
 
-/* Un tap sur le médaillon remonte à la vue du jardin. */
+/* Un tap sur le médaillon remonte à la vue du jardin — sauf pendant le jeu,
+ * où il sert d'afficheur de résultat : remonter sortirait l'enfant du jeu. */
 medaillon.addEventListener('click', function () {
+  if (!zoneJeu.hidden) return;
   try {
     canvasHublot.scrollIntoView({ behavior: mouvementReduit ? 'auto' : 'smooth', block: 'center' });
   } catch (e) {
@@ -366,7 +372,7 @@ var narrateur = (function () {
       fr.forEach(function (v) {
         var opt = document.createElement('option');
         opt.value = v.name;
-        opt.textContent = '🗣 ' + v.name;
+        opt.textContent = '🗣️ ' + v.name;
         if (voixChoisie && v.name === voixChoisie.name) opt.selected = true;
         menuVoix.appendChild(opt);
       });
@@ -521,9 +527,11 @@ boutonJouer.addEventListener('click', function () {
     zoneJeu.hidden = true;
     etat.defi = null;
     boutonJouer.textContent = 'Jouer';
+    medaillon.setAttribute('aria-label', 'La Lune de ce soir — remonter à la vue du jardin');
   } else {
     zoneJeu.hidden = false;
     boutonJouer.textContent = 'Ranger le jeu';
+    medaillon.setAttribute('aria-label', 'La Lune de ce soir — le résultat de ta manœuvre');
     nouveauDefi();
   }
 });
