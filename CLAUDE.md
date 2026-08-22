@@ -97,15 +97,51 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   la note aux parents ; toujours ouverte sur ordinateur, `main.js` y veille).
   Rien de tout cela n'existe sur grand écran.
 
-## Le conteur (synthèse vocale)
+## Le conteur (voix enregistrée + synthèse en repli)
 
 Voir la charte de la famille : moteur unique `narrateur` (générations pour
 invalider les lectures annulées), découpage en phrases, ton (rate/pitch selon
 la ponctuation), score des voix françaises (fr-FR > fr > fr-CA, bonus
 naturelles/neurales, malus robotiques), menu 🗣 si ≥ 2 voix (choix en
 `localStorage`), textes `oral` sans émoji avec espaces recollées avant la
-ponctuation, `pagehide` → `cancel()`. Sans synthèse, les boutons sonores se
-cachent et le site reste complet.
+ponctuation (`texteOral()` du modèle, partagée site/outil/tests),
+`visibilitychange`+`pagehide` → `narrateur.stop()` (qui coupe synthèse ET
+mp3). Sans synthèse, les boutons sonores se cachent et le site reste complet.
+
+## La voix enregistrée (ElevenLabs)
+
+Le conteur joue des **mp3 commités** dans `assets/audio/` quand ils existent ;
+la synthèse reste le repli permanent. L'implémentation canonique et le guide
+vivant de la famille sont dans `ou-va-le-soleil`
+(`docs/voix-conteur.md`) ; ici, seul `corpus()` de `tools/voix-lib.mjs` est
+propre à l'épisode. Règles dures :
+
+- **Le site reste 100 % statique** : mp3 générés HORS site par
+  `tools/build-voix.mjs` (Node ≥ 18, zéro dépendance, `ELEVENLABS_API_KEY` +
+  `ELEVENLABS_VOICE_ID` en variables d'environnement — jamais commitées).
+  Modèle `eleven_multilingual_v2`, sortie 64 kb/s.
+- **La clé API vit sur la machine de David** (`~/.zshrc`), JAMAIS dans un
+  cloud environment (`api.elevenlabs.io` y est bloqué par le réseau). Clé
+  dédiée scope Text-to-Speech, plafond ≈ 10 000 caractères/mois, expiration
+  ≤ 30 jours. La génération se fait en local ; depuis le cloud on prépare
+  corpus et outillage, puis on passe la main.
+- **La voix enregistrée ne ment jamais** : `assets/audio/manifest.json` stocke
+  le texte oral exact de chaque bloc ; `audioSrc(id, texte)` dans `main.js` ne
+  joue un mp3 que si son texte correspond ENCORE à l'écran (sinon repli
+  synthèse), et `node test/voix.test.mjs` échoue si un texte a changé sans
+  régénération.
+- **Le corpus : 17 blocs** (~1 700 crédits) — `histoire-1…5` (paragraphes de
+  la boîte d'explication), `scn-<id>` (les 4 scénarios, un bloc unique chacun,
+  pas de transitions parlées ici), `defi-<cible>-consigne`/`-bravo` (phrases
+  générées `consigneDefi`/`bravoDefi`). Des phrases pleines partout : aucun
+  fragment, aucun `previous_text`.
+- **Discipline de commit des mp3** (git ne delta-compresse pas l'audio) : les
+  essais vont dans `tools/essais/` (gitignoré, comme `tools/ecoute.html`), et
+  `assets/audio/` se commit en UNE fois, après validation à l'écoute.
+- **Figer les textes avant d'enregistrer** : tout changement de texte après
+  coup rejoue la loterie sur son bloc (`--only <id>` pour re-tirer une prise).
+- L'artefact de test embarque manifeste et sons en data URI
+  (`window.__VOIX_MANIFESTE`, lu avant le `fetch` du manifeste).
 
 ## Structure
 
@@ -116,15 +152,22 @@ js/model.js         modèle pur + constantes du récit
 js/vue-orbite.js    vue du ciel (Soleil fixe, orbite, geste-signature)
 js/vue-hublot.js    la Lune vue du jardin (dessinerDisqueLune)
 js/main.js          câblage : boucle rAF, curseur, scénarios, conteur, jeu
+assets/audio/       voix enregistrée du conteur (mp3 + manifest.json)
+tools/build-voix.mjs génération ElevenLabs hors site (idempotente, --dry-run…)
+tools/voix-lib.mjs  corpus() des blocs parlés — la seule partie propre à l'épisode
 test/model.test.mjs tests du modèle (Node)
+test/voix.test.mjs  tests de la voix (corpus oral + cohérence du manifeste)
 docs/               captures d'écran du README
 ```
 
 ## Vérification navigateur
 
 Suite Playwright maintenue **hors dépôt** (scratchpad de session,
-`test-site.js`) : trois passes — desktop 1200 px, `reducedMotion: 'reduce'`,
-mobile 390 px (`hasTouch`, `isMobile`). Vérifie la structure, le
+`test-site.js`) : quatre passes — desktop 1200 px, `reducedMotion: 'reduce'`,
+mobile 390 px (`hasTouch`, `isMobile`), et « voix enregistrée simulée »
+(manifeste injecté via `window.__VOIX_MANIFESTE`, `play()` instrumenté : le
+bloc au texte exact joue son fichier, le texte périmé retombe sur la
+synthèse). Vérifie la structure, le
 geste-signature (glisser simulé), la synchronisation des vues, l'effacement de
 l'histoire, le câblage du son, le jeu, zéro erreur console, pas de débordement
 horizontal, et des sondes de pixels (le Soleil doré fixe à gauche ; hublot

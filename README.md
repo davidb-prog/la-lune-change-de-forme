@@ -28,8 +28,11 @@ L'idée centrale, celle que l'enfant doit retenir :
   croissant, pleine lune, dernier quartier — l'animation rejoint le moment
   choisi en douceur, toujours dans le vrai sens de l'orbite, puis une
   micro-histoire raconte le moment (version sonore au bouton 🔇/🔊).
-- **La boîte d'explication** à lire ou à **écouter** (synthèse vocale hors
-  ligne, bouton « 🔊 Écouter l'histoire », menu de voix 🗣).
+- **La boîte d'explication** à lire ou à **écouter** (bouton « 🔊 Écouter
+  l'histoire », menu de voix 🗣). Le conteur joue une **voix enregistrée**
+  (mp3 commités dans `assets/audio/`) quand elle existe, et retombe sur la
+  synthèse vocale hors ligne du navigateur sinon — fichier manquant, texte
+  modifié, hors ligne : le site parle quand même.
 - **Le jeu « 🎯 Attrape la bonne Lune ! »** : le site demande une phase,
   l'enfant la fabrique en manœuvrant la Lune — directement dans les mini-vues
   reprises sous le jeu (synchronisées avec celles du haut), sans remonter en
@@ -55,6 +58,7 @@ Le modèle est pur (aucun accès DOM) et se teste sous Node, sans navigateur :
 
 ```bash
 node test/model.test.mjs
+node test/voix.test.mjs
 ```
 
 Les tests verrouillent les « vérités à préserver » de l'épisode :
@@ -65,6 +69,25 @@ Les tests verrouillent les « vérités à préserver » de l'épisode :
 3. l'ordre des phases ne s'inverse jamais (et la Lune grossit jusqu'à la pleine
    lune, puis rapetisse) ;
 4. le tour complet dure 29,5 jours et le cycle reboucle.
+
+Les tests de la voix vérifient le corpus oral (pas d'émoji, ponctuation
+propre) et que chaque mp3 enregistré dit ENCORE le texte affiché par le site.
+
+## La voix enregistrée du conteur
+
+Les mp3 sont générés **hors site** par `tools/build-voix.mjs` (Node ≥ 18, zéro
+dépendance, API ElevenLabs — la clé ne touche jamais le site ni le dépôt) :
+
+```bash
+node tools/build-voix.mjs --dry-run                    # chiffrage, sans clé
+ELEVENLABS_API_KEY=… node tools/build-voix.mjs --essai voixA,voixB  # choisir la voix
+ELEVENLABS_API_KEY=… ELEVENLABS_VOICE_ID=… node tools/build-voix.mjs
+```
+
+Le manifeste `assets/audio/manifest.json` garde le texte exact de chaque bloc :
+le site ne joue un fichier que si son texte correspond encore à l'écran, sinon
+repli synthèse. Le guide complet de la famille est dans
+[`ou-va-le-soleil/docs/voix-conteur.md`](https://github.com/davidb-prog/ou-va-le-soleil/blob/main/docs/voix-conteur.md).
 
 ## Ce que le site simplifie
 
@@ -93,7 +116,10 @@ js/model.js         le modèle pur (géométrie, phases, scénarios, défis)
 js/vue-orbite.js    la vue du ciel (canvas) + le geste-signature
 js/vue-hublot.js    le hublot : la Lune vue du jardin (canvas)
 js/main.js          le câblage : boucle rAF, curseur, scénarios, conteur, jeu
+assets/audio/       la voix enregistrée du conteur (mp3 + manifest.json)
+tools/              build-voix.mjs + voix-lib.mjs : génération ElevenLabs hors site
 test/model.test.mjs les tests du modèle (Node, sans navigateur)
+test/voix.test.mjs  les tests de la voix (corpus oral + manifeste)
 docs/               les captures d'écran
 ```
 
