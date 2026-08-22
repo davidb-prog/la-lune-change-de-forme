@@ -151,7 +151,7 @@ export var SCENARIOS = [
     histoire: 'Ce soir, pas de Lune dans le ciel ! Elle est passée entre la Terre et le Soleil. ' +
       'Sa moitié éclairée regarde le Soleil… et nous, on ne voit que sa moitié toute sombre. ' +
       'On appelle ça la nouvelle lune.',
-    oral: 'Regarde : ce soir, pas de Lune dans le ciel ! Elle est passée entre la Terre et le Soleil. ' +
+    oral: 'Regarde bien : ce soir, pas de Lune dans le ciel ! Elle est passée entre la Terre et le Soleil. ' +
       'Sa moitié éclairée regarde le Soleil… et nous, on ne voit que sa moitié toute sombre. ' +
       'On appelle ça la nouvelle lune.'
   },
@@ -164,7 +164,7 @@ export var SCENARIOS = [
     histoire: 'La Lune a un peu avancé sur son chemin. On aperçoit un tout petit bout de sa moitié éclairée : ' +
       'un fin croissant, comme un sourire dans le ciel ! Chaque soir, il va grossir un peu.',
     oral: 'Deux ou trois soirs après la nouvelle lune, la Lune a un peu avancé sur son chemin. ' +
-      'On aperçoit un tout petit bout de sa moitié éclairée : un fin croissant, comme un sourire dans le ciel ! ' +
+      'On aperçoit un tout petit bout de sa moitié éclairée. Un fin croissant, comme un sourire dans le ciel ! ' +
       'Chaque soir, il va grossir un peu.'
   },
   {
@@ -177,7 +177,7 @@ export var SCENARIOS = [
       'On voit toute sa moitié éclairée d’un coup : un grand rond brillant ! ' +
       'C’est la pleine lune.',
     oral: 'Deux semaines après la nouvelle lune, la Lune est arrivée de l’autre côté de la Terre, juste en face du Soleil. ' +
-      'On voit toute sa moitié éclairée d’un coup : un grand rond brillant ! ' +
+      'On voit toute sa moitié éclairée d’un coup. Un grand rond brillant ! ' +
       'C’est la pleine lune.'
   },
   {
@@ -190,8 +190,8 @@ export var SCENARIOS = [
       'on dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
       'jusqu’à disparaître… et tout recommencera.',
     oral: 'Trois semaines après la nouvelle lune, la Lune est sur le chemin du retour. ' +
-      'On ne voit plus que la moitié de sa moitié éclairée : ' +
-      'on dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
+      'On ne voit plus que la moitié de sa moitié éclairée. ' +
+      'On dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
       'jusqu’à disparaître… et tout recommencera.'
   }
 ];
@@ -222,4 +222,29 @@ export function consigneDefi(defi) {
 
 export function bravoDefi(defi) {
   return 'Bravo ! Tu as fabriqué ' + defi.nom + ' !';
+}
+
+/* ------------------------------------------------------------------ */
+/* Le texte oral du conteur                                             */
+/* ------------------------------------------------------------------ */
+
+/* Plage des émojis, imprononçables par les voix. Drapeau `g` : cloner la
+ * regex (new RegExp(EMOJI_RE.source, 'u')) avant un `.test()` répété. */
+export var EMOJI_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+
+/* Texte oral : émojis retirés, « 6 h 30 » → « 6 heures 30 » (l'heure écrite
+ * se lit mal par certaines voix), guillemets français retirés et tirets
+ * cadratins changés en virgules (la synthèse trébuche dessus), espaces
+ * recollés devant la ponctuation — un « . » isolé se fait lire « point ».
+ * Partagée par le site (js/main.js), l'outil ElevenLabs (tools/build-voix.mjs)
+ * et les tests (test/voix.test.mjs) : la même bouche pour tous. */
+export function texteOral(t) {
+  return t.replace(EMOJI_RE, '')
+    .replace(/[«»]/g, ' ')
+    .replace(/\s+—\s+/g, ', ')
+    .replace(/(\d+)\s*h\s+(\d+)/g, '$1 heures $2')
+    .replace(/(\d+)\s*h\b/g, '$1 heures')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([.,…])/g, '$1')
+    .trim();
 }

@@ -1,0 +1,4 @@
+# Les essais de voix ElevenLabs et la page d'écoute de contrôle sont des
+# outils de production locaux : jamais commités (voir tools/build-voix.mjs).
+tools/essais/
+tools/ecoute.html

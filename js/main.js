@@ -6,7 +6,8 @@
  */
 import {
   CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, consigneDefi, bravoDefi, DEFI_ATTENTE_MS
+  SCENARIOS, DEFIS, defiReussi, consigneDefi, bravoDefi, DEFI_ATTENTE_MS,
+  texteOral
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
 import { creerVueHublot } from './vue-hublot.js';
@@ -314,7 +315,7 @@ SCENARIOS.forEach(function (s) {
     allerAuJour(s.jour, false);
     histoireScenario.hidden = false;
     histoireScenario.textContent = s.histoire;
-    if (sonScenariosActif) narrateur.raconter(s.oral);
+    if (sonScenariosActif) narrateur.raconter(blocsScenario(s));
     montrerLeVoyage();
   });
   grilleScenarios.appendChild(bouton);
@@ -330,10 +331,35 @@ var CLE_SON = 'petit-labo-lune-son';
 var CLE_VOIX = 'petit-labo-lune-voix';
 var sonScenariosActif = false;
 
-/* Retire les émojis (imprononçables) et recolle l'espace orpheline. */
-function pourOral(texte) {
-  var sansEmoji = texte.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, '');
-  return sansEmoji.replace(/\s+([.,…])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+/* La voix enregistrée : un manifeste (assets/audio/manifest.json) liste les
+ * blocs mp3 disponibles avec leur texte oral exact. On ne joue un fichier que
+ * si son texte correspond ENCORE au texte du site — sinon, repli synthèse (la
+ * voix enregistrée ne ment jamais). Manifeste vide ou absent : tout passe par
+ * la synthèse, comme avant. Fichiers générés par tools/build-voix.mjs. */
+var audioBlocs = {};
+if (window.__VOIX_MANIFESTE && window.__VOIX_MANIFESTE.blocs) {
+  /* l'artefact de test familial embarque le manifeste dans la page */
+  audioBlocs = window.__VOIX_MANIFESTE.blocs;
+} else if (window.fetch) {
+  window.fetch('assets/audio/manifest.json')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (m) {
+      if (m && m.blocs) audioBlocs = m.blocs;
+      /* le conseil « voix robotiques » ne concerne que le repli synthèse */
+      if (voixEnregistreeDisponible()) conseilVoix.hidden = true;
+    })
+    ['catch'](function () { /* hors ligne ou manifeste absent : synthèse seule */ });
+}
+
+function voixEnregistreeDisponible() {
+  return Object.keys(audioBlocs).length > 0;
+}
+
+function audioSrc(id, texte) {
+  var bloc = audioBlocs[id];
+  if (!bloc || bloc.texte !== texte || !bloc.fichier) return null;
+  /* l'artefact embarque les sons en data URI ; le site sert des fichiers */
+  return bloc.fichier.indexOf('data:') === 0 ? bloc.fichier : 'assets/audio/' + bloc.fichier;
 }
 
 /* Découpe un texte en phrases (les moteurs coupent les longs blocs). */
@@ -356,7 +382,7 @@ function phrasesDe(texte) {
 
 var narrateur = (function () {
   if (!synthesePossible) {
-    return { parler: function () {}, raconter: function () {}, stop: function () {} };
+    return { raconter: function () {}, stop: function () {} };
   }
 
   var synthese = window.speechSynthesis;
@@ -414,7 +440,7 @@ var narrateur = (function () {
         menuVoix.appendChild(opt);
       });
     }
-    conseilVoix.hidden = scoreVoix(voixChoisie) >= 40;
+    conseilVoix.hidden = scoreVoix(voixChoisie) >= 40 || voixEnregistreeDisponible();
   }
 
   if (synthese.addEventListener) synthese.addEventListener('voiceschanged', rafraichirVoix);
@@ -423,7 +449,9 @@ var narrateur = (function () {
 
   menuVoix.addEventListener('change', function () {
     try { window.localStorage.setItem(CLE_VOIX, menuVoix.value); } catch (e) { /* tant pis */ }
-    var relire = synthese.speaking && lectureExplication;
+    /* avec la voix enregistrée, synthese.speaking peut être faux : l'état
+     * de lecture de la boîte suffit */
+    var relire = lectureExplication;
     rafraichirVoix();
     if (relire) lireExplication(); /* changement de voix en cours de lecture → on relit */
   });
@@ -436,20 +464,28 @@ var narrateur = (function () {
     if (/!\s*$/.test(phrase)) { u.rate = 0.96; u.pitch = 1.14; }
   }
 
-  function parler(morceaux, quandFini) {
-    generation += 1;
-    var gen = generation;
-    if (finPrecedente) { var f = finPrecedente; finPrecedente = null; f(); }
-    finPrecedente = quandFini || null;
-    synthese.cancel();
-    rafraichirVoix(); /* certaines listes de voix arrivent tard */
+  /* UN SEUL élément audio réutilisé pour tous les blocs enregistrés : une
+   * fois débloqué par un geste (iOS ne permet play() que dans la foulée d'un
+   * toucher), il peut rejouer SANS geste — indispensable pour le bravo du
+   * jeu, déclenché par la boucle d'animation quand l'enfant fabrique la
+   * bonne forme. */
+  var lecteur = null;
+  function obtenirLecteur() {
+    if (!lecteur) lecteur = new window.Audio();
+    return lecteur;
+  }
+  function couperLecteur() {
+    if (!lecteur) return;
+    try { lecteur.pause(); } catch (e) { /* déjà arrêté */ }
+    lecteur.onended = null;
+    lecteur.onerror = null;
+  }
 
+  /* Le repli synthèse d'un bloc : phrase à phrase, au ton de conteur. */
+  function direEnSynthese(morceaux, gen, quandFini) {
     function suivant(i) {
       if (gen !== generation) return;
-      if (i >= morceaux.length) {
-        if (finPrecedente) { var f2 = finPrecedente; finPrecedente = null; f2(); }
-        return;
-      }
+      if (i >= morceaux.length) { quandFini(); return; }
       var u = new window.SpeechSynthesisUtterance(morceaux[i].texte);
       u.lang = 'fr-FR';
       if (voixChoisie) u.voice = voixChoisie;
@@ -465,30 +501,94 @@ var narrateur = (function () {
     suivant(0);
   }
 
+  /* Le conteur : une suite de blocs { id, texte, pause }. Chaque bloc joue
+   * son fichier enregistré s'il existe ET dit encore le bon texte ; sinon la
+   * synthèse lit le texte phrase à phrase. Entre blocs, la respiration par
+   * défaut (620 ms) ; `pause` la raccourcit pour les fichiers qui gravent
+   * déjà leur silence de fin. */
+  function raconterBlocs(blocs, quandFini) {
+    generation += 1;
+    var gen = generation;
+    if (finPrecedente) { var f = finPrecedente; finPrecedente = null; f(); }
+    finPrecedente = quandFini || null;
+    synthese.cancel();
+    couperLecteur();
+    rafraichirVoix(); /* certaines listes de voix arrivent tard */
+
+    function suivant(i) {
+      if (gen !== generation) return;
+      if (i >= blocs.length) {
+        if (finPrecedente) { var f2 = finPrecedente; finPrecedente = null; f2(); }
+        return;
+      }
+      var bloc = blocs[i];
+      var apres = function () {
+        if (gen === generation) window.setTimeout(function () { suivant(i + 1); }, 0);
+      };
+      var tombe = false; /* onerror ET promesse rejetée peuvent tomber tous les deux */
+      function repli() {
+        if (tombe || gen !== generation) return;
+        tombe = true;
+        direEnSynthese(phrasesDe(bloc.texte), gen, apres);
+      }
+      var src = window.Audio ? audioSrc(bloc.id, bloc.texte) : null;
+      if (!src) { repli(); return; }
+      var a = obtenirLecteur();
+      var pause = typeof bloc.pause === 'number' ? bloc.pause : 620;
+      a.onended = function () {
+        if (gen === generation) window.setTimeout(apres, pause);
+      };
+      a.onerror = repli;
+      a.src = src;
+      var promesse = a.play();
+      if (promesse && promesse.then) promesse.then(null, repli);
+      /* pendant que ce bloc joue, préchauffer le fichier du suivant : son
+       * chargement se fait d'avance (cache HTTP) et ne s'ajoute plus au
+       * blanc entre les blocs */
+      if (i + 1 < blocs.length && window.fetch) {
+        var prochain = audioSrc(blocs[i + 1].id, blocs[i + 1].texte);
+        if (prochain && prochain.indexOf('data:') !== 0) {
+          window.fetch(prochain)['catch'](function () { /* le lecteur retentera */ });
+        }
+      }
+    }
+    suivant(0);
+  }
+
   return {
-    parler: parler,
-    raconter: function (texte) { parler(phrasesDe(pourOral(texte))); },
+    raconter: raconterBlocs,
     stop: function () {
       generation += 1;
       synthese.cancel();
+      couperLecteur();
       if (finPrecedente) { var f = finPrecedente; finPrecedente = null; f(); }
     }
   };
 })();
 
+/* Les blocs parlés du site — les MÊMES ids que le manifeste enregistré
+ * (tools/voix-lib.mjs), pour que chaque bloc retrouve son mp3. */
+function blocsScenario(s) {
+  return [{ id: 'scn-' + s.id, texte: texteOral(s.oral) }];
+}
+
+function blocsDefi(genre, texte) {
+  return [{ id: 'defi-' + etat.defi.cible + '-' + genre, texte: texteOral(texte) }];
+}
+
 /* « 🔊 Écouter l'histoire » sur la boîte d'explication. */
 var lectureExplication = false;
 
 function lireExplication() {
+  /* un bloc par paragraphe : les ids histoire-1…5 des fichiers enregistrés */
   var paragraphes = texteExplication.querySelectorAll('p');
-  var morceaux = [];
+  var blocs = [];
   for (var i = 0; i < paragraphes.length; i++) {
-    var phrases = phrasesDe(pourOral(paragraphes[i].textContent));
-    for (var j = 0; j < phrases.length; j++) morceaux.push(phrases[j]);
+    blocs.push({ id: 'histoire-' + (i + 1), texte: texteOral(paragraphes[i].textContent) });
   }
   lectureExplication = true;
   boutonEcouter.textContent = '⏹ Arrêter';
-  narrateur.parler(morceaux, function () {
+  narrateur.raconter(blocs, function () {
     lectureExplication = false;
     boutonEcouter.textContent = '🔊 Écouter l’histoire';
   });
@@ -521,12 +621,19 @@ if (synthesePossible) {
     } else if (etat.scenarioActif) {
       /* L'activer relit le moment affiché. */
       for (var i = 0; i < SCENARIOS.length; i++) {
-        if (SCENARIOS[i].id === etat.scenarioActif) { narrateur.raconter(SCENARIOS[i].oral); break; }
+        if (SCENARIOS[i].id === etat.scenarioActif) { narrateur.raconter(blocsScenario(SCENARIOS[i])); break; }
       }
     }
   });
 
-  window.addEventListener('pagehide', function () { window.speechSynthesis.cancel(); });
+  /* Partir ailleurs (autre application, autre onglet, écran verrouillé)
+   * coupe le conteur net — synthèse ET mp3 : un simple cancel() laisserait
+   * la voix enregistrée continuer sous une autre application. Pas de
+   * reprise au retour : rien ne parle tout seul, on re-tape. */
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') narrateur.stop();
+  });
+  window.addEventListener('pagehide', function () { narrateur.stop(); }); /* vieux Safari */
 }
 
 /* ------------------------------------------------------------------ */
@@ -547,7 +654,7 @@ function nouveauDefi() {
   bravoJeu.hidden = true;
   boutonEncore.hidden = true;
   /* La version sonore du jeu suit le même bouton 🔇/🔊 que les scénarios. */
-  if (sonScenariosActif) narrateur.raconter(consigneDefi(etat.defi));
+  if (sonScenariosActif) narrateur.raconter(blocsDefi('consigne', consigneDefi(etat.defi)));
 }
 
 function surveillerDefi(ms) {
@@ -579,7 +686,7 @@ function surveillerDefi(ms) {
     etat.defiGagne = true;
     bravoJeu.textContent = '⭐ ' + bravoDefi(etat.defi);
     boutonEncore.hidden = false;
-    if (sonScenariosActif) narrateur.raconter(bravoDefi(etat.defi));
+    if (sonScenariosActif) narrateur.raconter(blocsDefi('bravo', bravoDefi(etat.defi)));
   }
 }
 
