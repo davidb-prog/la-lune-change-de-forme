@@ -10,7 +10,7 @@ import {
   fractionEclairee, luneCroissante, coteEclaire, formeLune,
   ORDRE_PHASES, phaseInfo, phraseDuSoir,
   SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, DEFI_SORTIE_JOURS,
-  JOUR_DEPART, consigneDefi, bravoDefi,
+  JOUR_DEPART, consigneDefi, bravoDefi, LECTURE_SECONDES_PAR_CYCLE,
   DEFI_ATTENTE_MS
 } from '../js/model.js';
 
@@ -191,6 +191,11 @@ test('la page démarre sur un premier croissant : une Lune visible dès l’arri
   var info = phaseInfo(JOUR_DEPART);
   assert.equal(info.cle, 'croissant-1');
   assert.ok(fractionEclairee(JOUR_DEPART) > 0.04, 'la Lune du départ doit se voir');
+});
+
+test('la lecture auto fait un tour complet à une allure d’enfant (ni film, ni escargot)', function () {
+  assert.ok(LECTURE_SECONDES_PAR_CYCLE >= 45, 'trop rapide : les phases défileraient comme un film');
+  assert.ok(LECTURE_SECONDES_PAR_CYCLE <= 180, 'trop lente : on croirait la Lune arrêtée');
 });
 
 test('gagner demande de s’arrêter : la temporisation existe et reste vive', function () {

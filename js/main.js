@@ -6,7 +6,8 @@
  */
 import {
   CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, consigneDefi, bravoDefi, DEFI_ATTENTE_MS
+  SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, consigneDefi, bravoDefi, DEFI_ATTENTE_MS,
+  LECTURE_SECONDES_PAR_CYCLE
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
 import { creerVueHublot } from './vue-hublot.js';
@@ -23,14 +24,19 @@ var etat = {
   defiGagne: false,
   bravoVisible: false,  /* le bravo s'efface quand on repart tourner la Lune */
   defiEntreMs: null,    /* entrée dans la fenêtre (anti « gagné en passant ») */
-  glisse: false
+  glisse: false,
+  enLecture: false,     /* la lecture auto (bouton ⏸/▶) : la Lune avance seule */
+  tPrecedente: null     /* horodatage du dernier passage de la boucle */
 };
 
 var mouvementReduit = false;
 if (window.matchMedia) {
   var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
   mouvementReduit = !!mq.matches;
-  if (mq.addEventListener) mq.addEventListener('change', function (e) { mouvementReduit = !!e.matches; });
+  if (mq.addEventListener) mq.addEventListener('change', function (e) {
+    mouvementReduit = !!e.matches;
+    if (mouvementReduit) fixerLecture(false); /* rien ne bouge tout seul */
+  });
 }
 
 /* Petit écran ? (même seuil que la grille CSS : 880 px) */
@@ -52,6 +58,7 @@ var phraseSoir = document.getElementById('phrase-soir');
 var grilleScenarios = document.getElementById('grille-scenarios');
 var histoireScenario = document.getElementById('histoire-scenario');
 var boutonSonScenarios = document.getElementById('bouton-son-scenarios');
+var boutonLecture = document.getElementById('bouton-lecture');
 var boutonEcouter = document.getElementById('bouton-ecouter');
 var conseilVoix = document.getElementById('conseil-voix');
 var texteExplication = document.getElementById('texte-explication');
@@ -84,6 +91,18 @@ function fixerJour(jour) {
   curseur.value = String(etat.jour);
   phraseSoir.textContent = phraseDuSoir(etat.jour);
 }
+
+/* La lecture auto (bouton ⏸/▶ harmonisé de la famille) : la Lune avance toute
+ * seule sur son orbite ; reprendre la main met en pause. Les deux libellés
+ * vivent empilés dans le bouton (largeur stable) : aria-pressed suffit. */
+function fixerLecture(enLecture) {
+  etat.enLecture = enLecture;
+  boutonLecture.setAttribute('aria-pressed', enLecture ? 'true' : 'false');
+  boutonLecture.setAttribute('aria-label', enLecture
+    ? 'Mettre en pause (la Lune avance toute seule)'
+    : 'Relancer la Lune qui avance toute seule');
+}
+boutonLecture.addEventListener('click', function () { fixerLecture(!etat.enLecture); });
 
 /* L'utilisateur reprend la main : l'histoire affichée s'efface. */
 function reprendreLaMain() {
@@ -135,6 +154,13 @@ function adoucir(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) /
 
 function boucle(maintenant) {
   try {
+    /* La lecture auto : la Lune avance toute seule, sauf pendant une
+     * animation de scénario ou un glisser (le doigt est le maître). */
+    if (etat.enLecture && !etat.animation && !etat.glisse && etat.tPrecedente !== null) {
+      var dt = Math.min(200, maintenant - etat.tPrecedente); /* onglet endormi : pas de bond */
+      fixerJour(etat.jour + (dt / 1000) * (CYCLE_JOURS / LECTURE_SECONDES_PAR_CYCLE));
+    }
+    etat.tPrecedente = maintenant;
     if (etat.animation) {
       var a = etat.animation;
       if (a.t0 === null) a.t0 = maintenant;
@@ -246,6 +272,7 @@ function brancherGesteLune(canvas, vue) {
     if (!vue.attrapeLune(c.x, c.y, etat.jour)) return;
     etat.glisse = true;
     reprendreLaMain();
+    fixerLecture(false); /* attraper la Lune met en pause */
     canvas.classList.add('attrape');
     if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
     e.preventDefault();
@@ -276,6 +303,7 @@ brancherGesteLune(canvasOrbiteJeu, vueOrbiteJeu);
 
 curseur.addEventListener('input', function () {
   reprendreLaMain();
+  fixerLecture(false); /* reprendre la main met en pause */
   fixerJour(parseFloat(curseur.value));
 });
 
@@ -314,6 +342,7 @@ SCENARIOS.forEach(function (s) {
   bouton.querySelector('.titre').textContent = s.titre;
   bouton.querySelector('.sous').textContent = s.sousTitre;
   bouton.addEventListener('click', function () {
+    fixerLecture(false); /* le scénario prend la main sur la lecture auto */
     etat.scenarioActif = s.id;
     rafraichirBoutonsScenarios();
     allerAuJour(s.jour, false);
@@ -494,7 +523,7 @@ if (synthesePossible) {
   } catch (e) { /* tant pis */ }
 
   function rafraichirBoutonSon() {
-    boutonSonScenarios.textContent = sonScenariosActif ? '🔊' : '🔇';
+    /* libellés empilés dans le HTML : aria-pressed montre l'un, cache l'autre */
     boutonSonScenarios.setAttribute('aria-pressed', sonScenariosActif ? 'true' : 'false');
     boutonSonScenarios.setAttribute('aria-label',
       sonScenariosActif ? 'Couper la version sonore des histoires' : 'Activer la version sonore des histoires');
@@ -555,10 +584,10 @@ function surveillerDefi(ms) {
     }
     return;
   }
-  /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation), et
-   * il faut RESTER sur la forme : la traverser d'un grand coup de glisser
-   * ne compte pas. */
-  if (!dessus || etat.animation) {
+  /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation de
+   * scénario NI pendant la lecture auto), et il faut RESTER sur la forme :
+   * la traverser d'un grand coup de glisser ne compte pas. */
+  if (!dessus || etat.animation || etat.enLecture) {
     etat.defiEntreMs = null;
     return;
   }
@@ -585,6 +614,7 @@ boutonJouer.addEventListener('click', function () {
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — remonter à la vue du jardin');
   } else {
     zoneJeu.hidden = false;
+    fixerLecture(false); /* rien ne doit gagner tout seul */
     boutonJouer.textContent = 'Ranger le jeu';
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — le résultat de ta manœuvre');
     nouveauDefi();
@@ -616,4 +646,5 @@ if (typeof mqMobile !== 'undefined' && mqMobile) {
 /* ------------------------------------------------------------------ */
 
 fixerJour(JOUR_DEPART); /* un premier croissant : une Lune visible d'emblée */
+fixerLecture(!mouvementReduit); /* comme les autres épisodes : la Lune avance seule */
 window.requestAnimationFrame(boucle);

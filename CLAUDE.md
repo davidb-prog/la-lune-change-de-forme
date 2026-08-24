@@ -73,6 +73,18 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **Glisser fait avancer le phénomène** : attraper la Lune la déplace sur son
   orbite ; le curseur maître fait la même chose. Les deux vues (ciel + hublot)
   restent **synchronisées en permanence** sur le même `etat.jour`.
+- **La lecture auto** (harmonisation de la famille) : la Lune avance toute
+  seule (`LECTURE_SECONDES_PAR_CYCLE` = 90 s par cycle, dans le modèle),
+  commandée UNIQUEMENT par le **bouton ⏸/▶ à largeur stable** (libellés
+  « ⏸ Pause » / « ▶ Lecture » empilés) posé à côté du titre du curseur —
+  jamais par un tap sur une vue. Reprendre la main (attraper la Lune, bouger
+  le curseur, choisir un scénario, ouvrir le jeu) met en pause ; **on ne gagne
+  pas un défi pendant la lecture auto** (garde dans `surveillerDefi`) ;
+  `prefers-reduced-motion` la désactive. Le bouton 🔇/🔊 partage le même
+  patron à libellés empilés (« 🔊 avec la voix » / « 🔇 sans la voix »).
+- **Pied de page harmonisé de la famille** : les autres épisodes en liens
+  cliquables (sans « La mécanique des éclipses ») + bouton « 🧪 Tous les
+  épisodes » vers <https://petit-labo.fr/>.
 - **Les scénarios vont au moment choisi en douceur, toujours vers l'avant**
   (le vrai sens de l'orbite) ; en `prefers-reduced-motion`, saut sec. Sur
   mobile, taper une vignette **remonte doucement la page à la vue de

@@ -51,7 +51,14 @@
 
     <!-- Le grand curseur maître : les soirs du mois. -->
     <section class="carte carte-curseur">
-      <h2 id="titre-curseur">📅 Les soirs du mois</h2>
+      <div class="titre-avec-bouton">
+        <h2 id="titre-curseur">📅 Les soirs du mois</h2>
+        <!-- libellés empilés (grille 1×1) : largeur stable, rien ne se décale -->
+        <button id="bouton-lecture" class="bouton-son play-btn" type="button" aria-pressed="true"
+          aria-label="Mettre en pause (la Lune avance toute seule)"><span
+            class="play-on" aria-hidden="true">⏸ Pause</span><span
+            class="play-off" aria-hidden="true">▶ Lecture</span></button>
+      </div>
       <div class="piste-emojis" aria-hidden="true">
         <span>🌑</span><span>🌓</span><span>🌕</span><span>🌗</span><span>🌑</span>
       </div>
@@ -64,8 +71,12 @@
     <section class="carte carte-scenarios">
       <div class="titre-avec-bouton">
         <h2>🎲 Joue avec la Lune</h2>
-        <button id="bouton-son-scenarios" class="bouton-son" type="button" hidden
-          aria-pressed="false" aria-label="Activer la version sonore des histoires">🔇</button>
+        <!-- les deux libellés vivent empilés dans le bouton (grille 1×1) : sa largeur
+             est celle du plus long des deux, donc rien ne bouge quand on bascule -->
+        <button id="bouton-son-scenarios" class="bouton-son scn-voice-btn" type="button" hidden
+          aria-pressed="false" aria-label="Activer la version sonore des histoires"><span
+            class="scn-voice-on" aria-hidden="true">🔊 avec la voix</span><span
+            class="scn-voice-off" aria-hidden="true">🔇 sans la voix</span></button>
       </div>
       <div class="grille-scenarios" id="grille-scenarios"></div>
       <div class="histoire" id="histoire-scenario" aria-live="polite" hidden></div>
@@ -156,14 +167,15 @@
     <canvas id="canvas-medaillon" aria-hidden="true"></canvas>
   </button>
 
+  <!-- pied de page harmonisé de la famille : les autres épisodes en liens, puis
+       le bouton de retour au menu petit-labo.fr -->
   <footer class="pied-serie">
-    <p>Petit labo d’astronomie 🌌</p>
-    <ul>
-      <li><a href="https://petit-labo.fr/eclipse-explorer/">La mécanique des éclipses</a></li>
-      <li><a href="https://petit-labo.fr/ou-va-le-soleil/">Où va le Soleil la nuit ?</a></li>
-      <li><a href="https://petit-labo.fr/la-terre-tourne/">Quelle heure est-il là-bas ?</a></li>
-      <li aria-current="page">Pourquoi la Lune change de forme ?</li>
+    <p class="footer-serie">« Pourquoi la Lune change de forme ? » — un épisode du <strong>Petit labo d’astronomie</strong> 🌌</p>
+    <ul class="footer-episodes">
+      <li><a href="https://petit-labo.fr/ou-va-le-soleil/">🌅 Où va le Soleil la nuit ?</a></li>
+      <li><a href="https://petit-labo.fr/la-terre-tourne/">🌍 Quelle heure est-il là-bas ?</a></li>
     </ul>
+    <p class="footer-menu"><a class="btn-menu-labo" href="https://petit-labo.fr/">🧪 Tous les épisodes du Petit labo</a></p>
   </footer>
 
   <script type="module" src="js/main.js"></script>

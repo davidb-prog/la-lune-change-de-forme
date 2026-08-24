@@ -36,6 +36,10 @@ export var SEUIL_PLEINE = 0.965;    /* au dessus : pleine lune */
 export var SEUIL_QUARTIER_BAS = 0.40;
 export var SEUIL_QUARTIER_HAUT = 0.60;
 
+/* La lecture automatique (bouton ⏸/▶ harmonisé de la famille) : un cycle
+ * complet de la Lune défile en ce nombre de secondes. */
+export var LECTURE_SECONDES_PAR_CYCLE = 90;
+
 /* Ramène un jour dans [0, CYCLE_JOURS[. */
 export function jourNormalise(jour) {
   var j = jour % CYCLE_JOURS;
