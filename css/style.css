@@ -235,6 +235,15 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   cursor: pointer;
 }
 
+/* les boutons ⏸/▶ et 🔊/🔇 à la taille de la famille (ou-va-le-soleil),
+   et rangés à droite de leur ligne de titre — font: inherit d'abord :
+   sans lui, le bouton garde l'interligne du navigateur et perd 4 px */
+.bouton-son.play-btn, .bouton-son.scn-voice-btn {
+  font: inherit; font-size: 0.8rem; padding: 5px 12px;
+}
+.titre-avec-bouton > .bouton-son,
+.titre-avec-bouton > .boutons-voix { margin-left: auto; }
+
 .bouton-son[aria-pressed="true"] { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(70, 194, 165, 0.35); }
 
 .bouton-ecouter { font-weight: 600; }
@@ -475,6 +484,9 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   .ligne-histoire { display: block; }
   .puce-histoire { display: inline-block; }
   .texte-histoire { margin: 4px 0 0; }
+
+  /* des cibles tactiles d'au moins ~44 px pour les petits doigts */
+  .play-btn, .scn-voice-btn { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
 
   /* Le hublot se compacte en bandeau paysage (la Lune au-dessus du jardin) :
    * la vue de l'espace arrive plus tôt sous le pouce, et le médaillon-fenêtre
