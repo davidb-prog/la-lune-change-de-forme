@@ -261,31 +261,31 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   .grille-scenarios { grid-template-columns: repeat(4, 1fr); }
 }
 
+/* Le design des boutons-scénarios de la famille (repris d'ou-va-le-soleil) :
+   colonne emoji + titre + sous-titre, un dégradé coloré par moment. */
 .bouton-scenario {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  color: var(--text);
-  padding: 12px 10px;
-  cursor: pointer;
-  text-align: center;
-  font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  min-height: 72px; padding: 10px 8px; border-radius: 16px; cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: 0.95rem; text-align: center; line-height: 1.25;
+  color: var(--text); background: var(--surface-2); border: 1px solid var(--border);
   -webkit-transform: translateZ(0);
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: filter 0.15s, transform 0.05s, box-shadow 0.15s;
 }
 
-.bouton-scenario:hover { border-color: var(--violet); }
+.bouton-scenario:hover { filter: brightness(1.2); }
+.bouton-scenario:active { transform: translateY(1px); }
+.bouton-scenario[aria-pressed="true"] { box-shadow: 0 0 0 3px rgba(255, 207, 92, 0.55); }
 
-.bouton-scenario[aria-pressed="true"] {
-  border-color: var(--sun);
-  background: rgba(255, 207, 92, 0.08);
-}
+.bouton-scenario .emoji { font-size: 1.6rem; line-height: 1; display: block; }
+.bouton-scenario .titre { font-weight: 700; display: block; font-size: 0.95rem; }
+.bouton-scenario .sous { font-weight: 400; font-size: 0.76rem; opacity: 0.8; display: block; }
 
-.bouton-scenario .emoji { font-size: 1.8rem; display: block; }
-
-.bouton-scenario .titre { font-weight: 700; display: block; margin-top: 4px; font-size: 0.95rem; }
-
-.bouton-scenario .sous { color: var(--muted); font-size: 0.8rem; display: block; }
+/* les couleurs de la famille : croissant rose (le matin de la Lune), quartier
+   bleu, pleine lune dorée, nouvelle lune violette (la nuit) */
+.scn-croissant { background: linear-gradient(180deg, #4a1d33, #2d1122); border-color: var(--rose); color: #ffb3cd; }
+.scn-quartier { background: linear-gradient(180deg, #1c3a63, #132644); border-color: #3f6db3; color: #bcd9ff; }
+.scn-pleine { background: linear-gradient(180deg, #4a3a0d, #332807); border-color: var(--sun-deep); color: var(--sun); }
+.scn-nouvelle { background: linear-gradient(180deg, #2b1e52, #1c1433); border-color: #5f43b3; color: #cabcff; }
 
 .histoire {
   margin-top: 14px;
@@ -296,6 +296,16 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   padding: 12px 14px;
   font-size: 1rem;
 }
+
+/* une ligne par vue : puce colorée + texte, comme les autres épisodes */
+.ligne-histoire { display: flex; gap: 10px; align-items: flex-start; margin: 9px 0; }
+.puce-histoire {
+  flex: none; padding: 3px 11px; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+  white-space: nowrap;
+}
+.puce-ciel { background: rgba(255, 207, 92, 0.14); color: var(--sun); border: 1px solid rgba(255, 207, 92, 0.5); }
+.puce-espace { background: rgba(169, 139, 255, 0.14); color: var(--violet); border: 1px solid rgba(169, 139, 255, 0.5); }
+.texte-histoire { margin: 2px 0 0; }
 
 /* ---------- Explication ---------- */
 
@@ -460,6 +470,11 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
 
   .pied-serie ul { gap: 2px 12px; }
   .pied-serie a { display: inline-block; padding: 8px 6px; }
+
+  /* l'histoire : la puce au-dessus de son texte, comme les autres épisodes */
+  .ligne-histoire { display: block; }
+  .puce-histoire { display: inline-block; }
+  .texte-histoire { margin: 4px 0 0; }
 
   /* Le hublot se compacte en bandeau paysage (la Lune au-dessus du jardin) :
    * la vue de l'espace arrive plus tôt sous le pouce, et le médaillon-fenêtre

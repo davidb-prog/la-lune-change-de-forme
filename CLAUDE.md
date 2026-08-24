@@ -76,8 +76,8 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **La lecture auto** (harmonisation de la famille) : la Lune avance toute
   seule (`LECTURE_SECONDES_PAR_CYCLE` = 90 s par cycle, dans le modèle),
   commandée UNIQUEMENT par le **bouton ⏸/▶ à largeur stable** (libellés
-  « ⏸ Pause » / « ▶ Lecture » empilés) posé à côté du titre du curseur —
-  jamais par un tap sur une vue. Reprendre la main (attraper la Lune, bouger
+  « ⏸ Pause » / « ▶ Lecture » empilés) posé sur la PREMIÈRE carte
+  (« 🌙 Ce soir, dans le ciel ») — jamais par un tap sur une vue. Reprendre la main (attraper la Lune, bouger
   le curseur, choisir un scénario, ouvrir le jeu) met en pause ; **on ne gagne
   pas un défi pendant la lecture auto** (garde dans `surveillerDefi`) ;
   `prefers-reduced-motion` la désactive. Le bouton 🔇/🔊 partage le même
@@ -92,6 +92,14 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   rien sur grand écran où les deux vues sont déjà sous les yeux).
 - **Reprendre la main efface l'histoire** : bouger le curseur ou la Lune ferme
   la micro-histoire du scénario et désarme son `aria-pressed`.
+- **Scénarios au patron de la famille** (repris d'ou-va-le-soleil) : 4 boutons
+  en dégradés colorés (croissant rose, quartier bleu, pleine lune dorée,
+  nouvelle lune violette — classes `scn-<id>`), et l'histoire écrite en
+  **deux lignes à puces** — « 🌙 dans le ciel » (champs `ciel` du modèle) puis
+  « 🛰️ depuis l'espace » (`espace`) : le même instant, deux regards
+  (`montrerHistoire` dans main.js). Le bouton 🔇/🔊 a un **jumeau posé sur le
+  jeu** (`bouton-son-jeu`, même état, même clé ; l'activer depuis le jeu relit
+  la consigne du défi en cours).
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
   de scénario), et il faut **rester un instant sur la bonne forme**
   (`DEFI_ATTENTE_MS`) : un tour de Lune qui traverse la fenêtre sans

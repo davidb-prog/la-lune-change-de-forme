@@ -143,8 +143,10 @@ export function phraseDuSoir(jour) {
 }
 
 /* Les quatre moments-clés : boutons « 🎲 Joue avec la Lune ».
- * `histoire` s'affiche à l'écran ; `oral` est la version pour le conteur
- * (enchaînements ajoutés, aucun émoji, ponctuation propre). */
+ * L'histoire écrite raconte le même instant deux fois — `ciel` (ce qu'on voit
+ * depuis le jardin) puis `espace` (ce qui se passe vraiment sur l'orbite),
+ * une ligne par vue, comme les autres épisodes ; `oral` est la version pour
+ * le conteur (enchaînements ajoutés, aucun émoji, ponctuation propre). */
 export var SCENARIOS = [
   {
     id: 'nouvelle',
@@ -152,9 +154,10 @@ export var SCENARIOS = [
     jour: 0,
     titre: 'La Lune a disparu !',
     sousTitre: 'nouvelle lune',
-    histoire: 'Ce soir, pas de Lune dans le ciel ! Elle est passée entre la Terre et le Soleil. ' +
-      'Sa moitié éclairée regarde le Soleil… et nous, on ne voit que sa moitié toute sombre. ' +
+    ciel: 'Ce soir, pas de Lune dans le ciel ! On a beau chercher : elle se cache. ' +
       'On appelle ça la nouvelle lune.',
+    espace: 'Elle est passée entre la Terre et le Soleil. Sa moitié éclairée regarde le Soleil… ' +
+      'et nous, on ne voit que sa moitié toute sombre.',
     oral: 'Regarde : ce soir, pas de Lune dans le ciel ! Elle est passée entre la Terre et le Soleil. ' +
       'Sa moitié éclairée regarde le Soleil… et nous, on ne voit que sa moitié toute sombre. ' +
       'On appelle ça la nouvelle lune.'
@@ -165,8 +168,9 @@ export var SCENARIOS = [
     jour: 2.5,
     titre: 'Un petit sourire',
     sousTitre: 'premier croissant',
-    histoire: 'La Lune a un peu avancé sur son chemin. On aperçoit un tout petit bout de sa moitié éclairée : ' +
-      'un fin croissant, comme un sourire dans le ciel ! Chaque soir, il va grossir un peu.',
+    ciel: 'Un fin croissant, comme un sourire dans le ciel ! Chaque soir, il va grossir un peu.',
+    espace: 'La Lune a un peu avancé sur son chemin : on aperçoit un tout petit bout ' +
+      'de sa moitié éclairée.',
     oral: 'Deux ou trois soirs après la nouvelle lune, la Lune a un peu avancé sur son chemin. ' +
       'On aperçoit un tout petit bout de sa moitié éclairée : un fin croissant, comme un sourire dans le ciel ! ' +
       'Chaque soir, il va grossir un peu.'
@@ -177,9 +181,9 @@ export var SCENARIOS = [
     jour: JOUR_PLEINE,
     titre: 'Toute ronde !',
     sousTitre: 'pleine lune',
-    histoire: 'Cette nuit, la Lune est de l’autre côté de la Terre, juste en face du Soleil. ' +
-      'On voit toute sa moitié éclairée d’un coup : un grand rond brillant ! ' +
-      'C’est la pleine lune.',
+    ciel: 'Un grand rond brillant : la Lune est toute ronde ! C’est la pleine lune.',
+    espace: 'Cette nuit, la Lune est de l’autre côté de la Terre, juste en face du Soleil : ' +
+      'on voit toute sa moitié éclairée d’un coup.',
     oral: 'Deux semaines après la nouvelle lune, la Lune est arrivée de l’autre côté de la Terre, juste en face du Soleil. ' +
       'On voit toute sa moitié éclairée d’un coup : un grand rond brillant ! ' +
       'C’est la pleine lune.'
@@ -190,9 +194,10 @@ export var SCENARIOS = [
     jour: 22.125,
     titre: 'Coupée en deux',
     sousTitre: 'dernier quartier',
-    histoire: 'La Lune est sur le chemin du retour. On ne voit plus que la moitié de sa moitié éclairée : ' +
-      'on dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
+    ciel: 'On dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
       'jusqu’à disparaître… et tout recommencera.',
+    espace: 'La Lune est sur le chemin du retour : on ne voit plus que la moitié ' +
+      'de sa moitié éclairée.',
     oral: 'Trois semaines après la nouvelle lune, la Lune est sur le chemin du retour. ' +
       'On ne voit plus que la moitié de sa moitié éclairée : ' +
       'on dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +

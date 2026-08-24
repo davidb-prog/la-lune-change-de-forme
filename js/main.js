@@ -58,6 +58,7 @@ var phraseSoir = document.getElementById('phrase-soir');
 var grilleScenarios = document.getElementById('grille-scenarios');
 var histoireScenario = document.getElementById('histoire-scenario');
 var boutonSonScenarios = document.getElementById('bouton-son-scenarios');
+var boutonSonJeu = document.getElementById('bouton-son-jeu'); /* le jumeau posé sur le jeu */
 var boutonLecture = document.getElementById('bouton-lecture');
 var boutonEcouter = document.getElementById('bouton-ecouter');
 var conseilVoix = document.getElementById('conseil-voix');
@@ -332,10 +333,32 @@ function rafraichirBoutonsScenarios() {
   });
 }
 
+/* L'histoire écrite : une ligne par vue (puce colorée + texte), comme les
+ * autres épisodes — le même instant, deux regards. */
+function montrerHistoire(s) {
+  histoireScenario.hidden = false;
+  while (histoireScenario.firstChild) histoireScenario.removeChild(histoireScenario.firstChild);
+  [{ classe: 'puce-ciel', puce: '🌙 dans le ciel', texte: s.ciel },
+   { classe: 'puce-espace', puce: '🛰️ depuis l’espace', texte: s.espace }].forEach(function (l) {
+    var ligne = document.createElement('div');
+    ligne.className = 'ligne-histoire';
+    var puce = document.createElement('span');
+    puce.className = 'puce-histoire ' + l.classe;
+    puce.textContent = l.puce;
+    var texte = document.createElement('p');
+    texte.className = 'texte-histoire';
+    texte.textContent = l.texte;
+    ligne.appendChild(puce);
+    ligne.appendChild(texte);
+    histoireScenario.appendChild(ligne);
+  });
+}
+
 SCENARIOS.forEach(function (s) {
   var bouton = document.createElement('button');
   bouton.type = 'button';
-  bouton.className = 'bouton-scenario';
+  /* scn-<id> : les couleurs de la famille (reprises d'ou-va-le-soleil) */
+  bouton.className = 'bouton-scenario scn-' + s.id;
   bouton.setAttribute('aria-pressed', 'false');
   bouton.innerHTML = '<span class="emoji">' + s.emoji + '</span>' +
     '<span class="titre"></span><span class="sous"></span>';
@@ -346,8 +369,7 @@ SCENARIOS.forEach(function (s) {
     etat.scenarioActif = s.id;
     rafraichirBoutonsScenarios();
     allerAuJour(s.jour, false);
-    histoireScenario.hidden = false;
-    histoireScenario.textContent = s.histoire;
+    montrerHistoire(s);
     if (sonScenariosActif) narrateur.raconter(s.oral);
     montrerLeVoyage();
   });
@@ -510,6 +532,7 @@ function lireExplication() {
 if (synthesePossible) {
   boutonEcouter.hidden = false;
   boutonSonScenarios.hidden = false;
+  boutonSonJeu.hidden = false;
   boutonEcouter.addEventListener('click', function () {
     if (lectureExplication) narrateur.stop();
     else lireExplication();
@@ -523,26 +546,36 @@ if (synthesePossible) {
   } catch (e) { /* tant pis */ }
 
   function rafraichirBoutonSon() {
-    /* libellés empilés dans le HTML : aria-pressed montre l'un, cache l'autre */
-    boutonSonScenarios.setAttribute('aria-pressed', sonScenariosActif ? 'true' : 'false');
-    boutonSonScenarios.setAttribute('aria-label',
-      sonScenariosActif ? 'Couper la version sonore des histoires' : 'Activer la version sonore des histoires');
+    /* libellés empilés dans le HTML : aria-pressed montre l'un, cache
+     * l'autre. Les deux boutons (scénarios + jeu) sont jumeaux. */
+    [boutonSonScenarios, boutonSonJeu].forEach(function (b) {
+      b.setAttribute('aria-pressed', sonScenariosActif ? 'true' : 'false');
+      b.setAttribute('aria-label',
+        sonScenariosActif ? 'Couper la version sonore des histoires' : 'Activer la version sonore des histoires');
+    });
   }
   rafraichirBoutonSon();
 
-  boutonSonScenarios.addEventListener('click', function () {
+  function basculerSon() {
     sonScenariosActif = !sonScenariosActif;
     try { window.localStorage.setItem(CLE_SON, sonScenariosActif ? '1' : '0'); } catch (e) { /* tant pis */ }
     rafraichirBoutonSon();
     if (!sonScenariosActif) {
       narrateur.stop();
-    } else if (etat.scenarioActif) {
+      return;
+    }
+    if (etat.scenarioActif) {
       /* L'activer relit le moment affiché. */
       for (var i = 0; i < SCENARIOS.length; i++) {
         if (SCENARIOS[i].id === etat.scenarioActif) { narrateur.raconter(SCENARIOS[i].oral); break; }
       }
+    } else if (etat.defi) {
+      /* L'activer depuis le jeu relit la consigne du défi en cours. */
+      narrateur.raconter(consigneDefi(etat.defi));
     }
-  });
+  }
+  boutonSonScenarios.addEventListener('click', basculerSon);
+  boutonSonJeu.addEventListener('click', basculerSon);
 
   window.addEventListener('pagehide', function () { window.speechSynthesis.cancel(); });
 }

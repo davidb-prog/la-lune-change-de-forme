@@ -141,6 +141,13 @@ test('chaque scénario tombe bien sur sa phase', function () {
   });
 });
 
+test('chaque scénario raconte le même instant deux fois : dans le ciel, puis depuis l’espace', function () {
+  SCENARIOS.forEach(function (s) {
+    assert.ok(s.ciel && s.ciel.length > 20, 'ligne « ciel » manquante : ' + s.id);
+    assert.ok(s.espace && s.espace.length > 20, 'ligne « espace » manquante : ' + s.id);
+  });
+});
+
 test('les textes du conteur sont prêts pour l’oral : pas d’émoji, ponctuation propre', function () {
   var emojis = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/u;
   SCENARIOS.forEach(function (s) {

@@ -29,7 +29,14 @@
     <!-- Le cœur interactif : les deux vues, toujours synchronisées. -->
     <section class="vues">
       <div class="carte carte-hublot">
-        <h2>🌙 Ce soir, dans le ciel</h2>
+        <div class="titre-avec-bouton">
+          <h2>🌙 Ce soir, dans le ciel</h2>
+          <!-- libellés empilés (grille 1×1) : largeur stable, rien ne se décale -->
+          <button id="bouton-lecture" class="bouton-son play-btn" type="button" aria-pressed="true"
+            aria-label="Mettre en pause (la Lune avance toute seule)"><span
+              class="play-on" aria-hidden="true">⏸ Pause</span><span
+              class="play-off" aria-hidden="true">▶ Lecture</span></button>
+        </div>
         <p class="sous-titre">La Lune, vue depuis ton jardin.</p>
         <div class="cadre-canvas">
           <canvas id="canvas-hublot"
@@ -51,14 +58,7 @@
 
     <!-- Le grand curseur maître : les soirs du mois. -->
     <section class="carte carte-curseur">
-      <div class="titre-avec-bouton">
-        <h2 id="titre-curseur">📅 Les soirs du mois</h2>
-        <!-- libellés empilés (grille 1×1) : largeur stable, rien ne se décale -->
-        <button id="bouton-lecture" class="bouton-son play-btn" type="button" aria-pressed="true"
-          aria-label="Mettre en pause (la Lune avance toute seule)"><span
-            class="play-on" aria-hidden="true">⏸ Pause</span><span
-            class="play-off" aria-hidden="true">▶ Lecture</span></button>
-      </div>
+      <h2 id="titre-curseur">📅 Les soirs du mois</h2>
       <div class="piste-emojis" aria-hidden="true">
         <span>🌑</span><span>🌓</span><span>🌕</span><span>🌗</span><span>🌑</span>
       </div>
@@ -113,7 +113,14 @@
     <section class="carte carte-jeu">
       <div class="titre-avec-bouton">
         <h2>🎯 Attrape la bonne Lune !</h2>
-        <button id="bouton-jouer" class="bouton-jeu" type="button">Jouer</button>
+        <div class="boutons-voix">
+          <!-- le même réglage de voix que les scénarios, à portée de main du jeu -->
+          <button id="bouton-son-jeu" class="bouton-son scn-voice-btn" type="button" hidden
+            aria-pressed="false" aria-label="Activer la voix qui lit les consignes et les bravos du jeu"><span
+              class="scn-voice-on" aria-hidden="true">🔊 avec la voix</span><span
+              class="scn-voice-off" aria-hidden="true">🔇 sans la voix</span></button>
+          <button id="bouton-jouer" class="bouton-jeu" type="button">Jouer</button>
+        </div>
       </div>
       <div id="zone-jeu" hidden>
         <p class="consigne-jeu">Attrape la Lune ici et fais-la tourner pour fabriquer…</p>
