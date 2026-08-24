@@ -563,7 +563,9 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   text-align: center;
   color: var(--muted);
   font-size: 0.92rem;
-  padding-top: 8px;
+  margin-top: 26px;
+  border-top: 1px solid var(--border);
+  padding-top: 22px;
 }
 
 .pied-serie p { font-weight: 700; margin-bottom: 6px; }
@@ -573,21 +575,32 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 4px 18px;
+  gap: 8px 22px;
 }
 
-.pied-serie a { color: var(--violet); }
+.pied-serie a { color: var(--sun); }
 
 .pied-serie .footer-serie { font-weight: 400; margin-bottom: 10px; }
 .pied-serie .footer-serie strong { color: var(--text); }
 .footer-episodes { margin: 0 0 16px; padding: 0; }
-.footer-episodes a { text-decoration: underline; }
+/* les liens d'épisodes portent leur médaillon (le soulignement reste sur le
+   titre seul, pas sur la vignette) */
+.footer-episodes a { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.footer-episodes .ep-titre { text-decoration: underline; }
+.ep-medaillon {
+  flex: none; width: 30px; height: 30px; border-radius: 9px;
+  background: #070b17; border: 1px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.ep-medaillon svg { width: 26px; height: 26px; display: block; }
 .footer-menu { margin: 0; }
 .btn-menu-labo {
-  display: inline-block; padding: 10px 20px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 999px;
   border: 1px solid var(--sun-deep); color: var(--sun); text-decoration: none;
-  font-weight: 700; background: var(--surface-2);
+  font-weight: 700; background: linear-gradient(180deg, #4a3a0d, #332807);
 }
+.fiole-labo { width: 22px; height: 22px; flex: none; }
 .btn-menu-labo:focus-visible { outline: 2px solid var(--sun-deep); }
 
 /* ---------- Divers ---------- */

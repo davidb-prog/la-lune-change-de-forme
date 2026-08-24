@@ -85,9 +85,14 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   pas un défi pendant la lecture auto** (garde dans `surveillerDefi`) ;
   `prefers-reduced-motion` la désactive. Le bouton 🔇/🔊 partage le même
   patron à libellés empilés (« 🔊 avec la voix » / « 🔇 sans la voix »).
-- **Pied de page harmonisé de la famille** : les autres épisodes en liens
-  cliquables (sans « La mécanique des éclipses ») + bouton « 🧪 Tous les
-  épisodes » vers <https://petit-labo.fr/>.
+- **Pied de page harmonisé de la famille** : « un épisode du Petit labo
+  d'astronomie » suivi de l'emoji de série 🔭, les autres épisodes en liens
+  cliquables (sans « La mécanique des éclipses ») portant chacun le
+  **médaillon SVG de sa carte du portail** (tuile ~30 px, fond `#070b17`,
+  soulignement sur le titre seul), et le bouton « Tous les épisodes du Petit
+  labo » vers <https://petit-labo.fr/>, qui porte la **fiole maître au « ? »**
+  en SVG inline (version petites tailles de la charte) — plus d'emoji devant
+  ces liens ni d'éprouvette 🧪.
 - **Les scénarios vont au moment choisi en douceur, toujours vers l'avant**
   (le vrai sens de l'orbite) ; en `prefers-reduced-motion`, saut sec. Sur
   mobile, taper une vignette **remonte doucement la page à la vue de
