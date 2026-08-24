@@ -215,6 +215,23 @@ export function defiReussi(cible, jour) {
  * couvre ~15 % de l'orbite), un tour tranquille les traverse en ~500 ms. */
 export var DEFI_ATTENTE_MS = 650;
 
+/* Hystérésis de sortie (acquis d'ou-va-le-soleil, désormais dans la charte de
+ * la famille) : une fois le bravo gagné, il ne se range que si la Lune quitte
+ * FRANCHEMENT la forme — au bord de la fenêtre, un frémissement du doigt ne
+ * doit pas le faire clignoter. La marge s'exprime en jours d'orbite autour de
+ * la fenêtre de la phase. */
+export var DEFI_SORTIE_JOURS = 1.25;
+
+export function defiEncoreTenu(cible, jour) {
+  /* Les fenêtres de phases sont des arcs continus de plusieurs jours : un
+   * balayage au quart de jour autour de la position suffit à savoir si l'on
+   * est encore dans la fenêtre élargie. */
+  for (var d = -DEFI_SORTIE_JOURS; d <= DEFI_SORTIE_JOURS + 1e-9; d += 0.25) {
+    if (defiReussi(cible, jour + d)) return true;
+  }
+  return false;
+}
+
 /* La consigne et le bravo d'un défi — pour l'écran et pour le conteur. */
 export function consigneDefi(defi) {
   return 'Fabrique ' + defi.nom + ' !';

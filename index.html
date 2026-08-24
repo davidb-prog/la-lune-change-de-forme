@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- zoom navigateur verrouillé : un enfant qui pince partout ne doit jamais se
+       retrouver avec une page minuscule — les zooms d'accessibilité du système
+       (triple-tap iOS, loupe Android, « forcer le zoom ») restent utilisables -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#0b1020">
   <title>Pourquoi la Lune change de forme ? — Petit labo d’astronomie</title>
   <meta name="description" content="Un petit labo pour les enfants : fais tourner la Lune autour de la Terre et découvre pourquoi elle change de forme chaque soir.">
@@ -80,7 +83,6 @@
         <h2>💡 Pourquoi la Lune change de forme ?</h2>
         <div class="boutons-voix">
           <button id="bouton-ecouter" class="bouton-son bouton-ecouter" type="button" hidden>🔊 Écouter l’histoire</button>
-          <select id="menu-voix" class="menu-voix" hidden aria-label="Choisir la voix du conteur"></select>
         </div>
       </div>
       <div id="texte-explication">
@@ -129,7 +131,7 @@
         <li><strong>L’orbite est dessinée ronde et plate.</strong> La vraie orbite est légèrement ovale
           (excentricité ≈ 0,055) et inclinée d’environ 5° — c’est cette inclinaison qui explique
           qu’il n’y a pas une éclipse à chaque nouvelle ou pleine lune. Les éclipses ont leur propre
-          épisode : <a href="https://davidb-prog.github.io/eclipse-explorer/">La mécanique des éclipses</a>.</li>
+          épisode : <a href="https://petit-labo.fr/eclipse-explorer/">La mécanique des éclipses</a>.</li>
         <li><strong>Les tailles et les distances ne sont pas à l’échelle.</strong> En vrai, la Lune est
           à environ 384 000 km de la Terre — à l’échelle du dessin, elle serait à plusieurs mètres
           de l’écran !</li>
@@ -157,9 +159,9 @@
   <footer class="pied-serie">
     <p>Petit labo d’astronomie 🌌</p>
     <ul>
-      <li><a href="https://davidb-prog.github.io/eclipse-explorer/">La mécanique des éclipses</a></li>
-      <li><a href="https://davidb-prog.github.io/ou-va-le-soleil/">Où va le Soleil la nuit ?</a></li>
-      <li><a href="https://davidb-prog.github.io/la-terre-tourne/">Quelle heure est-il là-bas ?</a></li>
+      <li><a href="https://petit-labo.fr/eclipse-explorer/">La mécanique des éclipses</a></li>
+      <li><a href="https://petit-labo.fr/ou-va-le-soleil/">Où va le Soleil la nuit ?</a></li>
+      <li><a href="https://petit-labo.fr/la-terre-tourne/">Quelle heure est-il là-bas ?</a></li>
       <li aria-current="page">Pourquoi la Lune change de forme ?</li>
     </ul>
   </footer>

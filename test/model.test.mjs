@@ -9,7 +9,8 @@ import {
   jourNormalise, angleOrbite, positionLune, directionEclairee,
   fractionEclairee, luneCroissante, coteEclaire, formeLune,
   ORDRE_PHASES, phaseInfo, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, JOUR_DEPART, consigneDefi, bravoDefi,
+  SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, DEFI_SORTIE_JOURS,
+  JOUR_DEPART, consigneDefi, bravoDefi,
   DEFI_ATTENTE_MS
 } from '../js/model.js';
 
@@ -197,6 +198,33 @@ test('gagner demande de s’arrêter : la temporisation existe et reste vive', f
    * courte pour qu'un vrai arrêt semble instantané. */
   assert.ok(DEFI_ATTENTE_MS >= 400, 'trop courte : un tour la traverserait');
   assert.ok(DEFI_ATTENTE_MS <= 1200, 'trop longue : l’arrêt semblerait ignoré');
+});
+
+test('le bravo ne clignote pas au bord de la fenêtre : l’hystérésis de sortie tient', function () {
+  /* Acquis de la famille (payé sur ou-va-le-soleil) : la fenêtre où le bravo
+   * se range est PLUS LARGE que celle où il se gagne. Pour chaque défi : tout
+   * jour gagnant est encore « tenu » ; juste au bord de la fenêtre (moins
+   * d'une demi-marge dehors), toujours tenu ; loin dehors, plus tenu. */
+  assert.ok(DEFI_SORTIE_JOURS > 0.5, 'marge de sortie trop mince pour amortir le bord');
+  DEFIS.forEach(function (d) {
+    var dedans = [];
+    for (var j = 0; j < CYCLE_JOURS; j += 0.05) {
+      if (defiReussi(d.cible, j)) dedans.push(j);
+    }
+    dedans.forEach(function (j) {
+      assert.ok(defiEncoreTenu(d.cible, j), 'gagné mais pas tenu : ' + d.cible + ' au jour ' + j);
+    });
+    var bordBas = dedans[0];
+    var bordHaut = dedans[dedans.length - 1];
+    assert.ok(defiEncoreTenu(d.cible, bordBas - DEFI_SORTIE_JOURS / 2),
+      'le bravo clignoterait juste sous la fenêtre : ' + d.cible);
+    assert.ok(defiEncoreTenu(d.cible, bordHaut + DEFI_SORTIE_JOURS / 2),
+      'le bravo clignoterait juste au-dessus de la fenêtre : ' + d.cible);
+  });
+  /* Loin de la fenêtre, le bravo se range vraiment : à la nouvelle lune, ni
+   * la pleine ni les quartiers ne sont « encore tenus ». */
+  assert.ok(!defiEncoreTenu('pleine', 5), 'tenu bien trop loin de la pleine lune');
+  assert.ok(!defiEncoreTenu('quartier-1', 20), 'tenu bien trop loin du premier quartier');
 });
 
 test('la consigne et le bravo du défi nomment la forme, sans émoji', function () {

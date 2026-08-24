@@ -6,7 +6,7 @@
  */
 import {
   CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, consigneDefi, bravoDefi, DEFI_ATTENTE_MS
+  SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, consigneDefi, bravoDefi, DEFI_ATTENTE_MS
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
 import { creerVueHublot } from './vue-hublot.js';
@@ -53,7 +53,6 @@ var grilleScenarios = document.getElementById('grille-scenarios');
 var histoireScenario = document.getElementById('histoire-scenario');
 var boutonSonScenarios = document.getElementById('bouton-son-scenarios');
 var boutonEcouter = document.getElementById('bouton-ecouter');
-var menuVoix = document.getElementById('menu-voix');
 var conseilVoix = document.getElementById('conseil-voix');
 var texteExplication = document.getElementById('texte-explication');
 var boutonJouer = document.getElementById('bouton-jouer');
@@ -215,6 +214,12 @@ try {
   window.removeEventListener('test-passif', null, optionsTest);
 } catch (e) { /* vieux navigateur : les options sont un booléen */ }
 
+/* Safari iOS ignore user-scalable=no depuis iOS 10 : on neutralise aussi le
+ * zoom pincé de la PAGE par son événement propriétaire (inconnu ailleurs,
+ * donc sans effet). Les canvas des vues ne passent pas par là : leurs gestes
+ * vivent sur des éléments en touch-action: none. */
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+
 /* Toucher un canvas ne doit JAMAIS faire défiler ni zoomer la page : le CSS
  * pose touch-action: none, mais les vieux mobiles et certaines WebViews
  * l'ignorent — on bloque aussi le geste à la main. */
@@ -326,8 +331,11 @@ SCENARIOS.forEach(function (s) {
 /* ------------------------------------------------------------------ */
 
 var synthesePossible = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
-var CLE_SON = 'petit-labo-lune-son';
-var CLE_VOIX = 'petit-labo-lune-voix';
+/* Clé de famille : même origine petit-labo.fr pour tous les épisodes, le
+ * réglage du son suit l'enfant de l'un à l'autre. L'ancienne clé propre à
+ * l'épisode est lue en secours pour ne pas perdre le réglage déjà fait. */
+var CLE_SON = 'petit-labo-son';
+var ANCIENNE_CLE_SON = 'petit-labo-lune-son';
 var sonScenariosActif = false;
 
 /* Retire les émojis (imprononçables) et recolle l'espace orpheline. */
@@ -391,42 +399,18 @@ var narrateur = (function () {
     return fr;
   }
 
+  /* Le score choisit seul la meilleure voix française : le menu de choix des
+   * premiers épisodes était un héritage d'avant la voix enregistrée. */
   function rafraichirVoix() {
     var fr = voixFrancaises();
     if (!fr.length) return;
-    var souhait = null;
-    try { souhait = window.localStorage.getItem(CLE_VOIX); } catch (e) { /* stockage indisponible */ }
     voixChoisie = fr[0];
-    if (souhait) {
-      for (var i = 0; i < fr.length; i++) {
-        if (fr[i].name === souhait) { voixChoisie = fr[i]; break; }
-      }
-    }
-    /* Le menu de voix, seulement s'il y a le choix. */
-    if (fr.length >= 2) {
-      menuVoix.hidden = false;
-      while (menuVoix.firstChild) menuVoix.removeChild(menuVoix.firstChild);
-      fr.forEach(function (v) {
-        var opt = document.createElement('option');
-        opt.value = v.name;
-        opt.textContent = '🗣️ ' + v.name;
-        if (voixChoisie && v.name === voixChoisie.name) opt.selected = true;
-        menuVoix.appendChild(opt);
-      });
-    }
     conseilVoix.hidden = scoreVoix(voixChoisie) >= 40;
   }
 
   if (synthese.addEventListener) synthese.addEventListener('voiceschanged', rafraichirVoix);
   else if ('onvoiceschanged' in synthese) synthese.onvoiceschanged = rafraichirVoix;
   rafraichirVoix();
-
-  menuVoix.addEventListener('change', function () {
-    try { window.localStorage.setItem(CLE_VOIX, menuVoix.value); } catch (e) { /* tant pis */ }
-    var relire = synthese.speaking && lectureExplication;
-    rafraichirVoix();
-    if (relire) lireExplication(); /* changement de voix en cours de lecture → on relit */
-  });
 
   function tonDeConteur(u, phrase) {
     u.rate = 0.92;
@@ -502,7 +486,12 @@ if (synthesePossible) {
     else lireExplication();
   });
 
-  try { sonScenariosActif = window.localStorage.getItem(CLE_SON) === 'oui'; } catch (e) { /* tant pis */ }
+  try {
+    var son = window.localStorage.getItem(CLE_SON);
+    sonScenariosActif = son !== null
+      ? son === '1'
+      : window.localStorage.getItem(ANCIENNE_CLE_SON) === 'oui';
+  } catch (e) { /* tant pis */ }
 
   function rafraichirBoutonSon() {
     boutonSonScenarios.textContent = sonScenariosActif ? '🔊' : '🔇';
@@ -514,7 +503,7 @@ if (synthesePossible) {
 
   boutonSonScenarios.addEventListener('click', function () {
     sonScenariosActif = !sonScenariosActif;
-    try { window.localStorage.setItem(CLE_SON, sonScenariosActif ? 'oui' : 'non'); } catch (e) { /* tant pis */ }
+    try { window.localStorage.setItem(CLE_SON, sonScenariosActif ? '1' : '0'); } catch (e) { /* tant pis */ }
     rafraichirBoutonSon();
     if (!sonScenariosActif) {
       narrateur.stop();
@@ -555,9 +544,11 @@ function surveillerDefi(ms) {
   var dessus = defiReussi(etat.defi.cible, etat.jour);
   /* Le bravo ne ment jamais : il s'efface quand l'enfant repart faire
    * tourner la Lune, et revient s'il refabrique la bonne forme (sans
-   * relire la voix). « Encore une ! » reste acquis. */
+   * relire la voix). « Encore une ! » reste acquis. Il ne se range que si
+   * la Lune quitte FRANCHEMENT la forme (hystérésis defiEncoreTenu) : au
+   * bord de la fenêtre, un frémissement du doigt ne le fait pas clignoter. */
   if (etat.bravoVisible) {
-    if (!dessus) {
+    if (!defiEncoreTenu(etat.defi.cible, etat.jour)) {
       etat.bravoVisible = false;
       etat.defiEntreMs = null;
       bravoJeu.hidden = true;

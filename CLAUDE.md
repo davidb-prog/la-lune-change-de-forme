@@ -15,6 +15,15 @@ voix haute ; l'enfant attrape la Lune et la fait tourner autour de la Terre.
   interactif **doublé d'un repli JS** (`touchstart`/`touchmove` non passifs qui
   font `preventDefault` — les vieux mobiles ignorent `touch-action` et volent
   le geste pour défiler). Tester à 390 px de large.
+- **La page se manipule, elle ne se sélectionne pas** (verrou anti-gestes
+  d'enfant de la famille) : `user-select: none` sur `body` (préfixé,
+  + `-webkit-touch-callout: none` et `-webkit-tap-highlight-color:
+  transparent`) ; `* { touch-action: pan-x pan-y }` — le doigt défile mais ni
+  pincement ni double-tap ne zooment la page, le `touch-action: none` des
+  canvas, plus spécifique, gagne ; viewport `maximum-scale=1, user-scalable=no`
+  AVEC le filet JS `gesturestart` → `preventDefault` (Safari iOS ignore
+  `user-scalable` depuis iOS 10). Les zooms d'accessibilité du système restent
+  utilisables.
 - **`js/model.js` est pur** (aucun accès DOM) : toutes les constantes du récit
   (cycle, seuils de phases, scénarios, défis, phrases générées) vivent dedans.
   Il se teste avec `node test/model.test.mjs`.
@@ -75,8 +84,11 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   de scénario), et il faut **rester un instant sur la bonne forme**
   (`DEFI_ATTENTE_MS`) : un tour de Lune qui traverse la fenêtre sans
   s'arrêter ne gagne pas « en passant ». Le bravo **ne ment jamais** : il
-  s'efface quand l'enfant
-  repart faire tourner la Lune, revient si la bonne forme est refabriquée ;
+  s'efface quand l'enfant repart faire tourner la Lune — mais seulement
+  quand elle quitte **franchement** la forme (hystérésis de sortie
+  `DEFI_SORTIE_JOURS`/`defiEncoreTenu`, acquis de la famille : au bord de la
+  fenêtre, un frémissement du doigt ne le fait pas clignoter) — et revient
+  si la bonne forme est refabriquée ;
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
   `consigneDefi`/`bravoDefi` du modèle).
@@ -102,10 +114,16 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 Voir la charte de la famille : moteur unique `narrateur` (générations pour
 invalider les lectures annulées), découpage en phrases, ton (rate/pitch selon
 la ponctuation), score des voix françaises (fr-FR > fr > fr-CA, bonus
-naturelles/neurales, malus robotiques), menu 🗣 si ≥ 2 voix (choix en
-`localStorage`), textes `oral` sans émoji avec espaces recollées avant la
-ponctuation, `pagehide` → `cancel()`. Sans synthèse, les boutons sonores se
-cachent et le site reste complet.
+naturelles/neurales, malus robotiques) qui **choisit seul** la meilleure voix
+(le menu 🗣 d'avant la voix enregistrée a été retiré de toute la famille),
+textes `oral` sans émoji avec espaces recollées avant la ponctuation,
+`pagehide` → `cancel()`. Le réglage 🔇/🔊 se retient sous la **clé de
+famille** `petit-labo-son` (même origine petit-labo.fr pour tous les
+épisodes ; l'ancienne clé `petit-labo-lune-son` est lue en secours). Sans
+synthèse, les boutons sonores se cachent et le site reste complet. Prochaine
+étape sonore : la **voix enregistrée** (ElevenLabs), à porter depuis
+`la-terre-tourne` avec les skills `petit-labo` et `generer-voix-petit-labo` —
+les textes de cet épisode restent libres tant que rien n'est enregistré.
 
 ## Structure
 
@@ -135,7 +153,8 @@ lumineux à la pleine lune, sombre à la nouvelle). Servir avant :
 ## La série
 
 Pieds de page croisés avec : `eclipse-explorer`, `ou-va-le-soleil`,
-`la-terre-tourne`. En publiant cet épisode, ajouter son lien dans les pieds de
-page des trois voisins. Les épisodes ne sont **pas numérotés** (ni kicker, ni
+`la-terre-tourne`. La famille est en ligne sous son domaine **petit-labo.fr**
+(`petit-labo.fr/<depot>/`) : tous les liens croisés l'utilisent, jamais
+`github.io`. Les épisodes ne sont **pas numérotés** (ni kicker, ni
 pieds de page) : l'ordre de publication vit dans le registre du skill, pas dans
 l'interface.

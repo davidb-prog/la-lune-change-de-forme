@@ -29,7 +29,8 @@ L'idée centrale, celle que l'enfant doit retenir :
   choisi en douceur, toujours dans le vrai sens de l'orbite, puis une
   micro-histoire raconte le moment (version sonore au bouton 🔇/🔊).
 - **La boîte d'explication** à lire ou à **écouter** (synthèse vocale hors
-  ligne, bouton « 🔊 Écouter l'histoire », menu de voix 🗣).
+  ligne, bouton « 🔊 Écouter l'histoire » — la meilleure voix française de
+  l'appareil est choisie automatiquement).
 - **Le jeu « 🎯 Attrape la bonne Lune ! »** : le site demande une phase,
   l'enfant la fabrique en manœuvrant la Lune — directement dans les mini-vues
   reprises sous le jeu (synchronisées avec celles du haut), sans remonter en
@@ -73,7 +74,7 @@ Les tests verrouillent les « vérités à préserver » de l'épisode :
 - **L'orbite est ronde et plate** — la vraie est légèrement elliptique
   (e ≈ 0,055) et inclinée d'environ 5° sur l'écliptique ; c'est cette
   inclinaison qui évite une éclipse à chaque nouvelle ou pleine lune (voir
-  [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/)).
+  [La mécanique des éclipses](https://petit-labo.fr/eclipse-explorer/)).
 - **Tailles et distances ne sont pas à l'échelle** (la Lune est à ~384 000 km).
 - **Le hublot montre le ciel de l'hémisphère nord** : la Lune qui grossit y est
   éclairée à droite, celle qui rapetisse à gauche (l'inverse dans l'hémisphère
@@ -101,7 +102,7 @@ docs/               les captures d'écran
 
 **Petit labo d'astronomie 🌌**
 
-- [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/)
-- [Où va le Soleil la nuit ?](https://davidb-prog.github.io/ou-va-le-soleil/)
-- [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
+- [La mécanique des éclipses](https://petit-labo.fr/eclipse-explorer/)
+- [Où va le Soleil la nuit ?](https://petit-labo.fr/ou-va-le-soleil/)
+- [Quelle heure est-il là-bas ?](https://petit-labo.fr/la-terre-tourne/)
 - **Pourquoi la Lune change de forme ?** (cet épisode)
