@@ -89,10 +89,13 @@ main, header.entete, footer.pied-serie {
 
 .kicker-fiole { width: 24px; height: 24px; flex: none; }
 
+/* le titre-question en blanc : l'or reste au kicker, à la fiole et aux
+   accents — deux blocs or empilés feraient ton sur ton */
 .entete h1 {
-  font-size: 2rem;
+  font-size: clamp(2.1rem, 5.5vw, 3.1rem);
+  line-height: 1.1;
   margin: 10px 0 12px;
-  color: var(--sun);
+  color: var(--text);
 }
 
 .tagline {
@@ -101,6 +104,8 @@ main, header.entete, footer.pied-serie {
   margin: 0 auto;
   font-size: 1.05rem;
 }
+
+.tagline strong { color: var(--sun); }
 
 /* ---------- Cartes ---------- */
 
@@ -236,7 +241,7 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
-input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offset: 4px; border-radius: 999px; }
+input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
 .legende-curseur { color: var(--muted); font-size: 0.9rem; text-align: center; }
 
@@ -469,6 +474,9 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
 /* ---------- Le jeu sur mobile : une seule vue, tout tient à l'écran ---------- */
 
 @media (max-width: 879px) {
+  /* en-tête compact : la Lune doit se voir dès le premier écran */
+  .entete h1 { font-size: clamp(1.65rem, 7.5vw, 2.2rem); }
+
   .vues-jeu > .cadre-canvas:last-child { display: none; }
   .carte-jeu { padding: 14px 14px 12px; }
   .consigne-jeu { font-size: 0.88rem; }
@@ -610,6 +618,11 @@ button, summary {
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* le focus clavier, visible partout (patron de la famille) */
+button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--sun); outline-offset: 2px;
 }
 
 .bouton-scenario:active { border-color: var(--violet); }
