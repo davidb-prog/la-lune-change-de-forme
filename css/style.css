@@ -73,13 +73,21 @@ main, header.entete, footer.pied-serie {
 
 .entete { text-align: center; padding: 12px 0 26px; }
 
+/* le kicker porte la fiole de la série (l'étoile dedans) à côté de son texte,
+   comme le portail porte la fiole maître à côté de son nom — règle de la charte */
 .kicker {
-  color: var(--violet);
+  color: var(--sun);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
 }
+
+.kicker-fiole { width: 24px; height: 24px; flex: none; }
 
 .entete h1 {
   font-size: 2rem;
