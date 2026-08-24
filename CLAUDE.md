@@ -15,6 +15,15 @@ voix haute ; l'enfant attrape la Lune et la fait tourner autour de la Terre.
   interactif **doublé d'un repli JS** (`touchstart`/`touchmove` non passifs qui
   font `preventDefault` — les vieux mobiles ignorent `touch-action` et volent
   le geste pour défiler). Tester à 390 px de large.
+- **La page se manipule, elle ne se sélectionne pas** (verrou anti-gestes
+  d'enfant de la famille) : `user-select: none` sur `body` (préfixé,
+  + `-webkit-touch-callout: none` et `-webkit-tap-highlight-color:
+  transparent`) ; `* { touch-action: pan-x pan-y }` — le doigt défile mais ni
+  pincement ni double-tap ne zooment la page, le `touch-action: none` des
+  canvas, plus spécifique, gagne ; viewport `maximum-scale=1, user-scalable=no`
+  AVEC le filet JS `gesturestart` → `preventDefault` (Safari iOS ignore
+  `user-scalable` depuis iOS 10). Les zooms d'accessibilité du système restent
+  utilisables.
 - **`js/model.js` est pur** (aucun accès DOM) : toutes les constantes du récit
   (cycle, seuils de phases, scénarios, défis, phrases générées) vivent dedans.
   Il se teste avec `node test/model.test.mjs`.
@@ -64,6 +73,18 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **Glisser fait avancer le phénomène** : attraper la Lune la déplace sur son
   orbite ; le curseur maître fait la même chose. Les deux vues (ciel + hublot)
   restent **synchronisées en permanence** sur le même `etat.jour`.
+- **La lecture auto** (harmonisation de la famille) : la Lune avance toute
+  seule (`LECTURE_SECONDES_PAR_CYCLE` = 90 s par cycle, dans le modèle),
+  commandée UNIQUEMENT par le **bouton ⏸/▶ à largeur stable** (libellés
+  « ⏸ Pause » / « ▶ Lecture » empilés) posé sur la PREMIÈRE carte
+  (« 🌙 Ce soir, dans le ciel ») — jamais par un tap sur une vue. Reprendre la main (attraper la Lune, bouger
+  le curseur, choisir un scénario, ouvrir le jeu) met en pause ; **on ne gagne
+  pas un défi pendant la lecture auto** (garde dans `surveillerDefi`) ;
+  `prefers-reduced-motion` la désactive. Le bouton 🔇/🔊 partage le même
+  patron à libellés empilés (« 🔊 avec la voix » / « 🔇 sans la voix »).
+- **Pied de page harmonisé de la famille** : les autres épisodes en liens
+  cliquables (sans « La mécanique des éclipses ») + bouton « 🧪 Tous les
+  épisodes » vers <https://petit-labo.fr/>.
 - **Les scénarios vont au moment choisi en douceur, toujours vers l'avant**
   (le vrai sens de l'orbite) ; en `prefers-reduced-motion`, saut sec. Sur
   mobile, taper une vignette **remonte doucement la page à la vue de
@@ -71,12 +92,23 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   rien sur grand écran où les deux vues sont déjà sous les yeux).
 - **Reprendre la main efface l'histoire** : bouger le curseur ou la Lune ferme
   la micro-histoire du scénario et désarme son `aria-pressed`.
+- **Scénarios au patron de la famille** (repris d'ou-va-le-soleil) : 4 boutons
+  en dégradés colorés (croissant rose, quartier bleu, pleine lune dorée,
+  nouvelle lune violette — classes `scn-<id>`), et l'histoire écrite en
+  **deux lignes à puces** — « 🌙 dans le ciel » (champs `ciel` du modèle) puis
+  « 🛰️ depuis l'espace » (`espace`) : le même instant, deux regards
+  (`montrerHistoire` dans main.js). Le bouton 🔇/🔊 a un **jumeau posé sur le
+  jeu** (`bouton-son-jeu`, même état, même clé ; l'activer depuis le jeu relit
+  la consigne du défi en cours).
 - **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
   de scénario), et il faut **rester un instant sur la bonne forme**
   (`DEFI_ATTENTE_MS`) : un tour de Lune qui traverse la fenêtre sans
   s'arrêter ne gagne pas « en passant ». Le bravo **ne ment jamais** : il
-  s'efface quand l'enfant
-  repart faire tourner la Lune, revient si la bonne forme est refabriquée ;
+  s'efface quand l'enfant repart faire tourner la Lune — mais seulement
+  quand elle quitte **franchement** la forme (hystérésis de sortie
+  `DEFI_SORTIE_JOURS`/`defiEncoreTenu`, acquis de la famille : au bord de la
+  fenêtre, un frémissement du doigt ne le fait pas clignoter) — et revient
+  si la bonne forme est refabriquée ;
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
   `consigneDefi`/`bravoDefi` du modèle).
@@ -102,10 +134,16 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 Voir la charte de la famille : moteur unique `narrateur` (générations pour
 invalider les lectures annulées), découpage en phrases, ton (rate/pitch selon
 la ponctuation), score des voix françaises (fr-FR > fr > fr-CA, bonus
-naturelles/neurales, malus robotiques), menu 🗣 si ≥ 2 voix (choix en
-`localStorage`), textes `oral` sans émoji avec espaces recollées avant la
-ponctuation, `pagehide` → `cancel()`. Sans synthèse, les boutons sonores se
-cachent et le site reste complet.
+naturelles/neurales, malus robotiques) qui **choisit seul** la meilleure voix
+(le menu 🗣 d'avant la voix enregistrée a été retiré de toute la famille),
+textes `oral` sans émoji avec espaces recollées avant la ponctuation,
+`pagehide` → `cancel()`. Le réglage 🔇/🔊 se retient sous la **clé de
+famille** `petit-labo-son` (même origine petit-labo.fr pour tous les
+épisodes ; l'ancienne clé `petit-labo-lune-son` est lue en secours). Sans
+synthèse, les boutons sonores se cachent et le site reste complet. Prochaine
+étape sonore : la **voix enregistrée** (ElevenLabs), à porter depuis
+`la-terre-tourne` avec les skills `petit-labo` et `generer-voix-petit-labo` —
+les textes de cet épisode restent libres tant que rien n'est enregistré.
 
 ## Structure
 
@@ -135,7 +173,8 @@ lumineux à la pleine lune, sombre à la nouvelle). Servir avant :
 ## La série
 
 Pieds de page croisés avec : `eclipse-explorer`, `ou-va-le-soleil`,
-`la-terre-tourne`. En publiant cet épisode, ajouter son lien dans les pieds de
-page des trois voisins. Les épisodes ne sont **pas numérotés** (ni kicker, ni
+`la-terre-tourne`. La famille est en ligne sous son domaine **petit-labo.fr**
+(`petit-labo.fr/<depot>/`) : tous les liens croisés l'utilisent, jamais
+`github.io`. Les épisodes ne sont **pas numérotés** (ni kicker, ni
 pieds de page) : l'ordre de publication vit dans le registre du skill, pas dans
 l'interface.

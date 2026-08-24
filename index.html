@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- zoom navigateur verrouillé : un enfant qui pince partout ne doit jamais se
+       retrouver avec une page minuscule — les zooms d'accessibilité du système
+       (triple-tap iOS, loupe Android, « forcer le zoom ») restent utilisables -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#0b1020">
   <title>Pourquoi la Lune change de forme ? — Petit labo d’astronomie</title>
   <meta name="description" content="Un petit labo pour les enfants : fais tourner la Lune autour de la Terre et découvre pourquoi elle change de forme chaque soir.">
@@ -26,7 +29,14 @@
     <!-- Le cœur interactif : les deux vues, toujours synchronisées. -->
     <section class="vues">
       <div class="carte carte-hublot">
-        <h2>🌙 Ce soir, dans le ciel</h2>
+        <div class="titre-avec-bouton">
+          <h2>🌙 Ce soir, dans le ciel</h2>
+          <!-- libellés empilés (grille 1×1) : largeur stable, rien ne se décale -->
+          <button id="bouton-lecture" class="bouton-son play-btn" type="button" aria-pressed="true"
+            aria-label="Mettre en pause (la Lune avance toute seule)"><span
+              class="play-on" aria-hidden="true">⏸ Pause</span><span
+              class="play-off" aria-hidden="true">▶ Lecture</span></button>
+        </div>
         <p class="sous-titre">La Lune, vue depuis ton jardin.</p>
         <div class="cadre-canvas">
           <canvas id="canvas-hublot"
@@ -61,8 +71,12 @@
     <section class="carte carte-scenarios">
       <div class="titre-avec-bouton">
         <h2>🎲 Joue avec la Lune</h2>
-        <button id="bouton-son-scenarios" class="bouton-son" type="button" hidden
-          aria-pressed="false" aria-label="Activer la version sonore des histoires">🔇</button>
+        <!-- les deux libellés vivent empilés dans le bouton (grille 1×1) : sa largeur
+             est celle du plus long des deux, donc rien ne bouge quand on bascule -->
+        <button id="bouton-son-scenarios" class="bouton-son scn-voice-btn" type="button" hidden
+          aria-pressed="false" aria-label="Activer la version sonore des histoires"><span
+            class="scn-voice-on" aria-hidden="true">🔊 avec la voix</span><span
+            class="scn-voice-off" aria-hidden="true">🔇 sans la voix</span></button>
       </div>
       <div class="grille-scenarios" id="grille-scenarios"></div>
       <div class="histoire" id="histoire-scenario" aria-live="polite" hidden></div>
@@ -80,7 +94,6 @@
         <h2>💡 Pourquoi la Lune change de forme ?</h2>
         <div class="boutons-voix">
           <button id="bouton-ecouter" class="bouton-son bouton-ecouter" type="button" hidden>🔊 Écouter l’histoire</button>
-          <select id="menu-voix" class="menu-voix" hidden aria-label="Choisir la voix du conteur"></select>
         </div>
       </div>
       <div id="texte-explication">
@@ -100,7 +113,14 @@
     <section class="carte carte-jeu">
       <div class="titre-avec-bouton">
         <h2>🎯 Attrape la bonne Lune !</h2>
-        <button id="bouton-jouer" class="bouton-jeu" type="button">Jouer</button>
+        <div class="boutons-voix">
+          <!-- le même réglage de voix que les scénarios, à portée de main du jeu -->
+          <button id="bouton-son-jeu" class="bouton-son scn-voice-btn" type="button" hidden
+            aria-pressed="false" aria-label="Activer la voix qui lit les consignes et les bravos du jeu"><span
+              class="scn-voice-on" aria-hidden="true">🔊 avec la voix</span><span
+              class="scn-voice-off" aria-hidden="true">🔇 sans la voix</span></button>
+          <button id="bouton-jouer" class="bouton-jeu" type="button">Jouer</button>
+        </div>
       </div>
       <div id="zone-jeu" hidden>
         <p class="consigne-jeu">Attrape la Lune ici et fais-la tourner pour fabriquer…</p>
@@ -129,7 +149,7 @@
         <li><strong>L’orbite est dessinée ronde et plate.</strong> La vraie orbite est légèrement ovale
           (excentricité ≈ 0,055) et inclinée d’environ 5° — c’est cette inclinaison qui explique
           qu’il n’y a pas une éclipse à chaque nouvelle ou pleine lune. Les éclipses ont leur propre
-          épisode : <a href="https://davidb-prog.github.io/eclipse-explorer/">La mécanique des éclipses</a>.</li>
+          épisode : <a href="https://petit-labo.fr/eclipse-explorer/">La mécanique des éclipses</a>.</li>
         <li><strong>Les tailles et les distances ne sont pas à l’échelle.</strong> En vrai, la Lune est
           à environ 384 000 km de la Terre — à l’échelle du dessin, elle serait à plusieurs mètres
           de l’écran !</li>
@@ -154,14 +174,15 @@
     <canvas id="canvas-medaillon" aria-hidden="true"></canvas>
   </button>
 
+  <!-- pied de page harmonisé de la famille : les autres épisodes en liens, puis
+       le bouton de retour au menu petit-labo.fr -->
   <footer class="pied-serie">
-    <p>Petit labo d’astronomie 🌌</p>
-    <ul>
-      <li><a href="https://davidb-prog.github.io/eclipse-explorer/">La mécanique des éclipses</a></li>
-      <li><a href="https://davidb-prog.github.io/ou-va-le-soleil/">Où va le Soleil la nuit ?</a></li>
-      <li><a href="https://davidb-prog.github.io/la-terre-tourne/">Quelle heure est-il là-bas ?</a></li>
-      <li aria-current="page">Pourquoi la Lune change de forme ?</li>
+    <p class="footer-serie">« Pourquoi la Lune change de forme ? » — un épisode du <strong>Petit labo d’astronomie</strong> 🌌</p>
+    <ul class="footer-episodes">
+      <li><a href="https://petit-labo.fr/ou-va-le-soleil/">🌅 Où va le Soleil la nuit ?</a></li>
+      <li><a href="https://petit-labo.fr/la-terre-tourne/">🌍 Quelle heure est-il là-bas ?</a></li>
     </ul>
+    <p class="footer-menu"><a class="btn-menu-labo" href="https://petit-labo.fr/">🧪 Tous les épisodes du Petit labo</a></p>
   </footer>
 
   <script type="module" src="js/main.js"></script>

@@ -6,7 +6,8 @@
  */
 import {
   CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, consigneDefi, bravoDefi, DEFI_ATTENTE_MS
+  SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, consigneDefi, bravoDefi, DEFI_ATTENTE_MS,
+  LECTURE_SECONDES_PAR_CYCLE
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
 import { creerVueHublot } from './vue-hublot.js';
@@ -23,14 +24,19 @@ var etat = {
   defiGagne: false,
   bravoVisible: false,  /* le bravo s'efface quand on repart tourner la Lune */
   defiEntreMs: null,    /* entrée dans la fenêtre (anti « gagné en passant ») */
-  glisse: false
+  glisse: false,
+  enLecture: false,     /* la lecture auto (bouton ⏸/▶) : la Lune avance seule */
+  tPrecedente: null     /* horodatage du dernier passage de la boucle */
 };
 
 var mouvementReduit = false;
 if (window.matchMedia) {
   var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
   mouvementReduit = !!mq.matches;
-  if (mq.addEventListener) mq.addEventListener('change', function (e) { mouvementReduit = !!e.matches; });
+  if (mq.addEventListener) mq.addEventListener('change', function (e) {
+    mouvementReduit = !!e.matches;
+    if (mouvementReduit) fixerLecture(false); /* rien ne bouge tout seul */
+  });
 }
 
 /* Petit écran ? (même seuil que la grille CSS : 880 px) */
@@ -52,8 +58,9 @@ var phraseSoir = document.getElementById('phrase-soir');
 var grilleScenarios = document.getElementById('grille-scenarios');
 var histoireScenario = document.getElementById('histoire-scenario');
 var boutonSonScenarios = document.getElementById('bouton-son-scenarios');
+var boutonSonJeu = document.getElementById('bouton-son-jeu'); /* le jumeau posé sur le jeu */
+var boutonLecture = document.getElementById('bouton-lecture');
 var boutonEcouter = document.getElementById('bouton-ecouter');
-var menuVoix = document.getElementById('menu-voix');
 var conseilVoix = document.getElementById('conseil-voix');
 var texteExplication = document.getElementById('texte-explication');
 var boutonJouer = document.getElementById('bouton-jouer');
@@ -85,6 +92,18 @@ function fixerJour(jour) {
   curseur.value = String(etat.jour);
   phraseSoir.textContent = phraseDuSoir(etat.jour);
 }
+
+/* La lecture auto (bouton ⏸/▶ harmonisé de la famille) : la Lune avance toute
+ * seule sur son orbite ; reprendre la main met en pause. Les deux libellés
+ * vivent empilés dans le bouton (largeur stable) : aria-pressed suffit. */
+function fixerLecture(enLecture) {
+  etat.enLecture = enLecture;
+  boutonLecture.setAttribute('aria-pressed', enLecture ? 'true' : 'false');
+  boutonLecture.setAttribute('aria-label', enLecture
+    ? 'Mettre en pause (la Lune avance toute seule)'
+    : 'Relancer la Lune qui avance toute seule');
+}
+boutonLecture.addEventListener('click', function () { fixerLecture(!etat.enLecture); });
 
 /* L'utilisateur reprend la main : l'histoire affichée s'efface. */
 function reprendreLaMain() {
@@ -136,6 +155,13 @@ function adoucir(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) /
 
 function boucle(maintenant) {
   try {
+    /* La lecture auto : la Lune avance toute seule, sauf pendant une
+     * animation de scénario ou un glisser (le doigt est le maître). */
+    if (etat.enLecture && !etat.animation && !etat.glisse && etat.tPrecedente !== null) {
+      var dt = Math.min(200, maintenant - etat.tPrecedente); /* onglet endormi : pas de bond */
+      fixerJour(etat.jour + (dt / 1000) * (CYCLE_JOURS / LECTURE_SECONDES_PAR_CYCLE));
+    }
+    etat.tPrecedente = maintenant;
     if (etat.animation) {
       var a = etat.animation;
       if (a.t0 === null) a.t0 = maintenant;
@@ -215,6 +241,12 @@ try {
   window.removeEventListener('test-passif', null, optionsTest);
 } catch (e) { /* vieux navigateur : les options sont un booléen */ }
 
+/* Safari iOS ignore user-scalable=no depuis iOS 10 : on neutralise aussi le
+ * zoom pincé de la PAGE par son événement propriétaire (inconnu ailleurs,
+ * donc sans effet). Les canvas des vues ne passent pas par là : leurs gestes
+ * vivent sur des éléments en touch-action: none. */
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+
 /* Toucher un canvas ne doit JAMAIS faire défiler ni zoomer la page : le CSS
  * pose touch-action: none, mais les vieux mobiles et certaines WebViews
  * l'ignorent — on bloque aussi le geste à la main. */
@@ -241,6 +273,7 @@ function brancherGesteLune(canvas, vue) {
     if (!vue.attrapeLune(c.x, c.y, etat.jour)) return;
     etat.glisse = true;
     reprendreLaMain();
+    fixerLecture(false); /* attraper la Lune met en pause */
     canvas.classList.add('attrape');
     if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
     e.preventDefault();
@@ -271,6 +304,7 @@ brancherGesteLune(canvasOrbiteJeu, vueOrbiteJeu);
 
 curseur.addEventListener('input', function () {
   reprendreLaMain();
+  fixerLecture(false); /* reprendre la main met en pause */
   fixerJour(parseFloat(curseur.value));
 });
 
@@ -299,21 +333,43 @@ function rafraichirBoutonsScenarios() {
   });
 }
 
+/* L'histoire écrite : une ligne par vue (puce colorée + texte), comme les
+ * autres épisodes — le même instant, deux regards. */
+function montrerHistoire(s) {
+  histoireScenario.hidden = false;
+  while (histoireScenario.firstChild) histoireScenario.removeChild(histoireScenario.firstChild);
+  [{ classe: 'puce-ciel', puce: '🌙 dans le ciel', texte: s.ciel },
+   { classe: 'puce-espace', puce: '🛰️ depuis l’espace', texte: s.espace }].forEach(function (l) {
+    var ligne = document.createElement('div');
+    ligne.className = 'ligne-histoire';
+    var puce = document.createElement('span');
+    puce.className = 'puce-histoire ' + l.classe;
+    puce.textContent = l.puce;
+    var texte = document.createElement('p');
+    texte.className = 'texte-histoire';
+    texte.textContent = l.texte;
+    ligne.appendChild(puce);
+    ligne.appendChild(texte);
+    histoireScenario.appendChild(ligne);
+  });
+}
+
 SCENARIOS.forEach(function (s) {
   var bouton = document.createElement('button');
   bouton.type = 'button';
-  bouton.className = 'bouton-scenario';
+  /* scn-<id> : les couleurs de la famille (reprises d'ou-va-le-soleil) */
+  bouton.className = 'bouton-scenario scn-' + s.id;
   bouton.setAttribute('aria-pressed', 'false');
   bouton.innerHTML = '<span class="emoji">' + s.emoji + '</span>' +
     '<span class="titre"></span><span class="sous"></span>';
   bouton.querySelector('.titre').textContent = s.titre;
   bouton.querySelector('.sous').textContent = s.sousTitre;
   bouton.addEventListener('click', function () {
+    fixerLecture(false); /* le scénario prend la main sur la lecture auto */
     etat.scenarioActif = s.id;
     rafraichirBoutonsScenarios();
     allerAuJour(s.jour, false);
-    histoireScenario.hidden = false;
-    histoireScenario.textContent = s.histoire;
+    montrerHistoire(s);
     if (sonScenariosActif) narrateur.raconter(s.oral);
     montrerLeVoyage();
   });
@@ -326,8 +382,11 @@ SCENARIOS.forEach(function (s) {
 /* ------------------------------------------------------------------ */
 
 var synthesePossible = !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
-var CLE_SON = 'petit-labo-lune-son';
-var CLE_VOIX = 'petit-labo-lune-voix';
+/* Clé de famille : même origine petit-labo.fr pour tous les épisodes, le
+ * réglage du son suit l'enfant de l'un à l'autre. L'ancienne clé propre à
+ * l'épisode est lue en secours pour ne pas perdre le réglage déjà fait. */
+var CLE_SON = 'petit-labo-son';
+var ANCIENNE_CLE_SON = 'petit-labo-lune-son';
 var sonScenariosActif = false;
 
 /* Retire les émojis (imprononçables) et recolle l'espace orpheline. */
@@ -391,42 +450,18 @@ var narrateur = (function () {
     return fr;
   }
 
+  /* Le score choisit seul la meilleure voix française : le menu de choix des
+   * premiers épisodes était un héritage d'avant la voix enregistrée. */
   function rafraichirVoix() {
     var fr = voixFrancaises();
     if (!fr.length) return;
-    var souhait = null;
-    try { souhait = window.localStorage.getItem(CLE_VOIX); } catch (e) { /* stockage indisponible */ }
     voixChoisie = fr[0];
-    if (souhait) {
-      for (var i = 0; i < fr.length; i++) {
-        if (fr[i].name === souhait) { voixChoisie = fr[i]; break; }
-      }
-    }
-    /* Le menu de voix, seulement s'il y a le choix. */
-    if (fr.length >= 2) {
-      menuVoix.hidden = false;
-      while (menuVoix.firstChild) menuVoix.removeChild(menuVoix.firstChild);
-      fr.forEach(function (v) {
-        var opt = document.createElement('option');
-        opt.value = v.name;
-        opt.textContent = '🗣️ ' + v.name;
-        if (voixChoisie && v.name === voixChoisie.name) opt.selected = true;
-        menuVoix.appendChild(opt);
-      });
-    }
     conseilVoix.hidden = scoreVoix(voixChoisie) >= 40;
   }
 
   if (synthese.addEventListener) synthese.addEventListener('voiceschanged', rafraichirVoix);
   else if ('onvoiceschanged' in synthese) synthese.onvoiceschanged = rafraichirVoix;
   rafraichirVoix();
-
-  menuVoix.addEventListener('change', function () {
-    try { window.localStorage.setItem(CLE_VOIX, menuVoix.value); } catch (e) { /* tant pis */ }
-    var relire = synthese.speaking && lectureExplication;
-    rafraichirVoix();
-    if (relire) lireExplication(); /* changement de voix en cours de lecture → on relit */
-  });
 
   function tonDeConteur(u, phrase) {
     u.rate = 0.92;
@@ -497,34 +532,50 @@ function lireExplication() {
 if (synthesePossible) {
   boutonEcouter.hidden = false;
   boutonSonScenarios.hidden = false;
+  boutonSonJeu.hidden = false;
   boutonEcouter.addEventListener('click', function () {
     if (lectureExplication) narrateur.stop();
     else lireExplication();
   });
 
-  try { sonScenariosActif = window.localStorage.getItem(CLE_SON) === 'oui'; } catch (e) { /* tant pis */ }
+  try {
+    var son = window.localStorage.getItem(CLE_SON);
+    sonScenariosActif = son !== null
+      ? son === '1'
+      : window.localStorage.getItem(ANCIENNE_CLE_SON) === 'oui';
+  } catch (e) { /* tant pis */ }
 
   function rafraichirBoutonSon() {
-    boutonSonScenarios.textContent = sonScenariosActif ? '🔊' : '🔇';
-    boutonSonScenarios.setAttribute('aria-pressed', sonScenariosActif ? 'true' : 'false');
-    boutonSonScenarios.setAttribute('aria-label',
-      sonScenariosActif ? 'Couper la version sonore des histoires' : 'Activer la version sonore des histoires');
+    /* libellés empilés dans le HTML : aria-pressed montre l'un, cache
+     * l'autre. Les deux boutons (scénarios + jeu) sont jumeaux. */
+    [boutonSonScenarios, boutonSonJeu].forEach(function (b) {
+      b.setAttribute('aria-pressed', sonScenariosActif ? 'true' : 'false');
+      b.setAttribute('aria-label',
+        sonScenariosActif ? 'Couper la version sonore des histoires' : 'Activer la version sonore des histoires');
+    });
   }
   rafraichirBoutonSon();
 
-  boutonSonScenarios.addEventListener('click', function () {
+  function basculerSon() {
     sonScenariosActif = !sonScenariosActif;
-    try { window.localStorage.setItem(CLE_SON, sonScenariosActif ? 'oui' : 'non'); } catch (e) { /* tant pis */ }
+    try { window.localStorage.setItem(CLE_SON, sonScenariosActif ? '1' : '0'); } catch (e) { /* tant pis */ }
     rafraichirBoutonSon();
     if (!sonScenariosActif) {
       narrateur.stop();
-    } else if (etat.scenarioActif) {
+      return;
+    }
+    if (etat.scenarioActif) {
       /* L'activer relit le moment affiché. */
       for (var i = 0; i < SCENARIOS.length; i++) {
         if (SCENARIOS[i].id === etat.scenarioActif) { narrateur.raconter(SCENARIOS[i].oral); break; }
       }
+    } else if (etat.defi) {
+      /* L'activer depuis le jeu relit la consigne du défi en cours. */
+      narrateur.raconter(consigneDefi(etat.defi));
     }
-  });
+  }
+  boutonSonScenarios.addEventListener('click', basculerSon);
+  boutonSonJeu.addEventListener('click', basculerSon);
 
   window.addEventListener('pagehide', function () { window.speechSynthesis.cancel(); });
 }
@@ -555,19 +606,21 @@ function surveillerDefi(ms) {
   var dessus = defiReussi(etat.defi.cible, etat.jour);
   /* Le bravo ne ment jamais : il s'efface quand l'enfant repart faire
    * tourner la Lune, et revient s'il refabrique la bonne forme (sans
-   * relire la voix). « Encore une ! » reste acquis. */
+   * relire la voix). « Encore une ! » reste acquis. Il ne se range que si
+   * la Lune quitte FRANCHEMENT la forme (hystérésis defiEncoreTenu) : au
+   * bord de la fenêtre, un frémissement du doigt ne le fait pas clignoter. */
   if (etat.bravoVisible) {
-    if (!dessus) {
+    if (!defiEncoreTenu(etat.defi.cible, etat.jour)) {
       etat.bravoVisible = false;
       etat.defiEntreMs = null;
       bravoJeu.hidden = true;
     }
     return;
   }
-  /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation), et
-   * il faut RESTER sur la forme : la traverser d'un grand coup de glisser
-   * ne compte pas. */
-  if (!dessus || etat.animation) {
+  /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation de
+   * scénario NI pendant la lecture auto), et il faut RESTER sur la forme :
+   * la traverser d'un grand coup de glisser ne compte pas. */
+  if (!dessus || etat.animation || etat.enLecture) {
     etat.defiEntreMs = null;
     return;
   }
@@ -594,6 +647,7 @@ boutonJouer.addEventListener('click', function () {
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — remonter à la vue du jardin');
   } else {
     zoneJeu.hidden = false;
+    fixerLecture(false); /* rien ne doit gagner tout seul */
     boutonJouer.textContent = 'Ranger le jeu';
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — le résultat de ta manœuvre');
     nouveauDefi();
@@ -625,4 +679,5 @@ if (typeof mqMobile !== 'undefined' && mqMobile) {
 /* ------------------------------------------------------------------ */
 
 fixerJour(JOUR_DEPART); /* un premier croissant : une Lune visible d'emblée */
+fixerLecture(!mouvementReduit); /* comme les autres épisodes : la Lune avance seule */
 window.requestAnimationFrame(boucle);

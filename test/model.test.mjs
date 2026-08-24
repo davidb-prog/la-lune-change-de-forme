@@ -9,7 +9,8 @@ import {
   jourNormalise, angleOrbite, positionLune, directionEclairee,
   fractionEclairee, luneCroissante, coteEclaire, formeLune,
   ORDRE_PHASES, phaseInfo, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, JOUR_DEPART, consigneDefi, bravoDefi,
+  SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, DEFI_SORTIE_JOURS,
+  JOUR_DEPART, consigneDefi, bravoDefi, LECTURE_SECONDES_PAR_CYCLE,
   DEFI_ATTENTE_MS
 } from '../js/model.js';
 
@@ -140,6 +141,13 @@ test('chaque scénario tombe bien sur sa phase', function () {
   });
 });
 
+test('chaque scénario raconte le même instant deux fois : dans le ciel, puis depuis l’espace', function () {
+  SCENARIOS.forEach(function (s) {
+    assert.ok(s.ciel && s.ciel.length > 20, 'ligne « ciel » manquante : ' + s.id);
+    assert.ok(s.espace && s.espace.length > 20, 'ligne « espace » manquante : ' + s.id);
+  });
+});
+
 test('les textes du conteur sont prêts pour l’oral : pas d’émoji, ponctuation propre', function () {
   var emojis = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/u;
   SCENARIOS.forEach(function (s) {
@@ -192,11 +200,43 @@ test('la page démarre sur un premier croissant : une Lune visible dès l’arri
   assert.ok(fractionEclairee(JOUR_DEPART) > 0.04, 'la Lune du départ doit se voir');
 });
 
+test('la lecture auto fait un tour complet à une allure d’enfant (ni film, ni escargot)', function () {
+  assert.ok(LECTURE_SECONDES_PAR_CYCLE >= 45, 'trop rapide : les phases défileraient comme un film');
+  assert.ok(LECTURE_SECONDES_PAR_CYCLE <= 180, 'trop lente : on croirait la Lune arrêtée');
+});
+
 test('gagner demande de s’arrêter : la temporisation existe et reste vive', function () {
   /* Assez longue pour qu'un tour continu ne gagne pas en passant, assez
    * courte pour qu'un vrai arrêt semble instantané. */
   assert.ok(DEFI_ATTENTE_MS >= 400, 'trop courte : un tour la traverserait');
   assert.ok(DEFI_ATTENTE_MS <= 1200, 'trop longue : l’arrêt semblerait ignoré');
+});
+
+test('le bravo ne clignote pas au bord de la fenêtre : l’hystérésis de sortie tient', function () {
+  /* Acquis de la famille (payé sur ou-va-le-soleil) : la fenêtre où le bravo
+   * se range est PLUS LARGE que celle où il se gagne. Pour chaque défi : tout
+   * jour gagnant est encore « tenu » ; juste au bord de la fenêtre (moins
+   * d'une demi-marge dehors), toujours tenu ; loin dehors, plus tenu. */
+  assert.ok(DEFI_SORTIE_JOURS > 0.5, 'marge de sortie trop mince pour amortir le bord');
+  DEFIS.forEach(function (d) {
+    var dedans = [];
+    for (var j = 0; j < CYCLE_JOURS; j += 0.05) {
+      if (defiReussi(d.cible, j)) dedans.push(j);
+    }
+    dedans.forEach(function (j) {
+      assert.ok(defiEncoreTenu(d.cible, j), 'gagné mais pas tenu : ' + d.cible + ' au jour ' + j);
+    });
+    var bordBas = dedans[0];
+    var bordHaut = dedans[dedans.length - 1];
+    assert.ok(defiEncoreTenu(d.cible, bordBas - DEFI_SORTIE_JOURS / 2),
+      'le bravo clignoterait juste sous la fenêtre : ' + d.cible);
+    assert.ok(defiEncoreTenu(d.cible, bordHaut + DEFI_SORTIE_JOURS / 2),
+      'le bravo clignoterait juste au-dessus de la fenêtre : ' + d.cible);
+  });
+  /* Loin de la fenêtre, le bravo se range vraiment : à la nouvelle lune, ni
+   * la pleine ni les quartiers ne sont « encore tenus ». */
+  assert.ok(!defiEncoreTenu('pleine', 5), 'tenu bien trop loin de la pleine lune');
+  assert.ok(!defiEncoreTenu('quartier-1', 20), 'tenu bien trop loin du premier quartier');
 });
 
 test('la consigne et le bravo du défi nomment la forme, sans émoji', function () {
