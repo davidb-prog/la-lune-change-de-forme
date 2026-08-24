@@ -1,6 +1,18 @@
 /* La feuille de style de l'épisode — palette commune de la série astronomie. */
 
+/* la rondeur des titres de la famille : Baloo 2 auto-hébergée (charte du
+   portail — assets/fonts/, licence OFL) ; le corps du texte reste en pile
+   système, choix assumé de la charte */
+@font-face {
+  font-family: "Baloo 2";
+  src: url("../assets/fonts/baloo2-latin.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --titres: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
   --bg: #0b1020;
   --bg2: #0e1530;
   --surface: #121a33;
@@ -50,6 +62,12 @@ main, header.entete, footer.pied-serie {
   max-width: 1060px;
   margin: 0 auto;
 }
+
+/* la voix des titres : Baloo 2 sur tout ce qui titre la page — jamais sur le
+   corps du texte ni sur les boutons (leur font: inherit doit rester la pile
+   système, taille partagée par toute la famille) */
+.entete h1, .kicker, .carte h2, .defi,
+.note-parents summary { font-family: var(--titres); }
 
 /* ---------- En-tête ---------- */
 

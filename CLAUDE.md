@@ -7,8 +7,11 @@ voix haute ; l'enfant attrape la Lune et la fait tourner autour de la Terre.
 ## Contraintes (non négociables)
 
 - **Zéro dépendance, zéro build** : HTML + CSS + JS vanilla (modules ES),
-  canvas 2D dessiné à la main. La page s'ouvre avec `python3 -m http.server`
-  et se déploie telle quelle sur GitHub Pages.
+  canvas 2D dessiné à la main. Aucune police tierce à l'exécution : la rondeur
+  des titres de la famille, **Baloo 2**, est auto-hébergée (`assets/fonts/`,
+  licence OFL, `font-display: swap`, variable `--titres`) — les titres
+  seulement, jamais le corps du texte ni les boutons. La page s'ouvre avec
+  `python3 -m http.server` et se déploie telle quelle sur GitHub Pages.
 - **Compat mobiles anciens** : pas d'optional chaining `?.` ni de nullish `??`,
   pas de lookbehind regex, repli `@supports` pour `aspect-ratio`,
   `top/right/bottom/left` plutôt qu'`inset`, `touch-action: none` sur le canvas
@@ -149,6 +152,7 @@ les textes de cet épisode restent libres tant que rien n'est enregistré.
 
 ```
 index.html          la page unique
+assets/fonts/       Baloo 2 auto-hébergée (la voix des titres de la famille)
 css/style.css       palette commune de la série astronomie (fond nuit)
 js/model.js         modèle pur + constantes du récit
 js/vue-orbite.js    vue du ciel (Soleil fixe, orbite, geste-signature)
