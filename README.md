@@ -100,7 +100,7 @@ docs/               les captures d'écran
 
 ## La série
 
-**Petit labo d'astronomie 🌌**
+**Petit labo d'astronomie 🔭**
 
 - [La mécanique des éclipses](https://petit-labo.fr/eclipse-explorer/)
 - [Où va le Soleil la nuit ?](https://petit-labo.fr/ou-va-le-soleil/)

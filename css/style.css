@@ -1,6 +1,18 @@
 /* La feuille de style de l'épisode — palette commune de la série astronomie. */
 
+/* la rondeur des titres de la famille : Baloo 2 auto-hébergée (charte du
+   portail — assets/fonts/, licence OFL) ; le corps du texte reste en pile
+   système, choix assumé de la charte */
+@font-face {
+  font-family: "Baloo 2";
+  src: url("../assets/fonts/baloo2-latin.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --titres: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
   --bg: #0b1020;
   --bg2: #0e1530;
   --surface: #121a33;
@@ -51,22 +63,39 @@ main, header.entete, footer.pied-serie {
   margin: 0 auto;
 }
 
+/* la voix des titres : Baloo 2 sur tout ce qui titre la page — jamais sur le
+   corps du texte ni sur les boutons (leur font: inherit doit rester la pile
+   système, taille partagée par toute la famille) */
+.entete h1, .kicker, .carte h2, .defi,
+.note-parents summary { font-family: var(--titres); }
+
 /* ---------- En-tête ---------- */
 
 .entete { text-align: center; padding: 12px 0 26px; }
 
+/* le kicker porte la fiole de la série (l'étoile dedans) à côté de son texte,
+   comme le portail porte la fiole maître à côté de son nom — règle de la charte */
 .kicker {
-  color: var(--violet);
+  color: var(--sun);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
 }
 
+.kicker-fiole { width: 24px; height: 24px; flex: none; }
+
+/* le titre-question en blanc : l'or reste au kicker, à la fiole et aux
+   accents — deux blocs or empilés feraient ton sur ton */
 .entete h1 {
-  font-size: 2rem;
+  font-size: clamp(2.1rem, 5.5vw, 3.1rem);
+  line-height: 1.1;
   margin: 10px 0 12px;
-  color: var(--sun);
+  color: var(--text);
 }
 
 .tagline {
@@ -75,6 +104,8 @@ main, header.entete, footer.pied-serie {
   margin: 0 auto;
   font-size: 1.05rem;
 }
+
+.tagline strong { color: var(--sun); }
 
 /* ---------- Cartes ---------- */
 
@@ -210,7 +241,7 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
-input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offset: 4px; border-radius: 999px; }
+input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
 .legende-curseur { color: var(--muted); font-size: 0.9rem; text-align: center; }
 
@@ -443,6 +474,9 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
 /* ---------- Le jeu sur mobile : une seule vue, tout tient à l'écran ---------- */
 
 @media (max-width: 879px) {
+  /* en-tête compact : la Lune doit se voir dès le premier écran */
+  .entete h1 { font-size: clamp(1.65rem, 7.5vw, 2.2rem); }
+
   .vues-jeu > .cadre-canvas:last-child { display: none; }
   .carte-jeu { padding: 14px 14px 12px; }
   .consigne-jeu { font-size: 0.88rem; }
@@ -537,7 +571,9 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   text-align: center;
   color: var(--muted);
   font-size: 0.92rem;
-  padding-top: 8px;
+  margin-top: 26px;
+  border-top: 1px solid var(--border);
+  padding-top: 22px;
 }
 
 .pied-serie p { font-weight: 700; margin-bottom: 6px; }
@@ -547,21 +583,32 @@ input[type="range"]:focus-visible { outline: 3px solid var(--rose); outline-offs
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 4px 18px;
+  gap: 8px 22px;
 }
 
-.pied-serie a { color: var(--violet); }
+.pied-serie a { color: var(--sun); }
 
 .pied-serie .footer-serie { font-weight: 400; margin-bottom: 10px; }
 .pied-serie .footer-serie strong { color: var(--text); }
 .footer-episodes { margin: 0 0 16px; padding: 0; }
-.footer-episodes a { text-decoration: underline; }
+/* les liens d'épisodes portent leur médaillon (le soulignement reste sur le
+   titre seul, pas sur la vignette) */
+.footer-episodes a { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.footer-episodes .ep-titre { text-decoration: underline; }
+.ep-medaillon {
+  flex: none; width: 30px; height: 30px; border-radius: 9px;
+  background: #070b17; border: 1px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.ep-medaillon svg { width: 26px; height: 26px; display: block; }
 .footer-menu { margin: 0; }
 .btn-menu-labo {
-  display: inline-block; padding: 10px 20px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 999px;
   border: 1px solid var(--sun-deep); color: var(--sun); text-decoration: none;
-  font-weight: 700; background: var(--surface-2);
+  font-weight: 700; background: linear-gradient(180deg, #4a3a0d, #332807);
 }
+.fiole-labo { width: 22px; height: 22px; flex: none; }
 .btn-menu-labo:focus-visible { outline: 2px solid var(--sun-deep); }
 
 /* ---------- Divers ---------- */
@@ -571,6 +618,11 @@ button, summary {
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* le focus clavier, visible partout (patron de la famille) */
+button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--sun); outline-offset: 2px;
 }
 
 .bouton-scenario:active { border-color: var(--violet); }

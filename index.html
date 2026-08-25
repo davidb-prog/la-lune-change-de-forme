@@ -26,12 +26,21 @@
 <body>
 
   <header class="entete">
-    <p class="kicker">Petit labo d’astronomie</p>
+    <!-- la fiole de la série (l'étoile dedans) à côté du kicker — SVG repris du
+         portail (davidb-prog.github.io), règle de la charte -->
+    <p class="kicker">
+      <svg class="kicker-fiole" viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M43 22 L43 42 L28 68 A9 9 0 0 0 36 81 L64 81 A9 9 0 0 0 72 68 L57 42 L57 22 Z"
+              fill="#0e1530" stroke="#ffcf5c" stroke-width="6" stroke-linejoin="round"/>
+        <path d="M50 51 L52 57 L58 59 L52 61 L50 67 L48 61 L42 59 L48 57 Z" fill="#ffcf5c"/>
+        <rect x="38" y="15" width="24" height="7" rx="3.5" fill="#ffcf5c"/>
+      </svg>
+      <span>Petit labo d’astronomie</span></p>
     <h1>Pourquoi la Lune change de forme ?</h1>
     <p class="tagline">
       Certains soirs elle est toute ronde, d’autres soirs c’est un petit sourire…
-      et parfois elle disparaît ! Attrape la Lune, fais-la tourner autour de la
-      Terre, et regarde ce qui se passe dans le ciel.
+      et parfois elle disparaît ! <strong>Attrape la Lune, fais-la tourner autour
+      de la Terre</strong>, et regarde ce qui se passe dans le ciel.
     </p>
   </header>
 
@@ -188,12 +197,56 @@
   <!-- pied de page harmonisé de la famille : les autres épisodes en liens, puis
        le bouton de retour au menu petit-labo.fr -->
   <footer class="pied-serie">
-    <p class="footer-serie">« Pourquoi la Lune change de forme ? » — un épisode du <strong>Petit labo d’astronomie</strong> 🌌</p>
+    <p class="footer-serie">« Pourquoi la Lune change de forme ? » — un épisode du <strong>Petit labo d’astronomie</strong> 🔭</p>
+    <!-- chaque épisode porte son médaillon SVG (repris de sa carte sur le portail),
+         et le bouton du menu porte la fiole maître au « ? » (version petites
+         tailles : éclats retirés, traits épaissis — règle de la charte) -->
     <ul class="footer-episodes">
-      <li><a href="https://petit-labo.fr/ou-va-le-soleil/">🌅 Où va le Soleil la nuit ?</a></li>
-      <li><a href="https://petit-labo.fr/la-terre-tourne/">🌍 Quelle heure est-il là-bas ?</a></li>
+      <li><a href="https://petit-labo.fr/ou-va-le-soleil/">
+        <span class="ep-medaillon" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <defs><clipPath id="med-soleil"><rect x="0" y="0" width="100" height="64"/></clipPath></defs>
+            <g clip-path="url(#med-soleil)">
+              <circle cx="50" cy="66" r="17" fill="#ffcf5c"/>
+              <path d="M50 39 L50 31" stroke="#ffcf5c" stroke-width="5" stroke-linecap="round"/>
+              <path d="M30 46 L24.5 40.5" stroke="#ffcf5c" stroke-width="5" stroke-linecap="round"/>
+              <path d="M70 46 L75.5 40.5" stroke="#ffcf5c" stroke-width="5" stroke-linecap="round"/>
+            </g>
+            <path d="M16 66 L84 66" stroke="#46c2a5" stroke-width="4.5" stroke-linecap="round"/>
+            <circle cx="24" cy="25" r="2" fill="#9aa5c3"/>
+            <circle cx="79" cy="21" r="2.4" fill="#e9edf8"/>
+          </svg>
+        </span>
+        <span class="ep-titre">Où va le Soleil la nuit ?</span></a></li>
+      <li><a href="https://petit-labo.fr/la-terre-tourne/">
+        <span class="ep-medaillon" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <circle cx="36" cy="44" r="16" fill="#ffe9b0"/>
+            <circle cx="36" cy="44" r="16" fill="none" stroke="#ffcf5c" stroke-width="4.5"/>
+            <path d="M36 44 L36 33.5" stroke="#070b17" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M36 44 L43.5 47" stroke="#070b17" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="64" cy="62" r="16" fill="#0e1530"/>
+            <circle cx="64" cy="62" r="16" fill="none" stroke="#a98bff" stroke-width="4.5"/>
+            <path d="M64 62 L64 51.5" stroke="#a98bff" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M64 62 L56.5 65" stroke="#a98bff" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="74" cy="28" r="2" fill="#e9edf8"/>
+            <circle cx="22" cy="76" r="1.7" fill="#ff6b9d"/>
+          </svg>
+        </span>
+        <span class="ep-titre">Quelle heure est-il là-bas ?</span></a></li>
     </ul>
-    <p class="footer-menu"><a class="btn-menu-labo" href="https://petit-labo.fr/">🧪 Tous les épisodes du Petit labo</a></p>
+    <p class="footer-menu"><a class="btn-menu-labo" href="https://petit-labo.fr/">
+      <svg class="fiole-labo" viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M44 40 L44 54 L30 72 A8 8 0 0 0 37 84 L63 84 A8 8 0 0 0 70 72 L56 54 L56 40 Z"
+              fill="#0e1530" stroke="#ffcf5c" stroke-width="6.5" stroke-linejoin="round"/>
+        <rect x="39.5" y="34" width="21" height="6.5" rx="3.25" fill="#ffcf5c"/>
+        <g transform="rotate(10 53 17)">
+          <path d="M45.5 13 A7.5 7.5 0 1 1 53 20.5 L53 23"
+                fill="none" stroke="#ffcf5c" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="53" cy="29.5" r="3.6" fill="#ffcf5c"/>
+        </g>
+      </svg>
+      Tous les épisodes du Petit labo</a></p>
   </footer>
 
   <script type="module" src="js/main.js"></script>

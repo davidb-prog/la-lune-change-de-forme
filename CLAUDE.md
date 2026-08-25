@@ -7,8 +7,11 @@ voix haute ; l'enfant attrape la Lune et la fait tourner autour de la Terre.
 ## Contraintes (non négociables)
 
 - **Zéro dépendance, zéro build** : HTML + CSS + JS vanilla (modules ES),
-  canvas 2D dessiné à la main. La page s'ouvre avec `python3 -m http.server`
-  et se déploie telle quelle sur GitHub Pages.
+  canvas 2D dessiné à la main. Aucune police tierce à l'exécution : la rondeur
+  des titres de la famille, **Baloo 2**, est auto-hébergée (`assets/fonts/`,
+  licence OFL, `font-display: swap`, variable `--titres`) — les titres
+  seulement, jamais le corps du texte ni les boutons. La page s'ouvre avec
+  `python3 -m http.server` et se déploie telle quelle sur GitHub Pages.
 - **Compat mobiles anciens** : pas d'optional chaining `?.` ni de nullish `??`,
   pas de lookbehind regex, repli `@supports` pour `aspect-ratio`,
   `top/right/bottom/left` plutôt qu'`inset`, `touch-action: none` sur le canvas
@@ -82,9 +85,14 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   pas un défi pendant la lecture auto** (garde dans `surveillerDefi`) ;
   `prefers-reduced-motion` la désactive. Le bouton 🔇/🔊 partage le même
   patron à libellés empilés (« 🔊 avec la voix » / « 🔇 sans la voix »).
-- **Pied de page harmonisé de la famille** : les autres épisodes en liens
-  cliquables (sans « La mécanique des éclipses ») + bouton « 🧪 Tous les
-  épisodes » vers <https://petit-labo.fr/>.
+- **Pied de page harmonisé de la famille** : « un épisode du Petit labo
+  d'astronomie » suivi de l'emoji de série 🔭, les autres épisodes en liens
+  cliquables (sans « La mécanique des éclipses ») portant chacun le
+  **médaillon SVG de sa carte du portail** (tuile ~30 px, fond `#070b17`,
+  soulignement sur le titre seul), et le bouton « Tous les épisodes du Petit
+  labo » vers <https://petit-labo.fr/>, qui porte la **fiole maître au « ? »**
+  en SVG inline (version petites tailles de la charte) — plus d'emoji devant
+  ces liens ni d'éprouvette 🧪.
 - **Les scénarios vont au moment choisi en douceur, toujours vers l'avant**
   (le vrai sens de l'orbite) ; en `prefers-reduced-motion`, saut sec. Sur
   mobile, taper une vignette **remonte doucement la page à la vue de
@@ -149,6 +157,7 @@ les textes de cet épisode restent libres tant que rien n'est enregistré.
 
 ```
 index.html          la page unique
+assets/fonts/       Baloo 2 auto-hébergée (la voix des titres de la famille)
 css/style.css       palette commune de la série astronomie (fond nuit)
 js/model.js         modèle pur + constantes du récit
 js/vue-orbite.js    vue du ciel (Soleil fixe, orbite, geste-signature)
