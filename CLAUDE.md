@@ -229,8 +229,9 @@ lumineux à la pleine lune, sombre à la nouvelle). Servir avant :
 
 ## La série
 
-Pieds de page croisés avec : `eclipse-explorer`, `ou-va-le-soleil`,
-`la-terre-tourne`. La famille est en ligne sous son domaine **petit-labo.fr**
+Pieds de page croisés avec : `ou-va-le-soleil`, `la-terre-tourne`.
+`eclipse-explorer` n'est encore lié nulle part — ni pied de page, ni note aux
+parents, ni README : l'épisode n'est pas prêt. La famille est en ligne sous son domaine **petit-labo.fr**
 (`petit-labo.fr/<depot>/`) : tous les liens croisés l'utilisent, jamais
 `github.io`. Les épisodes ne sont **pas numérotés** (ni kicker, ni
 pieds de page) : l'ordre de publication vit dans le registre du skill, pas dans

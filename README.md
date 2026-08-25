@@ -74,8 +74,7 @@ Les tests verrouillent les « vérités à préserver » de l'épisode :
   moyenne.
 - **L'orbite est ronde et plate** — la vraie est légèrement elliptique
   (e ≈ 0,055) et inclinée d'environ 5° sur l'écliptique ; c'est cette
-  inclinaison qui évite une éclipse à chaque nouvelle ou pleine lune (voir
-  [La mécanique des éclipses](https://petit-labo.fr/eclipse-explorer/)).
+  inclinaison qui évite une éclipse à chaque nouvelle ou pleine lune.
 - **Tailles et distances ne sont pas à l'échelle** (la Lune est à ~384 000 km).
 - **Le hublot montre le ciel de l'hémisphère nord** : la Lune qui grossit y est
   éclairée à droite, celle qui rapetisse à gauche (l'inverse dans l'hémisphère
@@ -103,7 +102,6 @@ docs/               les captures d'écran
 
 **Petit labo d'astronomie 🔭**
 
-- [La mécanique des éclipses](https://petit-labo.fr/eclipse-explorer/)
 - [Où va le Soleil la nuit ?](https://petit-labo.fr/ou-va-le-soleil/)
 - [Quelle heure est-il là-bas ?](https://petit-labo.fr/la-terre-tourne/)
 - **Pourquoi la Lune change de forme ?** (cet épisode)
