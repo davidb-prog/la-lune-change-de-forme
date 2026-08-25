@@ -154,13 +154,14 @@ export var SCENARIOS = [
     jour: 0,
     titre: 'La Lune a disparu !',
     sousTitre: 'nouvelle lune',
-    ciel: 'Ce soir, pas de Lune dans le ciel ! On a beau chercher : elle se cache. ' +
-      'On appelle ça la nouvelle lune.',
-    espace: 'Elle est passée entre la Terre et le Soleil. Sa moitié éclairée regarde le Soleil… ' +
-      'et nous, on ne voit que sa moitié toute sombre.',
-    oral: 'Regarde : ce soir, pas de Lune dans le ciel ! Elle est passée entre la Terre et le Soleil. ' +
+    ciel: 'Ce soir, pas de Lune dans le ciel ! On a beau chercher : rien. ' +
+      'Où est-elle passée ?',
+    espace: 'Elle est là, juste entre la Terre et le Soleil ! Sa moitié éclairée regarde le Soleil… ' +
+      'et nous, on ne voit que sa moitié toute sombre. C’est la nouvelle lune.',
+    oral: 'Ce soir, pas de Lune dans le ciel ! On a beau chercher : rien. Où est-elle passée ? ' +
+      'Regarde depuis l’espace : elle est là, juste entre la Terre et le Soleil ! ' +
       'Sa moitié éclairée regarde le Soleil… et nous, on ne voit que sa moitié toute sombre. ' +
-      'On appelle ça la nouvelle lune.'
+      'C’est la nouvelle lune.'
   },
   {
     id: 'croissant',
@@ -168,12 +169,14 @@ export var SCENARIOS = [
     jour: 2.5,
     titre: 'Un petit sourire',
     sousTitre: 'premier croissant',
-    ciel: 'Un fin croissant, comme un sourire dans le ciel ! Chaque soir, il va grossir un peu.',
-    espace: 'La Lune a un peu avancé sur son chemin : on aperçoit un tout petit bout ' +
-      'de sa moitié éclairée.',
-    oral: 'Deux ou trois soirs après la nouvelle lune, la Lune a un peu avancé sur son chemin. ' +
-      'On aperçoit un tout petit bout de sa moitié éclairée : un fin croissant, comme un sourire dans le ciel ! ' +
-      'Chaque soir, il va grossir un peu.'
+    ciel: 'Ce soir, un tout fin croissant, comme un sourire dans le ciel ! ' +
+      'Et chaque soir, il grossit un peu.',
+    espace: 'C’est que la Lune avance sur son chemin autour de la Terre : on commence ' +
+      'tout juste à voir un petit bout de sa moitié éclairée. Plus elle avance, plus on en voit !',
+    oral: 'Ce soir, un tout fin croissant, comme un sourire dans le ciel ! Et chaque soir, il grossit un peu. ' +
+      'Regarde depuis l’espace : la Lune avance sur son chemin autour de la Terre, ' +
+      'et on commence tout juste à voir un petit bout de sa moitié éclairée. ' +
+      'Plus elle avance, plus on en voit !'
   },
   {
     id: 'pleine',
@@ -182,11 +185,12 @@ export var SCENARIOS = [
     titre: 'Toute ronde !',
     sousTitre: 'pleine lune',
     ciel: 'Un grand rond brillant : la Lune est toute ronde ! C’est la pleine lune.',
-    espace: 'Cette nuit, la Lune est de l’autre côté de la Terre, juste en face du Soleil : ' +
-      'on voit toute sa moitié éclairée d’un coup.',
-    oral: 'Deux semaines après la nouvelle lune, la Lune est arrivée de l’autre côté de la Terre, juste en face du Soleil. ' +
-      'On voit toute sa moitié éclairée d’un coup : un grand rond brillant ! ' +
-      'C’est la pleine lune.'
+    espace: 'Cette nuit, elle est arrivée de l’autre côté de la Terre, juste en face du Soleil. ' +
+      'Sa moitié éclairée nous regarde en entier : voilà pourquoi on la voit toute ronde !',
+    oral: 'Un grand rond brillant : la Lune est toute ronde ! C’est la pleine lune. ' +
+      'Regarde depuis l’espace : cette nuit, elle est arrivée de l’autre côté de la Terre, ' +
+      'juste en face du Soleil. Sa moitié éclairée nous regarde en entier : ' +
+      'voilà pourquoi on la voit toute ronde !'
   },
   {
     id: 'quartier',
@@ -194,14 +198,14 @@ export var SCENARIOS = [
     jour: 22.125,
     titre: 'Coupée en deux',
     sousTitre: 'dernier quartier',
-    ciel: 'On dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
+    ciel: 'On dirait que la Lune est coupée en deux ! Où est passé l’autre morceau ?',
+    espace: 'Il est toujours là… mais tout sombre ! La Lune finit son tour de la Terre : ' +
+      'on voit sa moitié éclairée de côté. Chaque soir, elle en montre un peu moins, ' +
       'jusqu’à disparaître… et tout recommencera.',
-    espace: 'La Lune est sur le chemin du retour : on ne voit plus que la moitié ' +
-      'de sa moitié éclairée.',
-    oral: 'Trois semaines après la nouvelle lune, la Lune est sur le chemin du retour. ' +
-      'On ne voit plus que la moitié de sa moitié éclairée : ' +
-      'on dirait qu’elle est coupée en deux ! Chaque soir, elle va rapetisser encore, ' +
-      'jusqu’à disparaître… et tout recommencera.'
+    oral: 'On dirait que la Lune est coupée en deux ! Où est passé l’autre morceau ? ' +
+      'Regarde depuis l’espace : il est toujours là… mais tout sombre ! ' +
+      'La Lune finit son tour de la Terre : on voit sa moitié éclairée de côté. ' +
+      'Chaque soir, elle en montre un peu moins, jusqu’à disparaître… et tout recommencera.'
   }
 ];
 

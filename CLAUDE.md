@@ -104,7 +104,7 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   en dégradés colorés (croissant rose, quartier bleu, pleine lune dorée,
   nouvelle lune violette — classes `scn-<id>`), et l'histoire écrite en
   **deux lignes à puces** — « 🌙 dans le ciel » (champs `ciel` du modèle) puis
-  « 🛰️ depuis l'espace » (`espace`) : le même instant, deux regards
+  « 🚀 depuis l'espace » (`espace`, fusée de la famille) : le même instant, deux regards
   (`montrerHistoire` dans main.js). Le bouton 🔇/🔊 a un **jumeau posé sur le
   jeu** (`bouton-son-jeu`, même état, même clé ; l'activer depuis le jeu relit
   la consigne du défi en cours).

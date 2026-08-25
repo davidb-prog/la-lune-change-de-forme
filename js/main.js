@@ -339,7 +339,7 @@ function montrerHistoire(s) {
   histoireScenario.hidden = false;
   while (histoireScenario.firstChild) histoireScenario.removeChild(histoireScenario.firstChild);
   [{ classe: 'puce-ciel', puce: '🌙 dans le ciel', texte: s.ciel },
-   { classe: 'puce-espace', puce: '🛰️ depuis l’espace', texte: s.espace }].forEach(function (l) {
+   { classe: 'puce-espace', puce: '🚀 depuis l’espace', texte: s.espace }].forEach(function (l) {
     var ligne = document.createElement('div');
     ligne.className = 'ligne-histoire';
     var puce = document.createElement('span');
@@ -523,9 +523,11 @@ function lireExplication() {
   }
   lectureExplication = true;
   boutonEcouter.textContent = '⏹ Arrêter';
+  boutonEcouter.setAttribute('aria-pressed', 'true');
   narrateur.parler(morceaux, function () {
     lectureExplication = false;
     boutonEcouter.textContent = '🔊 Écouter l’histoire';
+    boutonEcouter.setAttribute('aria-pressed', 'false');
   });
 }
 
