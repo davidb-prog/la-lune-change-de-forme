@@ -608,7 +608,25 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
    famille (la note aux parents de la-terre-tourne) */
 .note-parents .indice-note { color: var(--muted); font-weight: 400; font-size: 0.78em; }
 
-.note-parents ul { margin: 12px 0 4px 20px; font-size: 0.94rem; }
+/* les deux temps de la note (mode d'emploi, puis simplifications) : le patron
+   .parents h3 de la famille — teal, la couleur de ce qu'on vit depuis chez toi */
+.note-parents h3 {
+  margin: 14px 0 2px;
+  font-family: var(--titres);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.note-parents ul { margin: 8px 0 12px 20px; font-size: 0.94rem; }
+
+/* le mot de la fin, hors listes : ce qu'un parent retient s'il ne lit qu'une ligne */
+.note-parents-mot {
+  margin: 2px 0 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 0.94rem;
+}
 
 .note-parents li { margin-bottom: 8px; }
 

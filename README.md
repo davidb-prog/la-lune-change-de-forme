@@ -38,8 +38,9 @@ L'idée centrale, celle que l'enfant doit retenir :
   c'est le médaillon flottant qui montre la Lune du soir.
 - **Sur mobile**, un médaillon flottant montre la Lune du soir dès que le
   hublot sort de l'écran (scénarios, curseur, jeu…) — un tap y ramène.
-- **La note aux parents**, repliable, qui documente honnêtement chaque
-  simplification.
+- **La note aux parents**, repliable, en deux temps : le mode d’emploi
+  (« Comment on s’en sert ») puis chaque simplification documentée
+  honnêtement (« Ce que le site simplifie »).
 
 ## Lancer en local
 
