@@ -6,7 +6,7 @@
 // Contrairement à la-terre-tourne (textes générés, corpus par énumération),
 // tout ce que cet épisode peut dire est écrit main et fini : les 4 histoires
 // des scénarios, les paragraphes de la boîte d'explication, et les consignes
-// et bravos des 4 défis du jeu. Les ids sont EXACTEMENT ceux que js/main.js
+// et bravos des 6 défis du jeu. Les ids sont EXACTEMENT ceux que js/main.js
 // donne au conteur.
 
 import { readFileSync } from 'node:fs';

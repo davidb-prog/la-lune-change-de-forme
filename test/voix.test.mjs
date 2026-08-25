@@ -42,8 +42,8 @@ const blocs = corpus();
     const g = b.id.split('-')[0];
     groupes[g] = (groupes[g] || 0) + 1;
   }
-  check('l’ossature y est : 4 scénarios, 5 paragraphes d’histoire, 8 blocs de jeu',
-    groupes.scn === 4 && groupes.histoire === 5 && groupes.defi === 8,
+  check('l’ossature y est : 4 scénarios, 5 paragraphes d’histoire, 12 blocs de jeu',
+    groupes.scn === 4 && groupes.histoire === 5 && groupes.defi === 12,
     JSON.stringify(groupes));
 }
 {

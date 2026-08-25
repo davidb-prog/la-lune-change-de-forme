@@ -210,13 +210,49 @@ export var SCENARIOS = [
 ];
 
 /* Le jeu « Attrape la bonne Lune » : l'enfant doit amener la Lune sur la
- * phase demandée en la faisant tourner sur son orbite. */
+ * phase demandée en la faisant tourner sur son orbite. Toutes les formes qui
+ * ont un nom d'enfant y passent — seules les gibbeuses restent dehors (mot
+ * savant, réservé à la note aux parents). La nouvelle lune se demande avec
+ * ses propres mots : « fabriquer » une Lune invisible ne parlerait pas. */
 export var DEFIS = [
   { cible: 'croissant-1', emoji: '🌒', nom: 'un premier croissant' },
   { cible: 'quartier-1', emoji: '🌓', nom: 'un premier quartier' },
   { cible: 'pleine', emoji: '🌕', nom: 'une pleine lune' },
-  { cible: 'croissant-2', emoji: '🌘', nom: 'un dernier croissant' }
+  { cible: 'quartier-2', emoji: '🌗', nom: 'un dernier quartier' },
+  { cible: 'croissant-2', emoji: '🌘', nom: 'un dernier croissant' },
+  {
+    cible: 'nouvelle', emoji: '🌑', nom: 'une nouvelle lune',
+    consigne: 'Fais disparaître la Lune !',
+    bravo: 'Bravo ! Tu as fait disparaître la Lune : c’est la nouvelle lune !'
+  }
 ];
+
+/* Pioche des défis en « sac sans remise » : on mélange toutes les formes puis
+ * on les sort une à une avant de remélanger — chaque forme apparaît donc une
+ * fois par tournée, sans jamais sortir deux fois de suite, même à cheval sur
+ * deux sacs. `alea` s'injecte pour rendre les tests déterministes. */
+export function creerPiocheDefis(alea) {
+  var tirage = alea || Math.random;
+  var sac = [];
+  var dernier = null;
+  return function () {
+    if (sac.length === 0) {
+      sac = DEFIS.slice();
+      for (var i = sac.length - 1; i > 0; i--) {
+        var j = Math.floor(tirage() * (i + 1));
+        var t = sac[i]; sac[i] = sac[j]; sac[j] = t;
+      }
+      /* Le nouveau sac ne recommence pas par la forme qui vient de sortir :
+       * elle file au fond (elle ressortira en dernier). */
+      if (dernier !== null && sac[sac.length - 1].cible === dernier.cible) {
+        sac[sac.length - 1] = sac[0];
+        sac[0] = dernier;
+      }
+    }
+    dernier = sac.pop();
+    return dernier;
+  };
+}
 
 export function defiReussi(cible, jour) {
   return phaseInfo(jour).cle === cible;
@@ -245,13 +281,15 @@ export function defiEncoreTenu(cible, jour) {
   return false;
 }
 
-/* La consigne et le bravo d'un défi — pour l'écran et pour le conteur. */
+/* La consigne et le bravo d'un défi — pour l'écran et pour le conteur. Un
+ * défi peut apporter ses propres mots (la nouvelle lune) ; sinon, le patron
+ * « Fabrique… » de la famille. */
 export function consigneDefi(defi) {
-  return 'Fabrique ' + defi.nom + ' !';
+  return defi.consigne || ('Fabrique ' + defi.nom + ' !');
 }
 
 export function bravoDefi(defi) {
-  return 'Bravo ! Tu as fabriqué ' + defi.nom + ' !';
+  return defi.bravo || ('Bravo ! Tu as fabriqué ' + defi.nom + ' !');
 }
 
 /* ------------------------------------------------- la voix du conteur

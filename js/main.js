@@ -6,7 +6,7 @@
  */
 import {
   CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, consigneDefi, bravoDefi, DEFI_ATTENTE_MS,
+  SCENARIOS, creerPiocheDefis, defiReussi, defiEncoreTenu, consigneDefi, bravoDefi, DEFI_ATTENTE_MS,
   LECTURE_SECONDES_PAR_CYCLE, texteOral
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
@@ -688,12 +688,12 @@ if (synthesePossible) {
 /* Le jeu « Attrape la bonne Lune »                                     */
 /* ------------------------------------------------------------------ */
 
+/* Le sac survit au « Ranger le jeu » : sur une session entière, l'enfant voit
+ * toutes les formes avant qu'une seule ne revienne. */
+var piocherDefi = creerPiocheDefis();
+
 function nouveauDefi() {
-  var candidats = [];
-  for (var i = 0; i < DEFIS.length; i++) {
-    if (!etat.defi || DEFIS[i].cible !== etat.defi.cible) candidats.push(DEFIS[i]);
-  }
-  etat.defi = candidats[Math.floor(Math.random() * candidats.length)];
+  etat.defi = piocherDefi();
   etat.defiGagne = false;
   etat.bravoVisible = false;
   etat.defiEntreMs = null;

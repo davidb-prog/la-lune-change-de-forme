@@ -159,9 +159,9 @@ synthèse. La référence de la famille est le skill `petit-labo`
 (references/voix-enregistree.md) et son compagnon `generer-voix-petit-labo` ;
 l'outillage est porté de `la-terre-tourne`. Règles dures :
 
-- **Le corpus est fini et écrit main** : 17 blocs — 4 scénarios (`scn-<id>`,
+- **Le corpus est fini et écrit main** : 21 blocs — 4 scénarios (`scn-<id>`,
   champ `oral` du modèle), 5 paragraphes d'histoire (`histoire-N`, lus dans
-  `index.html`), 8 blocs de jeu (`defi-<cible>-consigne`/`-bravo`). Les ids
+  `index.html`), 12 blocs de jeu (`defi-<cible>-consigne`/`-bravo`). Les ids
   sont EXACTEMENT ceux que `js/main.js` donne au conteur ; `corpus()` vit
   dans `tools/voix-lib.mjs`, la seule partie propre à l'épisode.
 - **Le site reste 100 % statique** : génération HORS site par
@@ -207,7 +207,7 @@ js/model.js         modèle pur + constantes du récit + texteOral
 js/vue-orbite.js    vue du ciel (Soleil fixe, orbite, geste-signature)
 js/vue-hublot.js    la Lune vue du jardin (dessinerDisqueLune)
 js/main.js          câblage : boucle rAF, curseur, scénarios, conteur, jeu
-tools/voix-lib.mjs  corpus() : les 17 blocs parlés de l'épisode
+tools/voix-lib.mjs  corpus() : les 21 blocs parlés de l'épisode
 tools/build-voix.mjs  génération ElevenLabs (locale) + page d'écoute
 tools/controle-voix.mjs  contrôle « sans oreilles » (ffmpeg + whisper)
 test/model.test.mjs tests du modèle (Node)
