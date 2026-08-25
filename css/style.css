@@ -596,7 +596,17 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   color: var(--sun);
   font-weight: 700;
   font-size: 1rem;
+  /* le chevron de la famille remplace le marqueur du navigateur */
+  list-style: none;
 }
+
+.note-parents summary::-webkit-details-marker { display: none; }
+.note-parents summary::before { content: '▸ '; }
+.note-parents[open] summary::before { content: '▾ '; }
+
+/* le complément du titre, en gris et sans graisse : le patron .hint de la
+   famille (la note aux parents de la-terre-tourne) */
+.note-parents .indice-note { color: var(--muted); font-weight: 400; font-size: 0.78em; }
 
 .note-parents ul { margin: 12px 0 4px 20px; font-size: 0.94rem; }
 
