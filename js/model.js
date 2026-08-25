@@ -291,3 +291,31 @@ export function consigneDefi(defi) {
 export function bravoDefi(defi) {
   return defi.bravo || ('Bravo ! Tu as fabriqué ' + defi.nom + ' !');
 }
+
+/* ------------------------------------------------- la voix du conteur
+ * Les textes dits à voix haute, purs et partagés entre le site (js/main.js),
+ * l'outil de génération ElevenLabs (tools/voix-lib.mjs) et les tests — la
+ * voix enregistrée ne doit jamais dire autre chose que ce que le site
+ * affiche. Fonction de la famille (portée de la-terre-tourne). */
+
+/* les émojis sont imprononçables */
+export var EMOJI_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+
+/* Texte oral : émojis retirés, « 6 h 30 » → « 6 heures 30 » (l'heure écrite
+ * se lit mal par certaines voix), guillemets français retirés et tirets
+ * cadratins changés en virgules (la synthèse trébuche dessus), espaces
+ * recollés devant la ponctuation — un « . » isolé se fait lire « point » —
+ * et le point orphelin d'un émoji retiré après « ! » disparaît. */
+export function texteOral(t) {
+  return t.replace(EMOJI_RE, '')
+    .replace(/[«»]/g, ' ')
+    .replace(/\s+—\s+/g, ', ')
+    .replace(/(\d+)\s*h\s*00\b/g, '$1 h')
+    .replace(/(\d+)\s*h\s+(\d+)/g, '$1 heures $2')
+    .replace(/(\d+)\s*h\b/g, '$1 heures')
+    .replace(/\b1 heures\b/g, '1 heure') /* singulier — sinon la voix accroche */
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([.,…])/g, '$1')
+    .replace(/([!?…])\s*\./g, '$1')
+    .trim();
+}
