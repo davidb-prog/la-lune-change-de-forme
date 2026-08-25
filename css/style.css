@@ -414,19 +414,19 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
 /* ---------- Jeu ---------- */
 
+/* le patron .game-btn de la famille (ou-va-le-soleil) : dégradé teal sombre,
+   la couleur du jeu — le rose reste à la Lune attrapable et aux accents */
 .bouton-jeu {
-  background: var(--rose);
-  color: #240a14;
+  background: linear-gradient(180deg, #14434a, #0d2f35);
+  color: #8fe0cb;
   font-weight: 700;
-  border: none;
+  border: 1px solid var(--teal);
   border-radius: 999px;
-  padding: 9px 20px;
+  padding: 8px 18px;
   font-size: 1rem;
   cursor: pointer;
   font-family: inherit;
 }
-
-.bouton-jeu:hover { background: #ff87b0; }
 
 .consigne-jeu { color: var(--muted); }
 
