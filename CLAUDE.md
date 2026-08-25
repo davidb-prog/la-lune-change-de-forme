@@ -150,22 +150,68 @@ textes `oral` sans émoji avec espaces recollées avant la ponctuation,
 `pagehide` → `cancel()`. Le réglage 🔇/🔊 se retient sous la **clé de
 famille** `petit-labo-son` (même origine petit-labo.fr pour tous les
 épisodes ; l'ancienne clé `petit-labo-lune-son` est lue en secours). Sans
-synthèse, les boutons sonores se cachent et le site reste complet. Prochaine
-étape sonore : la **voix enregistrée** (ElevenLabs), à porter depuis
-`la-terre-tourne` avec les skills `petit-labo` et `generer-voix-petit-labo` —
-les textes de cet épisode restent libres tant que rien n'est enregistré.
+synthèse, les boutons sonores se cachent et le site reste complet.
+
+## La voix enregistrée (ElevenLabs)
+
+Le conteur peut jouer des **mp3 commités** dans `assets/audio/` au lieu de la
+synthèse. La référence de la famille est le skill `petit-labo`
+(references/voix-enregistree.md) et son compagnon `generer-voix-petit-labo` ;
+l'outillage est porté de `la-terre-tourne`. Règles dures :
+
+- **Le corpus est fini et écrit main** : 17 blocs — 4 scénarios (`scn-<id>`,
+  champ `oral` du modèle), 5 paragraphes d'histoire (`histoire-N`, lus dans
+  `index.html`), 8 blocs de jeu (`defi-<cible>-consigne`/`-bravo`). Les ids
+  sont EXACTEMENT ceux que `js/main.js` donne au conteur ; `corpus()` vit
+  dans `tools/voix-lib.mjs`, la seule partie propre à l'épisode.
+- **Le site reste 100 % statique** : génération HORS site par
+  `tools/build-voix.mjs` (Node ≥ 18, zéro dépendance, `ELEVENLABS_API_KEY` +
+  `ELEVENLABS_VOICE_ID` en variables d'environnement — jamais commitées,
+  jamais côté site). Modèle `eleven_multilingual_v2`, sortie 64 kb/s.
+- **La clé API vit sur la machine de David**, JAMAIS dans un cloud
+  environment (`api.elevenlabs.io` y est bloqué par le réseau). Un seul
+  rangement : le fichier gitignoré `.cle-elevenlabs` (chmod 600) à la racine
+  du dépôt — jamais collée dans une conversation. La génération se fait en
+  local ; depuis le cloud on prépare corpus et outillage, puis on passe la
+  main.
+- **La voix enregistrée ne ment jamais** : le manifeste
+  (`assets/audio/manifest.json`) stocke le texte oral exact de chaque bloc,
+  `audioSrc` (main.js) ne joue un mp3 que si son texte correspond ENCORE, et
+  `node test/voix.test.mjs` échoue si un texte a changé sans régénération.
+  Corollaire : **tout changement des textes parlés (`oral` des scénarios,
+  `consigneDefi`/`bravoDefi`, paragraphes d'`index.html`) invalide des
+  blocs** — re-passer par `--dry-run` et régénérer avant de committer.
+- **Une histoire = une voix** : un bloc manquant fait passer tout le récit en
+  synthèse (règle d'oreille, dans `lire` de main.js) — ne pas « optimiser »
+  en mélangeant.
+- **Figer les textes avant d'enregistrer**, valider à l'écoute
+  (`tools/ecoute.html`, gitignoré, généré par build-voix), puis UN seul
+  commit d'`assets/audio/` (mp3 + manifeste) — l'audio commité ne se
+  delta-compresse pas, chaque régénération commitée est un blob mort à vie.
+- **La revue ne se fait pas à l'oreille un par un** :
+  `node tools/controle-voix.mjs` (local aussi — prérequis ffmpeg et
+  openai-whisper, repli `--sans-stt`) passe chaque mp3 aux filets mécaniques
+  puis le transcrit et compare ; il écrit `tools/controle.html` (gitignoré)
+  avec seulement les suspects. Un clip signalé n'est pas forcément raté —
+  l'oreille reste juge en dernier ressort. Re-tirages : `--only <id> --calme`,
+  et diagnostic AVANT la série (voir le skill `generer-voix-petit-labo`).
 
 ## Structure
 
 ```
 index.html          la page unique
 assets/fonts/       Baloo 2 auto-hébergée (la voix des titres de la famille)
+assets/audio/       la voix enregistrée du conteur (mp3 + manifest.json)
 css/style.css       palette commune de la série astronomie (fond nuit)
-js/model.js         modèle pur + constantes du récit
+js/model.js         modèle pur + constantes du récit + texteOral
 js/vue-orbite.js    vue du ciel (Soleil fixe, orbite, geste-signature)
 js/vue-hublot.js    la Lune vue du jardin (dessinerDisqueLune)
 js/main.js          câblage : boucle rAF, curseur, scénarios, conteur, jeu
+tools/voix-lib.mjs  corpus() : les 17 blocs parlés de l'épisode
+tools/build-voix.mjs  génération ElevenLabs (locale) + page d'écoute
+tools/controle-voix.mjs  contrôle « sans oreilles » (ffmpeg + whisper)
 test/model.test.mjs tests du modèle (Node)
+test/voix.test.mjs  tests de la voix (corpus, couverture, manifeste)
 docs/               captures d'écran du README
 ```
 
