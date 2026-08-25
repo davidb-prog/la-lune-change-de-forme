@@ -9,7 +9,7 @@ import {
   jourNormalise, angleOrbite, positionLune, directionEclairee,
   fractionEclairee, luneCroissante, coteEclaire, formeLune,
   ORDRE_PHASES, phaseInfo, phraseDuSoir,
-  SCENARIOS, DEFIS, defiReussi, defiEncoreTenu, DEFI_SORTIE_JOURS,
+  SCENARIOS, DEFIS, creerPiocheDefis, defiReussi, defiEncoreTenu, DEFI_SORTIE_JOURS,
   JOUR_DEPART, consigneDefi, bravoDefi, LECTURE_SECONDES_PAR_CYCLE,
   DEFI_ATTENTE_MS
 } from '../js/model.js';
@@ -239,14 +239,64 @@ test('le bravo ne clignote pas au bord de la fenêtre : l’hystérésis de sort
   assert.ok(!defiEncoreTenu('quartier-1', 20), 'tenu bien trop loin du premier quartier');
 });
 
-test('la consigne et le bravo du défi nomment la forme, sans émoji', function () {
+test('la consigne et le bravo du défi nomment la forme (ou la Lune), sans émoji', function () {
   DEFIS.forEach(function (d) {
     var consigne = consigneDefi(d);
     var bravo = bravoDefi(d);
-    assert.ok(consigne.indexOf(d.nom) !== -1, 'consigne muette sur : ' + d.nom);
-    assert.ok(bravo.indexOf(d.nom) !== -1, 'bravo muet sur : ' + d.nom);
+    /* Un défi à mots propres (la nouvelle lune) parle de « la Lune » ;
+     * les autres suivent le patron et nomment la forme. */
+    function nomme(texte) {
+      return texte.indexOf(d.nom) !== -1 || texte.indexOf('la Lune') !== -1;
+    }
+    assert.ok(nomme(consigne), 'consigne muette sur : ' + d.nom);
+    assert.ok(nomme(bravo), 'bravo muet sur : ' + d.nom);
+    assert.ok(/!$/.test(consigne), 'la consigne ne s’exclame pas : ' + consigne);
+    assert.ok(bravo.indexOf('Bravo') === 0, 'le bravo ne félicite pas : ' + bravo);
     assert.ok(!/[\u{1F000}-\u{1FAFF}]/u.test(consigne + bravo), 'émoji dans les textes du défi');
   });
+});
+
+test('le jeu propose toutes les formes nommables — nouvelle lune et dernier quartier compris', function () {
+  var cibles = DEFIS.map(function (d) { return d.cible; });
+  assert.ok(cibles.indexOf('nouvelle') !== -1, 'la nouvelle lune manque au jeu');
+  assert.ok(cibles.indexOf('quartier-2') !== -1, 'le dernier quartier manque au jeu');
+  /* Les gibbeuses restent hors du jeu : mot savant, note aux parents. */
+  assert.ok(cibles.indexOf('gibbeuse-1') === -1, 'gibbeuse-1 : jargon dans le jeu');
+  assert.ok(cibles.indexOf('gibbeuse-2') === -1, 'gibbeuse-2 : jargon dans le jeu');
+});
+
+/* Un générateur déterministe (LCG de Park-Miller) pour tester la pioche. */
+function fauxAlea(graine) {
+  var g = graine;
+  return function () {
+    g = (g * 16807) % 2147483647;
+    return (g - 1) / 2147483646;
+  };
+}
+
+test('la pioche vide un sac complet avant toute répétition : chaque forme sort une fois par tournée', function () {
+  var piocher = creerPiocheDefis(fauxAlea(42));
+  for (var tournee = 0; tournee < 30; tournee++) {
+    var vues = {};
+    for (var i = 0; i < DEFIS.length; i++) {
+      var d = piocher();
+      assert.ok(!vues[d.cible], 'répétition dans la tournée ' + tournee + ' : ' + d.cible);
+      vues[d.cible] = true;
+    }
+  }
+});
+
+test('la pioche ne redonne jamais deux fois de suite la même forme, même entre deux sacs', function () {
+  for (var graine = 1; graine <= 10; graine++) {
+    var piocher = creerPiocheDefis(fauxAlea(graine));
+    var precedent = null;
+    for (var i = 0; i < 20 * DEFIS.length; i++) {
+      var d = piocher();
+      assert.ok(precedent === null || d.cible !== precedent.cible,
+        'deux fois de suite (graine ' + graine + ') : ' + d.cible);
+      precedent = d;
+    }
+  }
 });
 
 /* ------------------------------------------------------------------ */
