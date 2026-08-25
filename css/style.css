@@ -282,7 +282,21 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
 .bouton-son[aria-pressed="true"] { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(70, 194, 165, 0.35); }
 
-.bouton-ecouter { font-weight: 600; }
+/* « 🔊 Écouter l'histoire » : la pilule dorée de la famille (ou-va-le-soleil),
+   qui vire au bleu nuit pendant la lecture */
+.bouton-ecouter {
+  font-weight: 700;
+  padding: 8px 16px;
+  background: linear-gradient(180deg, #4a3a0d, #332807);
+  border-color: var(--sun-deep);
+  color: var(--sun);
+}
+.bouton-ecouter[aria-pressed="true"] {
+  background: #243158;
+  border-color: #3b4c86;
+  color: var(--text);
+  box-shadow: none;
+}
 
 /* libellés empilés (grille 1×1) : le bouton garde la largeur du plus long des
    deux états — basculer pause/lecture ou la voix ne décale jamais la page */
@@ -522,7 +536,10 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   }
 
   .pied-serie ul { gap: 2px 12px; }
-  .pied-serie a { display: inline-block; padding: 8px 6px; }
+  /* zone de tap généreuse pour les liens d'épisodes SEULEMENT : le bouton
+     « Tous les épisodes » garde son patron inline-flex de la famille
+     (l'ancien `.pied-serie a` l'attrapait aussi et l'écrasait) */
+  .footer-episodes a { padding: 8px 6px; }
 
   /* l'histoire : la puce au-dessus de son texte, comme les autres épisodes */
   .ligne-histoire { display: block; }
