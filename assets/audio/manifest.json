@@ -1,1 +1,117 @@
-{ "voix": null, "modele": null, "blocs": {} }
+{
+  "voix": "GFj5Qf6cNQ3Lgp8VKBwc",
+  "modele": "eleven_multilingual_v2",
+  "blocs": {
+    "scn-nouvelle": {
+      "texte": "Ce soir, pas de Lune dans le ciel ! On a beau chercher : rien. Où est-elle passée ? Regarde depuis l’espace : elle est là, juste entre la Terre et le Soleil ! Sa moitié éclairée regarde le Soleil… et nous, on ne voit que sa moitié toute sombre. C’est la nouvelle lune.",
+      "hash": "957097aed565",
+      "fichier": "scn-nouvelle.mp3"
+    },
+    "scn-croissant": {
+      "texte": "Ce soir, un tout fin croissant, comme un sourire dans le ciel ! Et chaque soir, il grossit un peu. Regarde depuis l’espace : la Lune avance sur son chemin autour de la Terre, et on commence tout juste à voir un petit bout de sa moitié éclairée. Plus elle avance, plus on en voit !",
+      "hash": "31f9459bec68",
+      "fichier": "scn-croissant.mp3"
+    },
+    "scn-pleine": {
+      "texte": "Un grand rond brillant : la Lune est toute ronde ! C’est la pleine lune. Regarde depuis l’espace : cette nuit, elle est arrivée de l’autre côté de la Terre, juste en face du Soleil. Sa moitié éclairée nous regarde en entier : voilà pourquoi on la voit toute ronde !",
+      "hash": "be2f59cea612",
+      "fichier": "scn-pleine.mp3"
+    },
+    "scn-quartier": {
+      "texte": "On dirait que la Lune est coupée en deux ! Où est passé l’autre morceau ? Regarde depuis l’espace : il est toujours là… mais tout sombre ! La Lune finit son tour de la Terre : on voit sa moitié éclairée de côté. Chaque soir, elle en montre un peu moins, jusqu’à disparaître… et tout recommencera.",
+      "hash": "70ecc00c090a",
+      "fichier": "scn-quartier.mp3"
+    },
+    "histoire-1": {
+      "texte": "La Lune ne brille pas toute seule. C’est le Soleil qui l’éclaire, comme une lampe géante.",
+      "hash": "a5b247260a0f",
+      "fichier": "histoire-1.mp3"
+    },
+    "histoire-2": {
+      "texte": "Le Soleil éclaire toujours une moitié de la Lune. L’autre moitié reste dans le noir, comme la nuit chez nous.",
+      "hash": "7174945a85ef",
+      "fichier": "histoire-2.mp3"
+    },
+    "histoire-3": {
+      "texte": "La Lune tourne autour de la Terre. Son grand voyage dure presque un mois.",
+      "hash": "9bd4682dc8cd",
+      "fichier": "histoire-3.mp3"
+    },
+    "histoire-4": {
+      "texte": "Chaque soir, la Lune a un peu avancé sur son chemin : on ne la voit pas du même côté. Alors on voit sa moitié éclairée un peu, beaucoup… ou pas du tout !",
+      "hash": "dc89cec660bd",
+      "fichier": "histoire-4.mp3"
+    },
+    "histoire-5": {
+      "texte": "La Lune ne change donc jamais vraiment de forme. C’est la lumière du Soleil qui joue à cache-cache avec nous…",
+      "hash": "76d0e56cb201",
+      "fichier": "histoire-5.mp3"
+    },
+    "defi-croissant-1-consigne": {
+      "texte": "Fabrique un premier croissant !",
+      "hash": "b9bc5ca25aa8",
+      "fichier": "defi-croissant-1-consigne.mp3"
+    },
+    "defi-croissant-1-bravo": {
+      "texte": "Bravo ! Tu as fabriqué un premier croissant !",
+      "hash": "584673f1d190",
+      "fichier": "defi-croissant-1-bravo.mp3"
+    },
+    "defi-quartier-1-consigne": {
+      "texte": "Fabrique un premier quartier !",
+      "hash": "3e9acedc2a7b",
+      "fichier": "defi-quartier-1-consigne.mp3"
+    },
+    "defi-quartier-1-bravo": {
+      "texte": "Bravo ! Tu as fabriqué un premier quartier !",
+      "hash": "99ab64cd31a0",
+      "fichier": "defi-quartier-1-bravo.mp3"
+    },
+    "defi-pleine-consigne": {
+      "texte": "Fabrique une pleine lune !",
+      "hash": "8e417b65c2e2",
+      "fichier": "defi-pleine-consigne.mp3"
+    },
+    "defi-pleine-bravo": {
+      "texte": "Bravo ! Tu as fabriqué une pleine lune !",
+      "hash": "78997e456f23",
+      "fichier": "defi-pleine-bravo.mp3"
+    },
+    "defi-quartier-2-consigne": {
+      "texte": "Fabrique un dernier quartier !",
+      "hash": "e2c6a2985971",
+      "fichier": "defi-quartier-2-consigne.mp3"
+    },
+    "defi-quartier-2-bravo": {
+      "texte": "Bravo ! Tu as fabriqué un dernier quartier !",
+      "hash": "16f80ec0f8b8",
+      "fichier": "defi-quartier-2-bravo.mp3"
+    },
+    "defi-croissant-2-consigne": {
+      "texte": "Fabrique un dernier croissant !",
+      "hash": "6a9253ab8281",
+      "fichier": "defi-croissant-2-consigne.mp3"
+    },
+    "defi-croissant-2-bravo": {
+      "texte": "Bravo ! Tu as fabriqué un dernier croissant !",
+      "hash": "438b2a34f78b",
+      "fichier": "defi-croissant-2-bravo.mp3"
+    },
+    "defi-nouvelle-consigne": {
+      "texte": "Fais disparaître la Lune !",
+      "hash": "6ca7d8e2a927",
+      "fichier": "defi-nouvelle-consigne.mp3"
+    },
+    "defi-nouvelle-bravo": {
+      "texte": "Bravo ! Tu as fait disparaître la Lune : c’est la nouvelle lune !",
+      "hash": "cb5ad931085f",
+      "fichier": "defi-nouvelle-bravo.mp3"
+    }
+  },
+  "format": "mp3_44100_64",
+  "reglages": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.3
+  }
+}
