@@ -125,6 +125,16 @@ main, header.entete, footer.pied-serie {
 
 .carte h2 { font-size: 1.15rem; }
 
+/* la charte des titres de la famille : couleur = fonction (patron
+   d'ou-va-le-soleil). L'or explique (boîte « pourquoi », note aux
+   parents), le teal se vit depuis chez toi (le ciel du soir, le jeu),
+   le violet regarde depuis l'espace ; le blanc reste au h1 et aux
+   titres-outils (curseur, scénarios). */
+.carte-hublot h2 { color: var(--teal); }
+.carte-orbite h2 { color: var(--violet); }
+.carte-jeu h2 { color: var(--teal); }
+.carte-explication h2 { color: var(--sun); }
+
 .sous-titre { color: var(--muted); font-size: 0.92rem; margin: 4px 0 12px; }
 
 /* ---------- Les deux vues ---------- */
@@ -404,19 +414,19 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
 /* ---------- Jeu ---------- */
 
+/* le patron .game-btn de la famille (ou-va-le-soleil) : dégradé teal sombre,
+   la couleur du jeu — le rose reste à la Lune attrapable et aux accents */
 .bouton-jeu {
-  background: var(--rose);
-  color: #240a14;
+  background: linear-gradient(180deg, #14434a, #0d2f35);
+  color: #8fe0cb;
   font-weight: 700;
-  border: none;
+  border: 1px solid var(--teal);
   border-radius: 999px;
-  padding: 9px 20px;
+  padding: 8px 18px;
   font-size: 1rem;
   cursor: pointer;
   font-family: inherit;
 }
-
-.bouton-jeu:hover { background: #ff87b0; }
 
 .consigne-jeu { color: var(--muted); }
 
@@ -554,7 +564,10 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
    * prend le relais dès que le bandeau sort de l'écran. */
   .carte-hublot { padding: 12px 14px 10px; scroll-margin-top: 10px; }
 
-  .carte-hublot h2 { font-size: 1rem; }
+  /* le titre du hublot garde la taille commune des .carte h2 : les deux vues
+     jumelles se titrent pareil (acquis de la famille — .view-head dans
+     ou-va-le-soleil, .canvas-title dans la-terre-tourne) ; le bandeau se
+     compacte par ses marges, pas en rapetissant son titre */
   .carte-hublot .sous-titre { margin: 2px 0 8px; }
 
   .carte-hublot .cadre-canvas { padding-bottom: 46%; }
@@ -579,8 +592,9 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
 .note-parents summary {
   cursor: pointer;
-  color: var(--text);
-  font-weight: 600;
+  /* or et graisse 700 : le patron .parents summary de la famille */
+  color: var(--sun);
+  font-weight: 700;
   font-size: 1rem;
 }
 

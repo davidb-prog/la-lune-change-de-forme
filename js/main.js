@@ -747,12 +747,12 @@ boutonJouer.addEventListener('click', function () {
     etat.defi = null;
     etat.bravoVisible = false;
     etat.defiEntreMs = null;
-    boutonJouer.textContent = 'Jouer';
+    boutonJouer.textContent = '🎮 Jouer';
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — remonter à la vue du jardin');
   } else {
     zoneJeu.hidden = false;
     fixerLecture(false); /* rien ne doit gagner tout seul */
-    boutonJouer.textContent = 'Ranger le jeu';
+    boutonJouer.textContent = '📦 Ranger le jeu';
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — le résultat de ta manœuvre');
     nouveauDefi();
   }
