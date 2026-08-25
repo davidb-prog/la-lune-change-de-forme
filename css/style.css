@@ -125,6 +125,16 @@ main, header.entete, footer.pied-serie {
 
 .carte h2 { font-size: 1.15rem; }
 
+/* la charte des titres de la famille : couleur = fonction (patron
+   d'ou-va-le-soleil). L'or explique (boîte « pourquoi », note aux
+   parents), le teal se vit depuis chez toi (le ciel du soir, le jeu),
+   le violet regarde depuis l'espace ; le blanc reste au h1 et aux
+   titres-outils (curseur, scénarios). */
+.carte-hublot h2 { color: var(--teal); }
+.carte-orbite h2 { color: var(--violet); }
+.carte-jeu h2 { color: var(--teal); }
+.carte-explication h2 { color: var(--sun); }
+
 .sous-titre { color: var(--muted); font-size: 0.92rem; margin: 4px 0 12px; }
 
 /* ---------- Les deux vues ---------- */
@@ -582,8 +592,9 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
 .note-parents summary {
   cursor: pointer;
-  color: var(--text);
-  font-weight: 600;
+  /* or et graisse 700 : le patron .parents summary de la famille */
+  color: var(--sun);
+  font-weight: 700;
   font-size: 1rem;
 }
 
