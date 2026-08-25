@@ -571,9 +571,10 @@ var narrateur = (function () {
       var src = enregistre ? audioSrc(bloc.id, bloc.texte) : null;
       if (!src) { repli(); return; }
       var a = getLecteur();
-      a.onended = function () {
-        if (gen === generation) window.setTimeout(apres, 620);
-      };
+      /* pas de pause ajoutée : les clips enregistrés portent déjà leur
+       * respiration (~300 ms de queue + ~100 ms de tête du suivant) — en
+       * rajouter creusait un blanc d'une seconde entre les paragraphes */
+      a.onended = apres;
       a.onerror = repli;
       a.src = src;
       var p = a.play();
