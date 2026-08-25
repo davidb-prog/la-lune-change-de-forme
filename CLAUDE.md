@@ -95,9 +95,11 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   ces liens ni d'éprouvette 🧪.
 - **Les scénarios vont au moment choisi en douceur, toujours vers l'avant**
   (le vrai sens de l'orbite) ; en `prefers-reduced-motion`, saut sec. Sur
-  mobile, taper une vignette **remonte doucement la page à la vue de
-  l'espace** pour regarder le voyage (défilement sec en mouvement réduit,
-  rien sur grand écran où les deux vues sont déjà sous les yeux).
+  mobile, taper une vignette **remonte doucement la page en calant la carte
+  du jardin en haut de l'écran** (`scroll-margin-top`) : le bandeau montre la
+  forme du soir et la vue de l'espace, juste dessous, montre le voyage en
+  même temps (défilement sec en mouvement réduit, rien sur grand écran où
+  les deux vues sont déjà sous les yeux).
 - **Reprendre la main efface l'histoire** : bouger le curseur ou la Lune ferme
   la micro-histoire du scénario et désarme son `aria-pressed`.
 - **Scénarios au patron de la famille** (repris d'ou-va-le-soleil) : 4 boutons

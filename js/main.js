@@ -315,15 +315,16 @@ curseur.addEventListener('input', function () {
 var boutonsScenarios = [];
 
 /* Sur mobile, le voyage de la Lune se joue hors écran quand on tape une
- * vignette : on remonte doucement à la vue de l'espace pour le regarder —
- * le bandeau du jardin, juste au-dessus, montre l'effet en même temps.
+ * vignette : on remonte doucement en calant la carte du jardin en haut de
+ * l'écran — le bandeau montre la forme du soir et la vue de l'espace,
+ * juste dessous, montre le voyage en même temps.
  * (Sur grand écran les deux vues sont déjà sous les yeux : on ne bouge pas.) */
 function montrerLeVoyage() {
   if (!estMobile) return;
   try {
-    canvasOrbite.scrollIntoView({ behavior: mouvementReduit ? 'auto' : 'smooth', block: 'center' });
+    carteHublot.scrollIntoView({ behavior: mouvementReduit ? 'auto' : 'smooth', block: 'start' });
   } catch (e) {
-    canvasOrbite.scrollIntoView(true);
+    carteHublot.scrollIntoView(true);
   }
 }
 

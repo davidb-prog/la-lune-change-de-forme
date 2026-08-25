@@ -552,7 +552,7 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   /* Le hublot se compacte en bandeau paysage (la Lune au-dessus du jardin) :
    * la vue de l'espace arrive plus tôt sous le pouce, et le médaillon-fenêtre
    * prend le relais dès que le bandeau sort de l'écran. */
-  .carte-hublot { padding: 12px 14px 10px; }
+  .carte-hublot { padding: 12px 14px 10px; scroll-margin-top: 10px; }
 
   .carte-hublot h2 { font-size: 1rem; }
   .carte-hublot .sous-titre { margin: 2px 0 8px; }
