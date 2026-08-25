@@ -50,7 +50,12 @@ input {
 html { -webkit-text-size-adjust: 100%; }
 
 body {
-  background: radial-gradient(circle at 20% -10%, var(--bg2), var(--bg) 60%);
+  /* couleur pleine À PART du dégradé : le raccourci background remettrait la
+     background-color à transparent, et Safari iOS peindrait en blanc les zones
+     hors du body (barre d'état, barre d'outils, rebond du défilement) */
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 20% -10%, var(--bg2), var(--bg) 60%);
+  background-attachment: fixed;
   color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.55;
@@ -474,6 +479,11 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 /* ---------- Le jeu sur mobile : une seule vue, tout tient à l'écran ---------- */
 
 @media (max-width: 879px) {
+  /* le fond fixe force des repeints à chaque défilement sur Android : sur
+     mobile le halo défile avec la page (acquis de la famille, PR 19 de
+     la-terre-tourne) */
+  body { background-attachment: scroll; }
+
   /* en-tête compact : la Lune doit se voir dès le premier écran */
   .entete h1 { font-size: clamp(1.65rem, 7.5vw, 2.2rem); }
 
