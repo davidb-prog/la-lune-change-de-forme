@@ -554,7 +554,10 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
    * prend le relais dès que le bandeau sort de l'écran. */
   .carte-hublot { padding: 12px 14px 10px; scroll-margin-top: 10px; }
 
-  .carte-hublot h2 { font-size: 1rem; }
+  /* le titre du hublot garde la taille commune des .carte h2 : les deux vues
+     jumelles se titrent pareil (acquis de la famille — .view-head dans
+     ou-va-le-soleil, .canvas-title dans la-terre-tourne) ; le bandeau se
+     compacte par ses marges, pas en rapetissant son titre */
   .carte-hublot .sous-titre { margin: 2px 0 8px; }
 
   .carte-hublot .cadre-canvas { padding-bottom: 46%; }
