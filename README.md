@@ -36,8 +36,9 @@ L'idée centrale, celle que l'enfant doit retenir :
   reprises sous le jeu (synchronisées avec celles du haut), sans remonter en
   haut de la page. Sur mobile, le jeu tient sur un écran : une seule vue, et
   c'est le médaillon flottant qui montre la Lune du soir.
-- **Sur mobile**, un médaillon flottant montre la Lune du soir dès que le
-  hublot sort de l'écran (scénarios, curseur, jeu…) — un tap y ramène.
+- **Sur mobile**, un médaillon flottant montre la Lune du soir dès que la Lune
+  du jardin quitte l'écran (scénarios, curseur, jeu…) — un tap y ramène. Il
+  s'écarte tant que la phrase du soir passe dans son coin : elle reste lisible.
 - **La note aux parents**, repliable, en deux temps : le mode d’emploi
   (« Comment on s’en sert ») puis chaque simplification documentée
   honnêtement (« Ce que le site simplifie »).
