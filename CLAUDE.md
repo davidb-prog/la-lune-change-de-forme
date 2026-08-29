@@ -127,8 +127,13 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   haut, il cacherait la vue de l'espace au niveau des boutons-scénarios. La
   vue de l'espace passe en carré (l'orbite plus grande sous le doigt). Un
   médaillon flottant (haut droit, hors du chemin du pouce) prend le relais
-  dès que la **carte** du hublot est entièrement sortie de l'écran (jamais
-  avant : il recouvrirait la phrase du soir). Le médaillon est
+  dès que la **Lune du jardin** a quitté l'écran — le disque lui-même
+  (`geometrieLune` de la vue, jamais une géométrie recopiée) : ce qui manque à
+  l'enfant qui a défilé, c'est la forme du soir, pas le bas de la carte. Il ne
+  recouvre pourtant **jamais la phrase du soir** : tant qu'une ligne de la
+  phrase traverse son coin, il se pose juste dessous et remonte avec elle
+  jusqu'à sa place (glissement collé au défilement ; on mesure les lignes et
+  non le bloc — une ligne courte et centrée ne le dérange pas). Le médaillon est
   un **mini hublot** (ciel, Lune, jardin) cerclé d'or — le violet reste
   réservé à la Lune attrapable, pour qu'on ne les confonde pas. Un tap y
   ramène au jardin, sauf pendant le jeu où il n'est qu'un afficheur (remonter

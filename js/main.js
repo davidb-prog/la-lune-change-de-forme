@@ -10,7 +10,7 @@ import {
   LECTURE_SECONDES_PAR_CYCLE, texteOral
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
-import { creerVueHublot } from './vue-hublot.js';
+import { creerVueHublot, geometrieLune } from './vue-hublot.js';
 
 /* ------------------------------------------------------------------ */
 /* L'état                                                              */
@@ -197,20 +197,60 @@ function boucle(maintenant) {
 
 var carteHublot = document.querySelector('.carte-hublot');
 
-/* La carte entière est-elle sortie de l'écran ? (Pas seulement le canvas :
- * tant que la phrase du soir se lit encore, le médaillon la recouvrirait.) */
-function carteHorsEcran(element) {
-  var rect = element.getBoundingClientRect();
+/* La Lune du jardin est-elle encore à l'écran ? On regarde le disque lui-même
+ * (géométrie de la vue, jamais recopiée ici), pas la carte : ce qui manque à
+ * l'enfant qui a défilé, c'est la forme du soir — dès qu'elle a quitté l'écran,
+ * le médaillon la reprend, même si le bas de la carte traîne encore en haut. */
+function luneDuJardinVisible() {
+  var rect = canvasHublot.getBoundingClientRect();
+  if (rect.height === 0) return false; /* hublot escamoté : le relais s'impose */
+  var geo = geometrieLune(rect.width, rect.height);
+  var haut = rect.top + geo.cy - geo.R;
+  var bas = rect.top + geo.cy + geo.R;
   var hauteur = window.innerHeight || document.documentElement.clientHeight;
-  return rect.bottom < 0 || rect.top > hauteur;
+  return bas > 0 && haut < hauteur;
+}
+
+/* Le médaillon ne recouvre jamais la phrase du soir : tant qu'une ligne de la
+ * phrase traverse son coin, il se pose juste dessous et remonte avec elle
+ * jusqu'à sa place (glissement collé au défilement, rien ne sautille).
+ * On mesure les lignes elles-mêmes, pas le bloc : la phrase est centrée, une
+ * ligne courte ne gêne pas et le médaillon reste alors dans son coin. */
+var mesureurLignes = document.createRange();
+var decalageMedaillon = 0;
+
+function eviterLaPhrase() {
+  var rect = medaillon.getBoundingClientRect();
+  var repos = rect.top - decalageMedaillon; /* sa place, décalage retiré */
+  mesureurLignes.selectNodeContents(phraseSoir);
+  var lignes = mesureurLignes.getClientRects();
+  var decalage = 0;
+  /* Deux passes : pousser sous une ligne peut en amener une autre dans le
+   * chemin (phrase de trois lignes) — deux suffisent, le bloc est court. */
+  for (var passe = 0; passe < 2; passe++) {
+    for (var i = 0; i < lignes.length; i++) {
+      var ligne = lignes[i];
+      if (ligne.width === 0) continue;
+      if (ligne.right <= rect.left || ligne.left >= rect.right) continue;
+      if (ligne.bottom <= repos + decalage || ligne.top >= repos + decalage + rect.height) continue;
+      var pousse = ligne.bottom + 8 - repos;
+      if (pousse > decalage) decalage = pousse;
+    }
+  }
+  return decalage > 0 ? decalage : 0;
 }
 
 function gererMedaillon() {
-  /* Dès que le hublot sort de l'écran, la Lune du soir suit l'enfant —
+  /* Dès que la Lune du jardin sort de l'écran, la Lune du soir suit l'enfant —
    * y compris pendant le jeu : c'est elle qui montre le résultat. */
-  var visible = estMobile && carteHorsEcran(carteHublot);
+  var visible = estMobile && !luneDuJardinVisible();
   medaillon.hidden = !visible;
   if (!visible) return;
+  var decalage = eviterLaPhrase();
+  if (decalage !== decalageMedaillon) {
+    decalageMedaillon = decalage;
+    medaillon.style.transform = decalage ? 'translateY(' + decalage + 'px)' : '';
+  }
   ajusterCanvas(canvasMedaillon);
   vueMedaillon.rendre(etat.jour);
 }

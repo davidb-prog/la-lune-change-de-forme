@@ -76,6 +76,13 @@ export function dessinerDisqueLune(ctx, cx, cy, R, forme) {
   ctx.stroke();
 }
 
+/* Où se pose le disque de la Lune dans le hublot, pour une boîte w × h.
+ * La vue s'en sert pour dessiner ; main.js s'en sert pour savoir si la Lune du
+ * jardin est encore à l'écran — une seule géométrie, jamais deux copies. */
+export function geometrieLune(w, h) {
+  return { cx: w / 2, cy: h * 0.44, R: Math.min(w, h) * 0.3 };
+}
+
 export function creerVueHublot(canvas) {
   var ctx = canvas.getContext('2d');
 
@@ -96,9 +103,10 @@ export function creerVueHublot(canvas) {
       ctx.globalAlpha = 1;
 
       var forme = formeLune(jour);
-      var R = Math.min(w, h) * 0.3;
-      var cx = w / 2;
-      var cy = h * 0.44;
+      var geo = geometrieLune(w, h);
+      var R = geo.R;
+      var cx = geo.cx;
+      var cy = geo.cy;
       /* Un halo doux quand la Lune brille. */
       if (forme.fraction > 0.02) {
         var halo = ctx.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 2.1);
