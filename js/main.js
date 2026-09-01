@@ -5,7 +5,7 @@
  * que brancher.
  */
 import {
-  CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoir,
+  CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoirParties,
   SCENARIOS, creerPiocheDefis, defiReussi, defiEncoreTenu, consigneDefi, bravoDefi, DEFI_ATTENTE_MS,
   LECTURE_SECONDES_PAR_CYCLE, texteOral
 } from './model.js';
@@ -90,7 +90,10 @@ var vueMedaillon = creerVueHublot(canvasMedaillon);
 function fixerJour(jour) {
   etat.jour = jourNormalise(jour);
   curseur.value = String(etat.jour);
-  phraseSoir.textContent = phraseDuSoir(etat.jour);
+  /* deux lignes fixes (white-space: pre-line) : la hauteur de la carte ne
+     dépend plus de la police du téléphone */
+  var parties = phraseDuSoirParties(etat.jour);
+  phraseSoir.textContent = parties.soir + '\n' + parties.suite;
 }
 
 /* La lecture auto (bouton ⏸/▶ harmonisé de la famille) : la Lune avance toute

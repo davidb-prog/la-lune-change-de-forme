@@ -131,15 +131,26 @@ export function phaseInfo(jour) {
   return { cle: cle, nom: NOMS_PHASES[cle], croissante: croissante };
 }
 
-/* La petite phrase du soir, affichée sous le hublot et lue par le conteur. */
-export function phraseDuSoir(jour) {
+/* La petite phrase du soir, en deux morceaux : le soir et sa phase
+ * (« Soir 14 — pleine lune. »), puis ce qu'on voit (« La Lune est toute
+ * ronde ! »). La page les pose sur deux lignes FIXES : laissée libre, la
+ * césure tombait pile à la largeur de la police du téléphone, et la carte
+ * du hublot changeait de hauteur d'un soir à l'autre (une ligne, puis deux). */
+export function phraseDuSoirParties(jour) {
   var j = Math.round(jourNormalise(jour));
   var info = phaseInfo(jour);
-  var debut = 'Soir ' + j + ' — ' + info.nom + '. ';
-  if (info.cle === 'nouvelle') return debut + 'On ne la voit pas du tout !';
-  if (info.cle === 'pleine') return debut + 'La Lune est toute ronde !';
-  if (info.croissante) return debut + 'Chaque soir, la Lune grossit.';
-  return debut + 'Chaque soir, la Lune rapetisse.';
+  var suite;
+  if (info.cle === 'nouvelle') suite = 'On ne la voit pas du tout !';
+  else if (info.cle === 'pleine') suite = 'La Lune est toute ronde !';
+  else if (info.croissante) suite = 'Chaque soir, la Lune grossit.';
+  else suite = 'Chaque soir, la Lune rapetisse.';
+  return { soir: 'Soir ' + j + ' — ' + info.nom + '.', suite: suite };
+}
+
+/* La même phrase d'un seul tenant (conteur, tests). */
+export function phraseDuSoir(jour) {
+  var parties = phraseDuSoirParties(jour);
+  return parties.soir + ' ' + parties.suite;
 }
 
 /* Les quatre moments-clés : boutons « 🎲 Joue avec la Lune ».
