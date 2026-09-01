@@ -8,7 +8,7 @@ import {
   TAU, CYCLE_JOURS, JOUR_PLEINE, SOLEIL_DIR, EPS,
   jourNormalise, angleOrbite, positionLune, directionEclairee,
   fractionEclairee, luneCroissante, coteEclaire, formeLune,
-  ORDRE_PHASES, phaseInfo, phraseDuSoir,
+  ORDRE_PHASES, phaseInfo, phraseDuSoir, phraseDuSoirParties,
   SCENARIOS, DEFIS, creerPiocheDefis, defiReussi, defiEncoreTenu, DEFI_SORTIE_JOURS,
   JOUR_DEPART, consigneDefi, bravoDefi, LECTURE_SECONDES_PAR_CYCLE,
   DEFI_ATTENTE_MS
@@ -165,6 +165,16 @@ test('la phrase du soir raconte le bon moment', function () {
   assert.ok(phraseDuSoir(7).indexOf('grossit') !== -1);
   assert.ok(phraseDuSoir(22).indexOf('rapetisse') !== -1);
   assert.ok(/[.!?]$/.test(phraseDuSoir(9)), 'la phrase du soir finit par une ponctuation');
+});
+
+test('la phrase du soir se coupe toujours au même endroit (deux lignes fixes à l’écran)', function () {
+  for (var j = 0; j < CYCLE_JOURS; j += 0.5) {
+    var p = phraseDuSoirParties(j);
+    assert.ok(/^Soir \d+ — .+\.$/.test(p.soir), 'le soir et sa phase, ponctués : ' + p.soir);
+    assert.ok(p.suite.length > 0 && /[.!?]$/.test(p.suite), 'la suite est une phrase : ' + p.suite);
+    assert.ok(p.soir.indexOf('\n') === -1 && p.suite.indexOf('\n') === -1, 'pas de retour à la ligne caché');
+    assert.equal(p.soir + ' ' + p.suite, phraseDuSoir(j), 'la phrase entière est la réunion des deux');
+  }
 });
 
 /* ------------------------------------------------------------------ */

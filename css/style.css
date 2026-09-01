@@ -197,7 +197,13 @@ main, header.entete, footer.pied-serie {
   font-weight: 700;
   font-size: 1.05rem;
   color: var(--sun);
-  min-height: 1.6em;
+  /* Deux lignes FIXES (« Soir 14 — pleine lune. » ⏎ « La Lune est toute
+     ronde ! ») : la césure vit dans le texte, pas dans la largeur de la
+     police — sinon la carte changeait de hauteur d'un soir à l'autre sur
+     Android (une ligne, puis deux). La hauteur réservée les couvre. */
+  white-space: pre-line;
+  line-height: 1.45;
+  min-height: 2.9em;
 }
 
 /* ---------- Curseur maître ---------- */
@@ -576,7 +582,14 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
     .carte-hublot .cadre-canvas { padding-bottom: 0; aspect-ratio: 13 / 6; }
   }
 
-  .phrase-soir { font-size: 0.95rem; margin-top: 8px; min-height: 1.5em; }
+  .phrase-soir { font-size: 0.95rem; margin-top: 8px; }
+}
+
+/* Tout petits écrans (320 px) : la seconde ligne (« Chaque soir, la Lune
+   rapetisse. ») déborderait sur une troisième — on resserre plutôt que de
+   laisser la carte changer de hauteur. */
+@media (max-width: 359px) {
+  .phrase-soir { font-size: 0.85rem; }
 }
 
 /* ---------- Note aux parents ---------- */
