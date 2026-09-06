@@ -10,6 +10,7 @@ import {
   fractionEclairee, luneCroissante, coteEclaire, formeLune,
   ORDRE_PHASES, phaseInfo, phraseDuSoir, phraseDuSoirParties,
   SCENARIOS, DEFIS, creerPiocheDefis, defiReussi, defiEncoreTenu, DEFI_SORTIE_JOURS,
+  phaseScenario, scenarioEncoreTenu,
   JOUR_DEPART, consigneDefi, bravoDefi, LECTURE_SECONDES_PAR_CYCLE,
   DEFI_ATTENTE_MS
 } from '../js/model.js';
@@ -247,6 +248,25 @@ test('le bravo ne clignote pas au bord de la fenêtre : l’hystérésis de sort
    * la pleine ni les quartiers ne sont « encore tenus ». */
   assert.ok(!defiEncoreTenu('pleine', 5), 'tenu bien trop loin de la pleine lune');
   assert.ok(!defiEncoreTenu('quartier-1', 20), 'tenu bien trop loin du premier quartier');
+});
+
+test('l’histoire d’un moment tient tant que la Lune garde sa forme, et pas au-delà', function () {
+  /* Acquis de la-terre-est-penchee : glisser la Lune ou tirer le curseur ne
+   * coupe plus le récit au premier doigt — il reste tant que la Lune garde la
+   * forme du moment choisi, et s’en va dès qu’elle en sort. */
+  SCENARIOS.forEach(function (s) {
+    var cle = phaseScenario(s.id);
+    assert.equal(cle, phaseInfo(s.jour).cle, 'le moment ne vise pas la forme de son jour : ' + s.id);
+    assert.ok(scenarioEncoreTenu(s.id, s.jour), 'l’histoire ne tient pas sur son propre jour : ' + s.id);
+    /* un frémissement du doigt (un quart de jour) ne l’efface pas */
+    assert.ok(scenarioEncoreTenu(s.id, s.jour + 0.25) && scenarioEncoreTenu(s.id, s.jour - 0.25),
+      'l’histoire clignote au moindre geste : ' + s.id);
+    /* un quart de cycle plus loin, la Lune a changé de forme : l’histoire s’en va */
+    assert.ok(!scenarioEncoreTenu(s.id, s.jour + CYCLE_JOURS / 4),
+      'l’histoire tient encore une forme plus loin : ' + s.id);
+  });
+  assert.equal(phaseScenario('pas-un-moment'), null, 'un id inconnu doit rester sans forme');
+  assert.ok(!scenarioEncoreTenu('pas-un-moment', 0), 'un id inconnu ne tient aucune histoire');
 });
 
 test('la consigne et le bravo du défi nomment la forme (ou la Lune), sans émoji', function () {

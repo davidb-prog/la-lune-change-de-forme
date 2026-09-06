@@ -326,6 +326,10 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
 .boutons-voix { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
+/* Le médaillon ancré dans l'en-tête du jeu (mobile, jeu ouvert — voir le bloc
+   mobile plus bas) : sur grand écran il reste caché, où qu'il soit dans le DOM. */
+.titre-avec-bouton .medaillon-lune { display: none; }
+
 .grille-scenarios {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -564,6 +568,44 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
   /* des cibles tactiles d'au moins ~44 px pour les petits doigts */
   .play-btn, .scn-voice-btn { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+
+  /* LE MÉDAILLON S'ANCRE DANS L'EN-TÊTE DU JEU pendant le jeu (main.js l'y
+     déplace tant que l'en-tête est à l'écran, et le rend à sa place flottante
+     sinon — acquis de la-terre-est-penchee) : il devient un élément de la mise
+     en page — à droite du titre, 60 px — et la rangée des commandes prend
+     toute la largeur dessous. Avant, il flottait par-dessus les boutons du
+     jeu. Hors du jeu, il redevient flottant. */
+  .carte-jeu.jeu-ouvert .titre-avec-bouton {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "titre medaillon" "actions actions";
+    gap: 8px 12px;
+    align-items: center;
+  }
+  .carte-jeu.jeu-ouvert .titre-avec-bouton > h2 { grid-area: titre; }
+  .titre-avec-bouton .medaillon-lune {
+    display: block;
+    grid-area: medaillon;
+    position: static;
+    width: 60px;
+    height: 60px;
+    box-shadow: none;
+  }
+  .carte-jeu.jeu-ouvert .actions-jeu { grid-area: actions; margin: 0; }
+
+  /* La rangée des commandes du jeu : [🔇] [Encore une !] [Ranger le jeu] —
+     la voix en icône seule (son libellé vit dans le jumeau des scénarios),
+     les deux autres se partagent le reste, sur UNE ligne, texte jamais coupé. */
+  .actions-jeu { flex-wrap: nowrap; max-width: 100%; }
+  .actions-jeu .scn-voice-btn { flex: none; padding-left: 12px; padding-right: 12px; }
+  .actions-jeu .scn-voice-btn .libelle { display: none; }
+  .carte-jeu.jeu-ouvert .actions-jeu .bouton-jeu {
+    flex: 1 1 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
 
   /* Le hublot se compacte en bandeau paysage (la Lune au-dessus du jardin) :
    * la vue de l'espace arrive plus tôt sous le pouce, et le médaillon-fenêtre

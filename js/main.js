@@ -6,7 +6,8 @@
  */
 import {
   CYCLE_JOURS, JOUR_DEPART, jourNormalise, phraseDuSoirParties,
-  SCENARIOS, creerPiocheDefis, defiReussi, defiEncoreTenu, consigneDefi, bravoDefi, DEFI_ATTENTE_MS,
+  SCENARIOS, creerPiocheDefis, defiReussi, defiEncoreTenu, scenarioEncoreTenu,
+  consigneDefi, bravoDefi, DEFI_ATTENTE_MS,
   LECTURE_SECONDES_PAR_CYCLE, texteOral
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
@@ -25,6 +26,7 @@ var etat = {
   bravoVisible: false,  /* le bravo s'efface quand on repart tourner la Lune */
   defiEntreMs: null,    /* entrée dans la fenêtre (anti « gagné en passant ») */
   glisse: false,
+  jourFabrique: true,   /* faux après un scénario, jusqu'au prochain geste de l'enfant */
   enLecture: false,     /* la lecture auto (bouton ⏸/▶) : la Lune avance seule */
   tPrecedente: null     /* horodatage du dernier passage de la boucle */
 };
@@ -106,18 +108,48 @@ function fixerLecture(enLecture) {
     ? 'Mettre en pause (la Lune avance toute seule)'
     : 'Relancer la Lune qui avance toute seule');
 }
-boutonLecture.addEventListener('click', function () { fixerLecture(!etat.enLecture); });
+boutonLecture.addEventListener('click', function () {
+  /* Relancer la Lune toute seule range l'histoire du moment choisi : elle va
+   * quitter sa forme sous nos yeux. La voix, elle, finit ce qu'elle dit. */
+  effacerHistoire(false);
+  fixerLecture(!etat.enLecture);
+});
 
-/* L'utilisateur reprend la main : l'histoire affichée s'efface. */
+/* L'utilisateur reprend la main POUR DE BON (ouvrir le jeu) : l'histoire
+ * s'efface et la voix se coupe net. */
 function reprendreLaMain() {
   etat.animation = null;
-  if (etat.scenarioActif !== null) {
-    etat.scenarioActif = null;
-    histoireScenario.hidden = true;
-    histoireScenario.textContent = '';
-    rafraichirBoutonsScenarios();
-    narrateur.stop();
-  }
+  effacerHistoire(true);
+}
+
+/* Reprendre la main EN DOUCEUR (attraper la Lune, tirer le curseur) : le
+ * voyage en cours s'arrête et le jour redevient celui de l'enfant, mais
+ * l'histoire du moment choisi RESTE tant que la Lune garde sa forme — et
+ * quand elle la quitte, la voix finit son bloc puis se tait (acquis de
+ * la-terre-est-penchee : le texte effacé et la voix coupée net au premier
+ * doigt ressemblaient à un bug — l'enfant écoute ET joue).
+ * `surveillerHistoire()` se fait APRÈS `fixerJour`, chez l'appelant : ici le
+ * jour peut encore être celui d'une animation interrompue à mi-chemin. */
+function reprendreLaMainDoucement() {
+  etat.animation = null;
+  etat.jourFabrique = true; /* la main de l'enfant : le jeu peut se gagner */
+}
+
+function effacerHistoire(couperLaVoix) {
+  if (etat.scenarioActif === null) return;
+  etat.scenarioActif = null;
+  histoireScenario.hidden = true;
+  histoireScenario.textContent = '';
+  rafraichirBoutonsScenarios();
+  if (couperLaVoix) narrateur.stop();
+  else narrateur.finirDoucement('scn-');
+}
+
+/* La Lune a-t-elle quitté la forme du moment choisi ? Alors l'histoire s'en
+ * va — sans couper la voix net. */
+function surveillerHistoire() {
+  if (etat.scenarioActif === null || etat.animation) return;
+  if (!scenarioEncoreTenu(etat.scenarioActif, etat.jour)) effacerHistoire(false);
 }
 
 /* Aller à un jour-cible EN AVANT (le vrai sens de l'orbite), en douceur. */
@@ -199,6 +231,34 @@ function boucle(maintenant) {
 /* ------------------------------------------------------------------ */
 
 var carteHublot = document.querySelector('.carte-hublot');
+var carteJeu = document.querySelector('.carte-jeu');
+var enteteJeu = carteJeu.querySelector('.titre-avec-bouton');
+/* Sa place d'origine (flottant, juste avant le pied de page) : le jeu l'ancre
+ * dans son en-tête tant que celui-ci est à l'écran, et l'y reprend sinon. */
+var placeMedaillon = medaillon.parentNode;
+var suivantMedaillon = medaillon.nextSibling;
+
+function medaillonAncre() {
+  return medaillon.parentNode === enteteJeu;
+}
+
+/* L'ancrage ne vaut que tant que l'en-tête du jeu est à l'écran : jeu ouvert,
+ * si l'enfant remonte vers les scénarios sans le ranger, le médaillon redevient
+ * flottant dès que l'en-tête sort par le bas, et se ré-ancre quand il revient
+ * (acquis de la-terre-est-penchee : « coincé en haut du jeu »). Le saut se fait
+ * à l'instant où sa place ancrée disparaît — jamais deux médaillons à la fois.
+ * Appelé à chaque image : un seul getBoundingClientRect, un déplacement DOM aux
+ * transitions seulement. */
+function placerMedaillon() {
+  var ancrer = false;
+  if (estMobile && !zoneJeu.hidden) {
+    var rect = enteteJeu.getBoundingClientRect();
+    var hauteur = window.innerHeight || document.documentElement.clientHeight;
+    ancrer = rect.bottom > 0 && rect.top < hauteur;
+  }
+  if (ancrer && !medaillonAncre()) enteteJeu.appendChild(medaillon);
+  else if (!ancrer && medaillonAncre()) placeMedaillon.insertBefore(medaillon, suivantMedaillon);
+}
 
 /* La Lune du jardin est-elle encore à l'écran ? On regarde le disque lui-même
  * (géométrie de la vue, jamais recopiée ici), pas la carte : ce qui manque à
@@ -244,12 +304,17 @@ function eviterLaPhrase() {
 }
 
 function gererMedaillon() {
+  placerMedaillon();
   /* Dès que la Lune du jardin sort de l'écran, la Lune du soir suit l'enfant —
-   * y compris pendant le jeu : c'est elle qui montre le résultat. */
-  var visible = estMobile && !luneDuJardinVisible();
+   * y compris pendant le jeu : c'est elle qui montre le résultat. Ancré dans
+   * l'en-tête du jeu, il est un élément de la page : visible quoi qu'il arrive
+   * au défilement. */
+  var ancre = medaillonAncre();
+  var visible = estMobile && (ancre || !luneDuJardinVisible());
   medaillon.hidden = !visible;
   if (!visible) return;
-  var decalage = eviterLaPhrase();
+  /* ancré, il a sa case dans la grille de l'en-tête : rien à esquiver */
+  var decalage = ancre ? 0 : eviterLaPhrase();
   if (decalage !== decalageMedaillon) {
     decalageMedaillon = decalage;
     medaillon.style.transform = decalage ? 'translateY(' + decalage + 'px)' : '';
@@ -311,11 +376,19 @@ function coordonneesCanvas(canvas, e) {
 function brancherGesteLune(canvas, vue) {
   bloquerDefilementTactile(canvas);
 
+  /* UN SEUL doigt tient la Lune : le pointeur qui l'a attrapée est mémorisé,
+   * les autres sont ignorés jusqu'au relâcher (acquis de la-terre-est-penchee :
+   * un second doigt posé faisait sauter la Lune sous lui). */
+  var pointeurTenant = null;
+
   canvas.addEventListener('pointerdown', function (e) {
+    if (pointeurTenant !== null) { e.preventDefault(); return; }
     var c = coordonneesCanvas(canvas, e);
     if (!vue.attrapeLune(c.x, c.y, etat.jour)) return;
+    pointeurTenant = e.pointerId;
     etat.glisse = true;
-    reprendreLaMain();
+    reprendreLaMainDoucement();
+    surveillerHistoire(); /* une animation coupée loin de la forme : l'histoire s'en va */
     fixerLecture(false); /* attraper la Lune met en pause */
     canvas.classList.add('attrape');
     if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
@@ -323,13 +396,16 @@ function brancherGesteLune(canvas, vue) {
   });
 
   canvas.addEventListener('pointermove', function (e) {
-    if (!etat.glisse) return;
+    if (!etat.glisse || e.pointerId !== pointeurTenant) return;
     var c = coordonneesCanvas(canvas, e);
     fixerJour(vue.jourDepuisPointeur(c.x, c.y));
+    surveillerHistoire();
     e.preventDefault();
   });
 
-  function lacherLaLune() {
+  function lacherLaLune(e) {
+    if (e && e.pointerId !== pointeurTenant) return;
+    pointeurTenant = null;
     etat.glisse = false;
     canvas.classList.remove('attrape');
   }
@@ -346,9 +422,10 @@ brancherGesteLune(canvasOrbiteJeu, vueOrbiteJeu);
 /* ------------------------------------------------------------------ */
 
 curseur.addEventListener('input', function () {
-  reprendreLaMain();
+  reprendreLaMainDoucement();
   fixerLecture(false); /* reprendre la main met en pause */
   fixerJour(parseFloat(curseur.value));
+  surveillerHistoire();
 });
 
 /* ------------------------------------------------------------------ */
@@ -410,6 +487,11 @@ SCENARIOS.forEach(function (s) {
   bouton.querySelector('.sous').textContent = s.sousTitre;
   bouton.addEventListener('click', function () {
     fixerLecture(false); /* le scénario prend la main sur la lecture auto */
+    /* le voyage finit PILE sur la forme du moment, qui est aussi une cible du
+     * jeu : jeu ouvert, « Toute ronde ! » gagnait « une pleine lune » sans que
+     * l'enfant fabrique quoi que ce soit. Le défi ne se regagne qu'après un
+     * geste de l'enfant (acquis de la-terre-est-penchee). */
+    etat.jourFabrique = false;
     etat.scenarioActif = s.id;
     rafraichirBoutonsScenarios();
     allerAuJour(s.jour, false);
@@ -482,7 +564,10 @@ function phrasesDe(texte) {
 
 var narrateur = (function () {
   if (!synthesePossible) {
-    return { lire: function () {}, raconter: function () {}, stop: function () {} };
+    return {
+      lire: function () {}, raconter: function () {},
+      stop: function () {}, finirDoucement: function () {}
+    };
   }
 
   var synthese = window.speechSynthesis;
@@ -490,6 +575,12 @@ var narrateur = (function () {
   var finPrecedente = null;
   var voixChoisie = null;
 
+  /* « Finis ton bloc, puis tais-toi » : la Lune a quitté la forme du moment
+   * choisi, l'histoire s'efface — mais la voix ne se coupe pas net. Le bloc en
+   * cours (le mp3 en cours, ou la phrase de synthèse en cours) va au bout, et
+   * les suivants ne partent pas. Acquis de la-terre-est-penchee. */
+  var finirApresLeBloc = false;
+  var blocsEnCours = null;
   function scoreVoix(v) {
     var lang = (v.lang || '').replace('_', '-').toLowerCase();
     var nom = (v.name || '').toLowerCase();
@@ -563,7 +654,7 @@ var narrateur = (function () {
   function direMorceaux(morceaux, gen, apres) {
     function suivant(i) {
       if (gen !== generation) return;
-      if (i >= morceaux.length) { apres(); return; }
+      if (i >= morceaux.length || finirApresLeBloc) { apres(); return; }
       var u = new window.SpeechSynthesisUtterance(morceaux[i].texte);
       u.lang = 'fr-FR';
       if (voixChoisie) u.voice = voixChoisie;
@@ -588,6 +679,8 @@ var narrateur = (function () {
   function lire(blocs, quandFini) {
     generation += 1;
     var gen = generation;
+    finirApresLeBloc = false;
+    blocsEnCours = blocs;
     finir();
     finPrecedente = quandFini || null;
     synthese.cancel();
@@ -600,7 +693,7 @@ var narrateur = (function () {
 
     function suivant(n) {
       if (gen !== generation) return;
-      if (n >= blocs.length) { finir(); return; }
+      if (n >= blocs.length || finirApresLeBloc) { finir(); return; }
       var bloc = blocs[n];
       var apres = function () {
         if (gen === generation) window.setTimeout(function () { suivant(n + 1); }, 0);
@@ -639,8 +732,18 @@ var narrateur = (function () {
     lire: lire,
     /* Un texte du modèle, en un seul bloc : id du fichier + version orale. */
     raconter: function (id, texte) { lire([{ id: id, texte: texteOral(texte) }]); },
+    /* Ne vise que la narration dont le premier bloc porte ce préfixe d'id
+     * (« scn- » : l'histoire d'un moment choisi) — la grande histoire du
+     * bouton « Écouter » et les consignes du jeu ne se taisent pas pour un
+     * doigt posé sur la Lune. */
+    finirDoucement: function (prefixe) {
+      if (!blocsEnCours || !blocsEnCours.length) return;
+      if (blocsEnCours[0].id.indexOf(prefixe) !== 0) return;
+      finirApresLeBloc = true;
+    },
     stop: function () {
       generation += 1;
+      finirApresLeBloc = false;
       synthese.cancel();
       arreterLecteur();
       finir();
@@ -766,9 +869,10 @@ function surveillerDefi(ms) {
     return;
   }
   /* On ne gagne qu'en manœuvrant soi-même (pas pendant une animation de
-   * scénario NI pendant la lecture auto), et il faut RESTER sur la forme :
-   * la traverser d'un grand coup de glisser ne compte pas. */
-  if (!dessus || etat.animation || etat.enLecture) {
+   * scénario, NI sur son point d'arrivée — `jourFabrique` —, NI pendant la
+   * lecture auto), et il faut RESTER sur la forme : la traverser d'un grand
+   * coup de glisser ne compte pas. */
+  if (!dessus || etat.animation || etat.enLecture || !etat.jourFabrique) {
     etat.defiEntreMs = null;
     return;
   }
@@ -788,14 +892,20 @@ boutonJouer.addEventListener('click', function () {
   var ouvert = !zoneJeu.hidden;
   if (ouvert) {
     zoneJeu.hidden = true;
+    carteJeu.classList.remove('jeu-ouvert');
+    gererMedaillon(); /* rend le médaillon à sa place flottante */
     etat.defi = null;
     etat.bravoVisible = false;
     etat.defiEntreMs = null;
+    boutonEncore.hidden = true; /* il vit dans l'en-tête : il ne se range plus tout seul */
     boutonJouer.textContent = '🎮 Jouer';
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — remonter à la vue du jardin');
   } else {
     zoneJeu.hidden = false;
-    fixerLecture(false); /* rien ne doit gagner tout seul */
+    carteJeu.classList.add('jeu-ouvert');
+    gererMedaillon(); /* ancre le médaillon dans l'en-tête du jeu */
+    reprendreLaMain(); /* l'enfant prend la main : rien ne doit gagner tout seul */
+    fixerLecture(false);
     boutonJouer.textContent = '📦 Ranger le jeu';
     medaillon.setAttribute('aria-label', 'La Lune de ce soir — le résultat de ta manœuvre');
     nouveauDefi();

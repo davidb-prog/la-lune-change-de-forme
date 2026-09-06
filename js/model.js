@@ -292,6 +292,26 @@ export function defiEncoreTenu(cible, jour) {
   return false;
 }
 
+/* La phase du soir visée par un scénario : la forme qu'on voit au jour-cible
+ * de son bouton (nouvelle lune, premier croissant, pleine lune, dernier
+ * quartier). Rien de nouveau n'est décidé ici — on relit le modèle. */
+export function phaseScenario(id) {
+  for (var i = 0; i < SCENARIOS.length; i++) {
+    if (SCENARIOS[i].id === id) return phaseInfo(SCENARIOS[i].jour).cle;
+  }
+  return null;
+}
+
+/* L'histoire d'un scénario tient-elle encore ? Elle reste affichée tant que la
+ * Lune garde la forme du moment choisi — à l'hystérésis du jeu près, pour que
+ * le texte ne clignote pas au bord de la fenêtre — et s'efface dès qu'elle en
+ * sort. C'est la règle de la famille (portée de la-terre-est-penchee) : glisser
+ * la Lune ou tirer le curseur ne coupe plus le récit au premier doigt. */
+export function scenarioEncoreTenu(id, jour) {
+  var cle = phaseScenario(id);
+  return cle !== null && defiEncoreTenu(cle, jour);
+}
+
 /* La consigne et le bravo d'un défi — pour l'écran et pour le conteur. Un
  * défi peut apporter ses propres mots (la nouvelle lune) ; sinon, le patron
  * « Fabrique… » de la famille. */

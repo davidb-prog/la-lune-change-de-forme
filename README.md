@@ -28,6 +28,9 @@ L'idée centrale, celle que l'enfant doit retenir :
   croissant, pleine lune, dernier quartier — l'animation rejoint le moment
   choisi en douceur, toujours dans le vrai sens de l'orbite, puis une
   micro-histoire raconte le moment (version sonore au bouton 🔇/🔊).
+  Reprendre la Lune au doigt ne coupe pas le récit : il reste tant que la Lune
+  garde la forme du moment, et quand elle en sort, la voix finit sa phrase
+  avant de se taire.
 - **La boîte d'explication** à lire ou à **écouter** (synthèse vocale hors
   ligne, bouton « 🔊 Écouter l'histoire » — la meilleure voix française de
   l'appareil est choisie automatiquement).
@@ -35,7 +38,11 @@ L'idée centrale, celle que l'enfant doit retenir :
   l'enfant la fabrique en manœuvrant la Lune — directement dans les mini-vues
   reprises sous le jeu (synchronisées avec celles du haut), sans remonter en
   haut de la page. Sur mobile, le jeu tient sur un écran : une seule vue, et
-  c'est le médaillon flottant qui montre la Lune du soir.
+  c'est le médaillon qui montre la Lune du soir — il s'ancre alors dans
+  l'en-tête du jeu, à droite du titre, avec les trois commandes
+  (voix, « Encore une ! », « Ranger le jeu ») sur une ligne juste dessous.
+  On ne gagne qu'en manœuvrant soi-même : taper un bouton-moment ne fabrique
+  rien.
 - **Sur mobile**, un médaillon flottant montre la Lune du soir dès que la Lune
   du jardin quitte l'écran (scénarios, curseur, jeu…) — un tap y ramène. Il
   s'écarte tant que la phrase du soir passe dans son coin : elle reste lisible.
