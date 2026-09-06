@@ -840,7 +840,9 @@ if (synthesePossible) {
 var piocherDefi = creerPiocheDefis();
 
 function nouveauDefi() {
-  etat.defi = piocherDefi();
+  /* le soir affiché part avec : la pioche n'offre jamais la forme qu'on voit
+   * déjà (le bravo tomberait sans que l'enfant ait rien fabriqué) */
+  etat.defi = piocherDefi(etat.jour);
   etat.defiGagne = false;
   etat.bravoVisible = false;
   etat.defiEntreMs = null;

@@ -42,7 +42,7 @@ L'idée centrale, celle que l'enfant doit retenir :
   l'en-tête du jeu, à droite du titre, avec les trois commandes
   (voix, « Encore une ! », « Ranger le jeu ») sur une ligne juste dessous.
   On ne gagne qu'en manœuvrant soi-même : taper un bouton-moment ne fabrique
-  rien.
+  rien, et le jeu ne demande jamais la forme que la Lune montre déjà.
 - **Sur mobile**, un médaillon flottant montre la Lune du soir dès que la Lune
   du jardin quitte l'écran (scénarios, curseur, jeu…) — un tap y ramène. Il
   s'écarte tant que la phrase du soir passe dans son coin : elle reste lisible.

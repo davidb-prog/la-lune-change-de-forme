@@ -241,26 +241,52 @@ export var DEFIS = [
 /* Pioche des défis en « sac sans remise » : on mélange toutes les formes puis
  * on les sort une à une avant de remélanger — chaque forme apparaît donc une
  * fois par tournée, sans jamais sortir deux fois de suite, même à cheval sur
- * deux sacs. `alea` s'injecte pour rendre les tests déterministes. */
+ * deux sacs. `alea` s'injecte pour rendre les tests déterministes.
+ *
+ * La pioche prend le SOIR AFFICHÉ (facultatif) : elle ne propose jamais une
+ * forme que la Lune montre déjà — le bravo tomberait sans que l'enfant ait
+ * rien fabriqué (acquis de la-terre-est-penchee). Une seule forme peut être
+ * écartée à la fois (les fenêtres de phases ne se chevauchent pas), il reste
+ * donc toujours de quoi tirer. Sans jour, la pioche se comporte exactement
+ * comme avant (tests du sac). */
 export function creerPiocheDefis(alea) {
   var tirage = alea || Math.random;
   var sac = [];
   var dernier = null;
-  return function () {
-    if (sac.length === 0) {
-      sac = DEFIS.slice();
-      for (var i = sac.length - 1; i > 0; i--) {
-        var j = Math.floor(tirage() * (i + 1));
-        var t = sac[i]; sac[i] = sac[j]; sac[j] = t;
-      }
-      /* Le nouveau sac ne recommence pas par la forme qui vient de sortir :
-       * elle file au fond (elle ressortira en dernier). */
-      if (dernier !== null && sac[sac.length - 1].cible === dernier.cible) {
-        sac[sac.length - 1] = sac[0];
-        sac[0] = dernier;
-      }
+
+  function remplirLeSac() {
+    sac = DEFIS.slice();
+    for (var i = sac.length - 1; i > 0; i--) {
+      var j = Math.floor(tirage() * (i + 1));
+      var t = sac[i]; sac[i] = sac[j]; sac[j] = t;
     }
-    dernier = sac.pop();
+    /* Le nouveau sac ne recommence pas par la forme qui vient de sortir :
+     * elle file au fond (elle ressortira en dernier). */
+    if (dernier !== null && sac[sac.length - 1].cible === dernier.cible) {
+      sac[sac.length - 1] = sac[0];
+      sac[0] = dernier;
+    }
+  }
+
+  /* Le prochain défi valide, depuis le fond du sac (sans jour et sans
+   * contrainte, c'est le dernier : la pioche d'avant, à l'identique). */
+  function indiceValide(jour) {
+    for (var i = sac.length - 1; i >= 0; i--) {
+      if (dernier !== null && sac[i].cible === dernier.cible) continue;
+      if (typeof jour === 'number' && defiReussi(sac[i].cible, jour)) continue;
+      return i;
+    }
+    return -1;
+  }
+
+  return function (jour) {
+    if (sac.length === 0) remplirLeSac();
+    var i = indiceValide(jour);
+    /* Le fond du sac n'a plus que la forme du soir (ou celle qui vient de
+     * sortir) : on remélange un sac neuf plutôt que de mentir. */
+    if (i < 0) { remplirLeSac(); i = indiceValide(jour); }
+    if (i < 0) i = sac.length - 1; /* filet : la pioche ne se bloque jamais */
+    dernier = sac.splice(i, 1)[0];
     return dernier;
   };
 }

@@ -136,7 +136,11 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   quand elle quitte **franchement** la forme (hystérésis de sortie
   `DEFI_SORTIE_JOURS`/`defiEncoreTenu`, acquis de la famille : au bord de la
   fenêtre, un frémissement du doigt ne le fait pas clignoter) — et revient
-  si la bonne forme est refabriquée ;
+  si la bonne forme est refabriquée ; **et la pioche n'offre jamais la forme
+  que la Lune montre déjà** (`creerPiocheDefis(alea)` prend le soir affiché,
+  `piocherDefi(etat.jour)` : à l'ouverture du jeu comme à « Encore une ! »,
+  un défi gagné d'avance serait un bravo sans manœuvre — le fond de sac qui
+  ne garde que celle-là fait remélanger un sac neuf plutôt que de mentir) ;
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
   `consigneDefi`/`bravoDefi` du modèle).

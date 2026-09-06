@@ -329,6 +329,41 @@ test('la pioche ne redonne jamais deux fois de suite la même forme, même entre
   }
 });
 
+test('la pioche n’offre jamais la forme que la Lune montre déjà (pas de bravo gagné d’avance)', function () {
+  /* Acquis de la-terre-est-penchee : le jeu s’ouvre sur le soir affiché — si
+   * la pioche y sortait la forme du soir, le bravo tomberait sans que l’enfant
+   * ait fait tourner quoi que ce soit. On balaye le cycle par demi-journées,
+   * et à chaque soir on tire une tournée entière. */
+  for (var graine = 1; graine <= 5; graine++) {
+    var piocher = creerPiocheDefis(fauxAlea(graine));
+    for (var jour = 0; jour < CYCLE_JOURS; jour += 0.5) {
+      for (var i = 0; i < DEFIS.length; i++) {
+        var d = piocher(jour);
+        assert.ok(!defiReussi(d.cible, jour),
+          'défi gagné d’avance au soir ' + jour.toFixed(1) + ' (graine ' + graine + ') : ' + d.cible);
+      }
+    }
+  }
+});
+
+test('la pioche filtrée reste une pioche : ni répétition d’affilée, ni forme oubliée', function () {
+  /* Le filtre du soir écarte au plus UNE forme (les fenêtres de phases ne se
+   * chevauchent pas) : la tournée reste variée et rien ne se bloque. */
+  var piocher = creerPiocheDefis(fauxAlea(7));
+  var precedent = null;
+  var vues = {};
+  for (var i = 0; i < 40 * DEFIS.length; i++) {
+    var jour = (i * 0.7) % CYCLE_JOURS; /* l’enfant promène la Lune entre deux défis */
+    var d = piocher(jour);
+    assert.ok(precedent === null || d.cible !== precedent.cible, 'deux fois de suite : ' + d.cible);
+    precedent = d;
+    vues[d.cible] = (vues[d.cible] || 0) + 1;
+  }
+  DEFIS.forEach(function (d) {
+    assert.ok(vues[d.cible] > 0, 'forme jamais tirée : ' + d.cible);
+  });
+});
+
 /* ------------------------------------------------------------------ */
 
 var rates = 0;
