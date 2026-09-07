@@ -114,8 +114,8 @@
              est celle du plus long des deux, donc rien ne bouge quand on bascule -->
         <button id="bouton-son-scenarios" class="bouton-son scn-voice-btn" type="button" hidden
           aria-pressed="false" aria-label="Activer la version sonore des histoires"><span
-            class="scn-voice-on" aria-hidden="true">🔊 avec la voix</span><span
-            class="scn-voice-off" aria-hidden="true">🔇 sans la voix</span></button>
+            class="scn-voice-on" aria-hidden="true">🔊 <span class="libelle">avec la voix</span></span><span
+            class="scn-voice-off" aria-hidden="true">🔇 <span class="libelle">sans la voix</span></span></button>
       </div>
       <div class="grille-scenarios" id="grille-scenarios"></div>
       <div class="histoire" id="histoire-scenario" aria-live="polite" hidden></div>
@@ -152,12 +152,16 @@
     <section class="carte carte-jeu">
       <div class="titre-avec-bouton">
         <h2>🎯 Attrape la bonne Lune !</h2>
-        <div class="boutons-voix">
+        <!-- toutes les commandes du jeu sur UNE rangée, en haut de la carte :
+             [🔇] [Encore une !] [Jouer / Ranger le jeu]. Pendant le jeu, main.js
+             ancre le médaillon à droite du titre (voir css/style.css). -->
+        <div class="boutons-voix actions-jeu">
           <!-- le même réglage de voix que les scénarios, à portée de main du jeu -->
           <button id="bouton-son-jeu" class="bouton-son scn-voice-btn" type="button" hidden
             aria-pressed="false" aria-label="Activer la voix qui lit les consignes et les bravos du jeu"><span
-              class="scn-voice-on" aria-hidden="true">🔊 avec la voix</span><span
-              class="scn-voice-off" aria-hidden="true">🔇 sans la voix</span></button>
+              class="scn-voice-on" aria-hidden="true">🔊 <span class="libelle">avec la voix</span></span><span
+              class="scn-voice-off" aria-hidden="true">🔇 <span class="libelle">sans la voix</span></span></button>
+          <button id="bouton-encore" class="bouton-jeu" type="button" hidden>🎲 Encore une !</button>
           <button id="bouton-jouer" class="bouton-jeu" type="button">🎮 Jouer</button>
         </div>
       </div>
@@ -175,7 +179,6 @@
           </div>
         </div>
         <p class="bravo" id="bravo-jeu" aria-live="polite" hidden></p>
-        <button id="bouton-encore" class="bouton-jeu" type="button" hidden>🎲 Encore une !</button>
       </div>
     </section>
 

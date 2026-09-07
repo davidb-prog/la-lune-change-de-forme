@@ -73,6 +73,10 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 
 - **Le Soleil ne bouge jamais à l'écran** (objet-repère de la série) — sonde de
   pixels dans la suite navigateur.
+- **Un seul doigt tient la Lune** : le `pointerId` qui l'a attrapée est
+  mémorisé, les autres sont ignorés jusqu'au relâcher (acquis de
+  la-terre-est-penchee : un second doigt posé faisait sauter la Lune sous
+  lui). Vaut pour les deux vues de l'espace — celle du haut et celle du jeu.
 - **Glisser fait avancer le phénomène** : attraper la Lune la déplace sur son
   orbite ; le curseur maître fait la même chose. Les deux vues (ciel + hublot)
   restent **synchronisées en permanence** sur le même `etat.jour`.
@@ -100,8 +104,17 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   forme du soir et la vue de l'espace, juste dessous, montre le voyage en
   même temps (défilement sec en mouvement réduit, rien sur grand écran où
   les deux vues sont déjà sous les yeux).
-- **Reprendre la main efface l'histoire** : bouger le curseur ou la Lune ferme
-  la micro-histoire du scénario et désarme son `aria-pressed`.
+- **Reprendre la main ne coupe plus l'histoire au premier doigt** (acquis de
+  la-terre-est-penchee) : glisser la Lune ou tirer le curseur
+  (`reprendreLaMainDoucement`) laisse la micro-histoire à l'écran **tant que
+  la Lune garde la forme du moment choisi** — à l'hystérésis du jeu près
+  (`scenarioEncoreTenu`/`defiEncoreTenu` du modèle : au bord de la fenêtre,
+  un frémissement ne fait pas clignoter le texte). Dès qu'elle en sort,
+  l'histoire s'efface et son `aria-pressed` se désarme, mais **la voix ne se
+  coupe pas net : elle finit son bloc puis se tait**
+  (`narrateur.finirDoucement('scn-')`). Le bouton ⏸/▶ range aussi l'histoire
+  de la même façon ; **ouvrir le jeu**, lui, efface ET coupe
+  (`reprendreLaMain`).
 - **Scénarios au patron de la famille** (repris d'ou-va-le-soleil) : 4 boutons
   en dégradés colorés (croissant rose, quartier bleu, pleine lune dorée,
   nouvelle lune violette — classes `scn-<id>`), et l'histoire écrite en
@@ -110,15 +123,24 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   (`montrerHistoire` dans main.js). Le bouton 🔇/🔊 a un **jumeau posé sur le
   jeu** (`bouton-son-jeu`, même état, même clé ; l'activer depuis le jeu relit
   la consigne du défi en cours).
-- **Le jeu ne se gagne qu'en manœuvrant soi-même** (pas pendant une animation
-  de scénario), et il faut **rester un instant sur la bonne forme**
+- **Le jeu ne se gagne qu'en manœuvrant soi-même** — ni pendant une animation
+  de scénario, **ni sur son point d'arrivée** (`etat.jourFabrique`, faux dès
+  qu'on tape un bouton-moment, vrai au premier geste de l'enfant : le voyage
+  finit PILE sur la forme du moment, qui est aussi une cible du jeu — jeu
+  ouvert, « Toute ronde ! » gagnait « une pleine lune » sans rien fabriquer ;
+  le saut sec du mouvement réduit gagnait pareil). Et il faut **rester un
+  instant sur la bonne forme**
   (`DEFI_ATTENTE_MS`) : un tour de Lune qui traverse la fenêtre sans
   s'arrêter ne gagne pas « en passant ». Le bravo **ne ment jamais** : il
   s'efface quand l'enfant repart faire tourner la Lune — mais seulement
   quand elle quitte **franchement** la forme (hystérésis de sortie
   `DEFI_SORTIE_JOURS`/`defiEncoreTenu`, acquis de la famille : au bord de la
   fenêtre, un frémissement du doigt ne le fait pas clignoter) — et revient
-  si la bonne forme est refabriquée ;
+  si la bonne forme est refabriquée ; **et la pioche n'offre jamais la forme
+  que la Lune montre déjà** (`creerPiocheDefis(alea)` prend le soir affiché,
+  `piocherDefi(etat.jour)` : à l'ouverture du jeu comme à « Encore une ! »,
+  un défi gagné d'avance serait un bravo sans manœuvre — le fond de sac qui
+  ne garde que celle-là fait remélanger un sac neuf plutôt que de mentir) ;
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
   `consigneDefi`/`bravoDefi` du modèle).
@@ -139,7 +161,18 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   ramène au jardin, sauf pendant le jeu où il n'est qu'un afficheur (remonter
   sortirait l'enfant du jeu). Le jeu n'affiche qu'une seule vue (l'espace),
   sans rien d'incrusté dans le canvas : c'est le médaillon qui montre le
-  résultat, il reste donc visible pendant le jeu. La boîte « Pourquoi la Lune
+  résultat, il reste donc visible pendant le jeu. **Jeu ouvert, le médaillon
+  s'ancre dans l'en-tête du jeu** (`placerMedaillon`, à chaque image, un seul
+  `getBoundingClientRect` et un déplacement DOM aux transitions) : il devient
+  un élément de la mise en page — à droite du titre, 60 px, sa case dans la
+  grille, plus rien à esquiver — et les **trois commandes tiennent sur une
+  ligne dessous** : `[🔇] [🎲 Encore une !] [📦 Ranger le jeu]`, la voix en
+  icône seule (son libellé vit dans le jumeau des scénarios), « Encore une ! »
+  monté dans l'en-tête (il se range donc à la main au rangement du jeu).
+  L'ancrage ne vaut que **tant que l'en-tête est à l'écran** : si l'enfant
+  remonte vers les scénarios sans ranger le jeu, le médaillon redevient
+  flottant, et se ré-ancre au retour (acquis de la-terre-est-penchee :
+  « coincé en haut du jeu »). La boîte « Pourquoi la Lune
   change de forme ? » se **replie** sur mobile (repliée au chargement, comme
   la note aux parents ; toujours ouverte sur ordinateur, `main.js` y veille).
   Rien de tout cela n'existe sur grand écran.
@@ -152,7 +185,11 @@ la ponctuation), score des voix françaises (fr-FR > fr > fr-CA, bonus
 naturelles/neurales, malus robotiques) qui **choisit seul** la meilleure voix
 (le menu 🗣 d'avant la voix enregistrée a été retiré de toute la famille),
 textes `oral` sans émoji avec espaces recollées avant la ponctuation,
-`pagehide` → `cancel()`. Le réglage 🔇/🔊 se retient sous la **clé de
+`pagehide` → `cancel()`. Un cran de plus que `stop()` :
+**`finirDoucement(prefixe)`** — « finis ton bloc, puis tais-toi ». Le mp3 (ou
+la phrase de synthèse) en cours va au bout, les blocs suivants ne partent pas.
+Visé par préfixe d'id (`scn-`) : la grande histoire du bouton « Écouter » et
+les consignes du jeu ne se taisent pas pour un doigt posé sur la Lune. Le réglage 🔇/🔊 se retient sous la **clé de
 famille** `petit-labo-son` (même origine petit-labo.fr pour tous les
 épisodes ; l'ancienne clé `petit-labo-lune-son` est lue en secours). Sans
 synthèse, les boutons sonores se cachent et le site reste complet.
