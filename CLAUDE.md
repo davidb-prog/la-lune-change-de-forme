@@ -144,6 +144,17 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
   `consigneDefi`/`bravoDefi` du modèle).
+- **Les deux vues du jeu tombent PILE à la même hauteur** : la largeur des
+  colonnes et les ratios des cadres se répondent — orbite `1.25fr` en `9/7`,
+  hublot `1fr` en `36/35` (= 1 / (1,25 × 7/9), repli `padding-bottom: 97.2%`)
+  — et la grille à deux colonnes ne s'ouvre qu'à **880 px**, là où le hublot
+  apparaît (en dessous, une grille à 720 px réservait une colonne vide et
+  l'orbite perdait 44 % de la rangée : la vue qu'on manipule rétrécissait
+  quand la fenêtre grandissait). Règle de méthode de la famille (même défaut
+  corrigé sur la-terre-est-penchee et ou-va-le-soleil) : **on fige d'abord la
+  vue qu'on manipule — sa largeur ne se sacrifie pas — puis on déduit le ratio
+  de l'autre.** Un cadre qui s'arrête plus haut que son voisin se lit comme un
+  bug de mise en page.
 - **Sur mobile (< 880 px) seulement** : le hublot se compacte en bandeau
   paysage (13/6, la Lune au-dessus du jardin) — jamais collant : épinglé en
   haut, il cacherait la vue de l'espace au niveau des boutons-scénarios. La
