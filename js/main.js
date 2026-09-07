@@ -12,6 +12,7 @@ import {
 } from './model.js';
 import { creerVueOrbite } from './vue-orbite.js';
 import { creerVueHublot, geometrieLune } from './vue-hublot.js';
+import { svgLune, formeIcone, formeIconeDefi } from './icone-lune.js';
 
 /* ------------------------------------------------------------------ */
 /* L'état                                                              */
@@ -58,6 +59,11 @@ var canvasHublot = document.getElementById('canvas-hublot');
 var curseur = document.getElementById('curseur-jours');
 var phraseSoir = document.getElementById('phrase-soir');
 var grilleScenarios = document.getElementById('grille-scenarios');
+/* La frise au-dessus du curseur : nouvelle, premier quartier, pleine, dernier
+ * quartier, nouvelle — nos Lunes, pas les emoji système. */
+document.querySelector('.piste-emojis').innerHTML =
+  [0, CYCLE_JOURS / 4, CYCLE_JOURS / 2, (3 * CYCLE_JOURS) / 4, 0]
+    .map(function (j) { return '<span>' + svgLune(formeIcone(j)) + '</span>'; }).join('');
 var histoireScenario = document.getElementById('histoire-scenario');
 var boutonSonScenarios = document.getElementById('bouton-son-scenarios');
 var boutonSonJeu = document.getElementById('bouton-son-jeu'); /* le jumeau posé sur le jeu */
@@ -482,7 +488,9 @@ SCENARIOS.forEach(function (s) {
   /* scn-<id> : les couleurs de la famille (reprises d'ou-va-le-soleil) */
   bouton.className = 'bouton-scenario scn-' + s.id;
   bouton.setAttribute('aria-pressed', 'false');
-  bouton.innerHTML = '<span class="emoji">' + s.emoji + '</span>' +
+  /* l'icône montre la forme du soir où le bouton emmène (croissant épaissi
+   * en pictogramme — voir icone-lune.js), jamais l'emoji système */
+  bouton.innerHTML = '<span class="emoji">' + svgLune(formeIcone(s.jour)) + '</span>' +
     '<span class="titre"></span><span class="sous"></span>';
   bouton.querySelector('.titre').textContent = s.titre;
   bouton.querySelector('.sous').textContent = s.sousTitre;
@@ -847,7 +855,8 @@ function nouveauDefi() {
   etat.defiGagne = false;
   etat.bravoVisible = false;
   etat.defiEntreMs = null;
-  defiJeu.textContent = etat.defi.emoji + ' ' + etat.defi.nom + ' !';
+  /* la Lune du défi en pictogramme SVG (le nom vient du modèle, sans HTML) */
+  defiJeu.innerHTML = svgLune(formeIconeDefi(etat.defi.cible)) + ' ' + etat.defi.nom + ' !';
   defiJeu.hidden = false;
   bravoJeu.hidden = true;
   boutonEncore.hidden = true;

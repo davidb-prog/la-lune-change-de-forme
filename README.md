@@ -100,10 +100,12 @@ index.html          la page unique
 css/style.css       le thème de la série astronomie
 js/model.js         le modèle pur (géométrie, phases, scénarios, défis)
 js/lune-disque.js   le disque de la Lune, partagé par les vues (pré-rendu)
+js/icone-lune.js    les petites Lunes en SVG de la frise, des boutons et du jeu
 js/vue-orbite.js    la vue du ciel (canvas) + le geste-signature
 js/vue-hublot.js    le hublot : la Lune vue du jardin (canvas) et le médaillon
 js/main.js          le câblage : boucle rAF, curseur, scénarios, conteur, jeu
 test/model.test.mjs les tests du modèle (Node, sans navigateur)
+test/icone.test.mjs les tests des pictogrammes de Lune
 docs/               les captures d'écran
 ```
 

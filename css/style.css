@@ -217,6 +217,12 @@ main, header.entete, footer.pied-serie {
   padding: 4px 2px 0;
 }
 
+/* les pictogrammes de Lune (icone-lune.js) : la taille suit celle du texte
+   qu'ils accompagnent */
+.icone-lune { width: 1em; height: 1em; vertical-align: -0.15em; }
+.piste-emojis .icone-lune { display: block; }
+.defi .icone-lune { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: 0.1em; }
+
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -356,6 +362,7 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 .bouton-scenario[aria-pressed="true"] { box-shadow: 0 0 0 3px rgba(255, 207, 92, 0.55); }
 
 .bouton-scenario .emoji { font-size: 1.6rem; line-height: 1; display: block; }
+.bouton-scenario .emoji .icone-lune { display: block; margin: 0 auto; }
 .bouton-scenario .titre { font-weight: 700; display: block; font-size: 0.95rem; }
 .bouton-scenario .sous { font-weight: 400; font-size: 0.76rem; opacity: 0.8; display: block; }
 

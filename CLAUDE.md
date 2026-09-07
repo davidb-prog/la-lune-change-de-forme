@@ -95,6 +95,14 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   ne serait qu'un pointillé). Pas de chat ni d'animal : rien ne doit
   détourner l'œil de la Lune. Palette bleu nuit, une seule source chaude :
   les fenêtres.
+- **Les pictogrammes de Lune** (frise du curseur, boutons-moments, ligne du
+  défi) sont du **SVG inline** aux couleurs de la Lune (`js/icone-lune.js`,
+  pur, testé par `node test/icone.test.mjs`) — jamais les emoji 🌑🌒🌕🌗,
+  jaunes sur iOS, autres sur Android, blancs ailleurs : le site ne les
+  maîtrise pas. Une seule licence : un croissant d'icône est porté à
+  `FRACTION_ICONE_MIN` (20 %) — au soir 3, les 7 % réels font un fil de 2 px
+  sur 26 px. Le hublot, lui, montre la forme exacte. Les champs `emoji` du
+  modèle restent (textes, tests) mais ne s'affichent plus.
 - **L'espace** : Soleil en dégradé à seize rayons doux, lueur atténuée ;
   Terre en volume, continents organiques, nuages, atmosphère, **sans
   calottes polaires** ; la maison-repère est un **pictogramme posé SUR le
@@ -292,6 +300,7 @@ assets/audio/       la voix enregistrée du conteur (mp3 + manifest.json)
 css/style.css       palette commune de la série astronomie (fond nuit)
 js/model.js         modèle pur + constantes du récit + texteOral
 js/lune-disque.js   le disque de la Lune partagé (Lune pleine pré-rendue, phase)
+js/icone-lune.js    les pictogrammes de Lune en SVG (frise, boutons, défi)
 js/vue-orbite.js    vue du ciel (Soleil fixe, orbite, Terre, geste-signature)
 js/vue-hublot.js    la Lune vue du jardin (décor pré-rendu, médaillon)
 js/main.js          câblage : boucle rAF, curseur, scénarios, conteur, jeu
@@ -299,6 +308,7 @@ tools/voix-lib.mjs  corpus() : les 21 blocs parlés de l'épisode
 tools/build-voix.mjs  génération ElevenLabs (locale) + page d'écoute
 tools/controle-voix.mjs  contrôle « sans oreilles » (ffmpeg + whisper)
 test/model.test.mjs tests du modèle (Node)
+test/icone.test.mjs tests des pictogrammes (formes, SVG)
 test/voix.test.mjs  tests de la voix (corpus, couverture, manifeste)
 docs/               captures d'écran du README
 ```
