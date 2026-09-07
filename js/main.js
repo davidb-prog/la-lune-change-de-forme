@@ -81,9 +81,10 @@ var vueHublot = creerVueHublot(canvasHublot);
 /* Les mêmes vues, en petit, sous le jeu — synchronisées sur le même jour. */
 var vueOrbiteJeu = creerVueOrbite(canvasOrbiteJeu);
 var vueHublotJeu = creerVueHublot(canvasHublotJeu);
-/* Le médaillon est un mini hublot (ciel, Lune, jardin) : une fenêtre sur le
- * soir, impossible à confondre avec la Lune attrapable de la vue de l'espace. */
-var vueMedaillon = creerVueHublot(canvasMedaillon);
+/* Le médaillon montre la Lune du soir seule, sans jardin ni cratères : à
+ * 60 px, seule la forme compte. Cerclé d'or par la feuille de style, il ne se
+ * confond pas avec la Lune attrapable (violette) de la vue de l'espace. */
+var vueMedaillon = creerVueHublot(canvasMedaillon, { medaillon: true });
 
 /* ------------------------------------------------------------------ */
 /* Changer de jour                                                     */
