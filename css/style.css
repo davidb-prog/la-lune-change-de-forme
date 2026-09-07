@@ -445,21 +445,30 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   margin: 12px 0;
 }
 
-.vues-jeu .cadre-canvas { margin-bottom: 12px; }
-
 .vues-jeu .cadre-canvas { height: 0; padding-bottom: 78%; }
 
 @supports (aspect-ratio: 1 / 1) {
   .vues-jeu .cadre-canvas { height: auto; padding-bottom: 0; aspect-ratio: 9 / 7; }
 }
 
-@media (min-width: 720px) {
+/* Deux colonnes seulement là où il y a deux vues : le hublot n'apparaît qu'à
+   880 px (voir le bloc max-width: 879px). En dessous, la grille réservait une
+   colonne vide et l'orbite — la vue qu'on manipule — perdait 44 % de la
+   rangée. */
+@media (min-width: 880px) {
   .vues-jeu {
     display: grid;
     grid-template-columns: 1.25fr 1fr;
     gap: 12px;
   }
-  .vues-jeu .cadre-canvas { margin-bottom: 0; }
+  /* Le hublot se règle sur l'orbite pour que les deux cadres tombent PILE à la
+     même hauteur : l'orbite fait 1,25 colonne en 9/7, donc le hublot fait
+     1 / (1,25 × 7/9) = 36/35. L'orbite garde sa taille, c'est le hublot qui
+     grandit — chaque pixel compte pour la Lune qu'on attrape du doigt. */
+  .vues-jeu > .cadre-canvas:last-child { padding-bottom: 97.2%; }
+  @supports (aspect-ratio: 1 / 1) {
+    .vues-jeu > .cadre-canvas:last-child { padding-bottom: 0; aspect-ratio: 36 / 35; }
+  }
 }
 
 #canvas-orbite-jeu { cursor: grab; }
