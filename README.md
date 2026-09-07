@@ -16,10 +16,10 @@ L'idée centrale, celle que l'enfant doit retenir :
 ## Fonctionnalités
 
 - **Le hublot « Ce soir, dans le ciel »**, en ouverture : la Lune vue du jardin
-  (petite maison à la fenêtre allumée, sapins), avec sa forme du soir et la
-  petite phrase du soir en dessous.
+  (la maison, l'enfant à la fenêtre allumée qui la regarde, les arbres), avec
+  sa forme du soir et la petite phrase du soir en dessous.
 - **La vue « Depuis l'espace »** : la Terre et la Lune vues de très haut, le Soleil fixe à
-  gauche, et une petite maison plantée sur le côté nuit de la Terre — c'est de
+  gauche, et une petite maison posée sur le côté nuit de la Terre — c'est de
   là qu'on regarde. Le geste-signature de l'épisode : **attraper la Lune au
   doigt et la faire tourner** sur son orbite. Les deux vues restent toujours
   synchronisées.
@@ -99,10 +99,13 @@ Les tests verrouillent les « vérités à préserver » de l'épisode :
 index.html          la page unique
 css/style.css       le thème de la série astronomie
 js/model.js         le modèle pur (géométrie, phases, scénarios, défis)
+js/lune-disque.js   le disque de la Lune, partagé par les vues (pré-rendu)
+js/icone-lune.js    les petites Lunes en SVG de la frise, des boutons et du jeu
 js/vue-orbite.js    la vue du ciel (canvas) + le geste-signature
-js/vue-hublot.js    le hublot : la Lune vue du jardin (canvas)
+js/vue-hublot.js    le hublot : la Lune vue du jardin (canvas) et le médaillon
 js/main.js          le câblage : boucle rAF, curseur, scénarios, conteur, jeu
 test/model.test.mjs les tests du modèle (Node, sans navigateur)
+test/icone.test.mjs les tests des pictogrammes de Lune
 docs/               les captures d'écran
 ```
 

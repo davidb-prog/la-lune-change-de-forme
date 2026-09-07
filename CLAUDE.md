@@ -69,6 +69,46 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   `k = dir · (1 − 2·fraction)` (demi-axe signé du terminateur, en fraction du
   rayon) — le hublot ne calcule rien lui-même.
 
+## Le dessin des vues (style « livre illustré »)
+
+- **Le décor est pré-rendu** : tout ce qui ne dépend pas du soir (ciel,
+  étoiles, jardin, Soleil, orbite, Terre, étiquettes) est dessiné une fois
+  dans un canvas mémoire, refait seulement quand le canvas change de taille ;
+  chaque image de la boucle rAF copie le décor puis pose la Lune. La Lune
+  pleine est elle-même pré-rendue par rayon (`creerCacheLune` dans
+  `js/lune-disque.js`, partagé par les trois vues). Mesuré : moins cher par
+  image que l'ancien dessin à plat — un dessin naïf coûterait quinze à
+  trente fois plus. Ne jamais redessiner le décor dans `rendre`.
+- **Primitives portables seulement** : arcs, dégradés, découpe par chemin,
+  `fill('evenodd')`. Pas de `ctx.ellipse`, `filter`, `shadowBlur`, `Path2D`.
+- **La Lune** : boule ivoire assombrie au bord, six cratères cartoon (pas de
+  mers « réalistes » : à cette taille elles font des taches grises et jurent
+  avec le jardin dessiné à plat), terminateur adouci par quatre bandes,
+  côté nuit deviné (lumière cendrée à 7 %). Même disque dans le hublot et
+  dans l'espace ; dans l'espace, la moitié nuit est un dégradé COURT (quelques
+  pixels) pour que « la moitié » reste lisible — pas de lumières de villes.
+- **Le jardin** : collines, pré, maison à toit de tuiles et cheminée qui
+  fume, **l'enfant à la grande fenêtre** (silhouette de dos, une main sur la
+  vitre : c'est lui qui regarde la Lune), porte sombre (pas une lampe), un
+  feuillu et un sapin **à droite, hors du disque de la Lune** (elle occupe
+  jusqu'à ~0,79 w), clôture sur grand écran seulement (en bandeau 13/6 elle
+  ne serait qu'un pointillé). Pas de chat ni d'animal : rien ne doit
+  détourner l'œil de la Lune. Palette bleu nuit, une seule source chaude :
+  les fenêtres.
+- **Les pictogrammes de Lune** (frise du curseur, boutons-moments, ligne du
+  défi) sont du **SVG inline** aux couleurs de la Lune (`js/icone-lune.js`,
+  pur, testé par `node test/icone.test.mjs`) — jamais les emoji 🌑🌒🌕🌗,
+  jaunes sur iOS, autres sur Android, blancs ailleurs : le site ne les
+  maîtrise pas. Une seule licence : un croissant d'icône est porté à
+  `FRACTION_ICONE_MIN` (20 %) — au soir 3, les 7 % réels font un fil de 2 px
+  sur 26 px. Le hublot, lui, montre la forme exacte. Les champs `emoji` du
+  modèle restent (textes, tests) mais ne s'affichent plus.
+- **L'espace** : Soleil en dégradé à seize rayons doux, lueur atténuée ;
+  Terre en volume, continents organiques, nuages, atmosphère, **sans
+  calottes polaires** ; la maison-repère est un **pictogramme posé SUR le
+  disque**, côté nuit (corps clair, une fenêtre chaude — pas de toit rouge,
+  qui lisait « croix rouge »). Le Soleil ne bouge toujours pas d'un pixel.
+
 ## Invariants d'interaction
 
 - **Le Soleil ne bouge jamais à l'écran** (objet-repère de la série) — sonde de
@@ -166,9 +206,11 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   recouvre pourtant **jamais la phrase du soir** : tant qu'une ligne de la
   phrase traverse son coin, il se pose juste dessous et remonte avec elle
   jusqu'à sa place (glissement collé au défilement ; on mesure les lignes et
-  non le bloc — une ligne courte et centrée ne le dérange pas). Le médaillon est
-  un **mini hublot** (ciel, Lune, jardin) cerclé d'or — le violet reste
-  réservé à la Lune attrapable, pour qu'on ne les confonde pas. Un tap y
+  non le bloc — une ligne courte et centrée ne le dérange pas). Le médaillon
+  montre la **Lune seule** (ciel uni, ni jardin ni cratères : à 60 px, seule
+  la forme du soir compte — option `{ medaillon: true }` de `creerVueHublot`),
+  cerclé d'or — le violet reste réservé à la Lune attrapable, pour qu'on ne
+  les confonde pas. Un tap y
   ramène au jardin, sauf pendant le jeu où il n'est qu'un afficheur (remonter
   sortirait l'enfant du jeu). Le jeu n'affiche qu'une seule vue (l'espace),
   sans rien d'incrusté dans le canvas : c'est le médaillon qui montre le
@@ -257,13 +299,16 @@ assets/fonts/       Baloo 2 auto-hébergée (la voix des titres de la famille)
 assets/audio/       la voix enregistrée du conteur (mp3 + manifest.json)
 css/style.css       palette commune de la série astronomie (fond nuit)
 js/model.js         modèle pur + constantes du récit + texteOral
-js/vue-orbite.js    vue du ciel (Soleil fixe, orbite, geste-signature)
-js/vue-hublot.js    la Lune vue du jardin (dessinerDisqueLune)
+js/lune-disque.js   le disque de la Lune partagé (Lune pleine pré-rendue, phase)
+js/icone-lune.js    les pictogrammes de Lune en SVG (frise, boutons, défi)
+js/vue-orbite.js    vue du ciel (Soleil fixe, orbite, Terre, geste-signature)
+js/vue-hublot.js    la Lune vue du jardin (décor pré-rendu, médaillon)
 js/main.js          câblage : boucle rAF, curseur, scénarios, conteur, jeu
 tools/voix-lib.mjs  corpus() : les 21 blocs parlés de l'épisode
 tools/build-voix.mjs  génération ElevenLabs (locale) + page d'écoute
 tools/controle-voix.mjs  contrôle « sans oreilles » (ffmpeg + whisper)
 test/model.test.mjs tests du modèle (Node)
+test/icone.test.mjs tests des pictogrammes (formes, SVG)
 test/voix.test.mjs  tests de la voix (corpus, couverture, manifeste)
 docs/               captures d'écran du README
 ```
