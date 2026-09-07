@@ -409,7 +409,10 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   .resume-explication::-webkit-details-marker { display: none; }
   .resume-explication::before { content: '▸ '; color: var(--sun); font-weight: 700; }
   .carte-explication[open] .resume-explication::before { content: '▾ '; }
-  .resume-explication h2 { display: inline; font-size: 1.1rem; }
+  /* le titre tient sur une ligne dès 360 px (mesuré : ~335 px à 1,1 rem avec
+     le chevron) : taille fluide, et l'espace insécable avant le « ? » du HTML
+     empêche un point d'interrogation orphelin sur les écrans plus étroits */
+  .resume-explication h2 { display: inline; font-size: clamp(0.9rem, 4.2vw, 1.1rem); }
 
   .indice-pli {
     display: block;
