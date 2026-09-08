@@ -212,7 +212,11 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   « 🚀 Depuis l'espace » — « la petite maison : chez nous, du côté nuit » —
   visible partout, sous le titre sur mobile (« Le Soleil éclaire depuis la
   gauche » est parti : l'image le montre ; aucun de ces textes n'était
-  parlé). La **largeur de page est celle de la famille** : 1180 px marges
+  parlé). **Les tailles de texte sont celles de la famille** (retour
+  utilisateur : la police paraissait plus grosse sur mobile) : accroche
+  1 rem, 0,92 rem sur mobile ; corps de l'histoire 1,02 rem, interligne
+  1,7, gris clair `#c9d2ea` ; note aux parents 0,93 rem ; pied 0,88 rem —
+  seule la phrase du soir (1,05 rem, or, gras) reste propre à l'épisode. La **largeur de page est celle de la famille** : 1180 px marges
   comprises, 1140 utiles (`max-width: 1140px` + 20 px de body ; la Lune
   vivait à 1060) — **plafonnée par la hauteur visible sur grand écran**
   (retour utilisateur : sur un portable 13", la page dimensionnée par la
@@ -221,15 +225,19 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   0.432, 1140px)` sur `main`, l'en-tête et le pied, pour qu'en-tête + scène
   (vues, phrase, frise) tiennent en 100vh. Constantes MESURÉES à 1140 px :
   268 px de fixe dans la scène, 0,432 × largeur pour les vues (9/7 sur
-  1,25 colonne sur 2,25), `--entete-px` = en-tête + 20 px de marge du body.
+  1,25 colonne sur 2,25), `--entete-px` = bas de l'en-tête (235 px ; plus de marge haute sur `body`,
+  l'espace avant le kicker vit dans l'en-tête comme sur les autres épisodes :
+  38 px, 18 sur mobile — une bande de 20 px de plus se voyait, et le
+  `theme-color` que la Lune était seule à porter teintait la barre de Safari
+  d'un aplat visible contre le dégradé de la page : retiré).
   Plancher 880 px (l'orbite ne descend pas sous 465 px : la vue qu'on
   manipule ne se sacrifie pas). Mesuré : 24" 1080p → 984 px de large et
   tout tient, 27" → 1140 inchangé, 13" → plancher. Sans `clamp()`, 1140.
   **L'en-tête se serre sur les écrans larges mais bas** (`min-width:
   880px and max-height: 849px`, le portable) : titre 2,4 rem, accroche
-  0,95 rem sur deux lignes (largeur 860), respirations réduites — 237 →
+  0,95 rem sur deux lignes (largeur 860), respirations réduites — 235 →
   149 px, rien de retiré (le H1 reste le H1, la consigne reste lue), et
-  `--entete-px` passe à 169. Mesuré : 13" 1440×900 → 887 px de large, tout
+  `--entete-px` passe à 149. Mesuré : 13" 1440×900 → 887 px de large, tout
   tient ; 13" 1280×800 → il reste ~100 px à faire défiler, accepté (le
   plancher de largeur prime). Toute retouche des marges de la scène ou de
   l'en-tête se re-mesure et se reporte dans ces constantes. La **pilule « ✋ Attrape la Lune… » est éphémère sur mobile
