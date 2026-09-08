@@ -71,6 +71,25 @@ main, header.entete, footer.pied-serie {
   margin: 0 auto;
 }
 
+/* LE BLOC DE LA SCÈNE TIENT DANS L'ÉCRAN D'UN PORTABLE AUSSI (retour
+   utilisateur : sur un 13", la page dimensionnée par la largeur seule
+   montrait les vues et rien d'autre — la même vue qu'un téléphone). La
+   largeur utile se plafonne par la HAUTEUR visible : en-tête + scène
+   (vues + phrase + frise) doivent tenir en 100vh. Mesuré à 1140 px : la
+   scène fait 268 px de fixe (titres, phrase, frise, marges) + 0,432 × la
+   largeur utile (les vues, 9/7 sur 1,25 colonne sur 2,25), l'en-tête
+   237 px + 20 px de marge haute du body (--entete-px). Plancher 880 px :
+   en dessous, l'orbite passerait sous 465 px — la vue qu'on manipule ne se
+   sacrifie pas (règle de méthode de la famille). Sans clamp() (vieux
+   navigateurs), la ligne est ignorée et la largeur reste 1140. Rien sous
+   880 px : le mobile a son propre budget (bloc mobile plus bas). */
+@media (min-width: 880px) {
+  :root { --entete-px: 257px; }
+  main, header.entete, footer.pied-serie {
+    max-width: clamp(880px, calc((100vh - 268px - var(--entete-px)) / 0.432), 1140px);
+  }
+}
+
 /* la voix des titres : Baloo 2 sur tout ce qui titre la page — jamais sur le
    corps du texte ni sur les boutons (leur font: inherit doit rester la pile
    système, taille partagée par toute la famille) */
@@ -125,6 +144,21 @@ main, header.entete, footer.pied-serie {
 }
 
 .tagline strong { color: var(--sun); }
+
+/* L'EN-TÊTE SE SERRE SUR LES ÉCRANS LARGES MAIS BAS (le portable) : 237 px
+   avant la première image, c'est un tiers d'un 13" pour un kicker, un titre
+   et trois lignes d'accroche. Rien n'est retiré — le H1 reste le H1, la
+   consigne « Attrape la Lune… » reste lue — tout se resserre : titre à
+   2,4 rem, accroche à 0,95 rem sur deux lignes (largeur 860 — à 720 elle en
+   faisait encore trois), respirations réduites. Mesuré : 237 → 149 px, et
+   --entete-px (149 + 20) suit pour le plafond de largeur (bloc ci-dessus). Une règle sur la HAUTEUR : un 24" ou un
+   téléphone gardent l'en-tête de la charte. */
+@media (min-width: 880px) and (max-height: 849px) {
+  :root { --entete-px: 169px; }
+  .entete { padding: 8px 0 14px; }
+  .entete h1 { font-size: 2.4rem; margin: 6px 0 8px; }
+  .tagline { font-size: 0.95rem; max-width: 860px; }
+}
 
 /* ---------- Cartes ---------- */
 
