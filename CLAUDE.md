@@ -221,10 +221,10 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   vivait à 1060) — **plafonnée par la hauteur visible sur grand écran**
   (retour utilisateur : sur un portable 13", la page dimensionnée par la
   largeur seule montrait les vues et rien d'autre, la même vue qu'un
-  téléphone) : `max-width: clamp(880px, (100vh − 268px − --entete-px) /
+  téléphone) : `max-width: clamp(880px, (100vh − 278px − --entete-px) /
   0.432, 1140px)` sur `main`, l'en-tête et le pied, pour qu'en-tête + scène
   (vues, phrase, frise) tiennent en 100vh. Constantes MESURÉES à 1140 px :
-  268 px de fixe dans la scène, 0,432 × largeur pour les vues (9/7 sur
+  278 px de fixe dans la scène (dont le curseur à 44 px, la hauteur de la famille — il vivait à 34 sur ordinateur), 0,432 × largeur pour les vues (9/7 sur
   1,25 colonne sur 2,25), `--entete-px` = bas de l'en-tête (235 px ; plus de marge haute sur `body`,
   l'espace avant le kicker vit dans l'en-tête comme sur les autres épisodes :
   38 px, 18 sur mobile — une bande de 20 px de plus se voyait, et le
