@@ -214,11 +214,12 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   gauche » est parti : l'image le montre ; aucun de ces textes n'était
   parlé). La **largeur de page est celle de la famille** : 1180 px marges
   comprises, 1140 utiles (`max-width: 1140px` + 20 px de body ; la Lune
-  vivait à 1060). La **pilule « ✋ Attrape la Lune… » est éphémère** (patron
-  bulle-geste des saisons) : 8 s ou le premier geste sur la Lune
-  (`cacherAstuceGeste`, main.js), puis elle se replie (`.astuce.cachee`,
-  hauteur 0) et rend sa place — le halo « attrape-moi » de la vue, lui,
-  continue de respirer. **Sur mobile, le bloc tient dans l'écran** : du
+  vivait à 1060). La **pilule « ✋ Attrape la Lune… » est éphémère sur mobile
+  seulement** (patron bulle-geste des saisons) : 8 s ou le premier geste
+  sur la Lune (`cacherAstuceGeste`, main.js), puis elle se replie
+  (`.astuce.cachee`, hauteur 0, règle du bloc mobile) et rend sa place ;
+  **sur ordinateur elle reste** (décision utilisateur : la place ne manque
+  pas) — le halo « attrape-moi » de la vue, lui, continue de respirer. **Sur mobile, le bloc tient dans l'écran** : du
   titre « 🌙 Ce soir, dans le ciel » (là où un tap-scénario cale l'écran) au
   bas du curseur, **713 px pilule repliée** pour ~715 visibles sur un
   iPhone 13 (746 tant qu'elle est affichée — accepté, comme sur les

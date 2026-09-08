@@ -385,11 +385,13 @@ function coordonneesCanvas(canvas, e) {
   };
 }
 
-/* La pilule « ✋ Attrape la Lune… » est éphémère (patron bulle-geste de la
- * famille) : 8 secondes, ou le premier geste sur la Lune, puis elle se replie
- * et rend sa place — sur mobile, ce sont ses 32 px qui décident si la frise
- * des soirs tient dans l'écran (voir le bloc mobile de style.css). Le halo
- * « attrape-moi » de la vue, lui, continue de respirer. */
+/* La pilule « ✋ Attrape la Lune… » est éphémère SUR MOBILE (patron
+ * bulle-geste de la famille) : 8 secondes, ou le premier geste sur la Lune,
+ * puis elle se replie et rend sa place — ce sont ses 32 px qui décident si la
+ * frise des soirs tient dans l'écran. La classe est posée partout, mais seul
+ * le bloc mobile de style.css la replie : sur ordinateur la place ne manque
+ * pas, la pilule reste (décision utilisateur). Le halo « attrape-moi » de la
+ * vue, lui, continue de respirer partout. */
 var astuceGeste = document.getElementById('astuce-geste');
 
 function cacherAstuceGeste() {

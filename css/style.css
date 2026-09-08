@@ -233,10 +233,10 @@ main, header.entete, footer.pied-serie {
 .carte-orbite canvas { cursor: grab; }
 .carte-orbite canvas.attrape { cursor: grabbing; }
 
-/* la pilule « attrape-moi », SOUS la vue de l'espace et transitoire (patron
-   bulle-geste des saisons) : rien ne recouvre jamais les canvas — elle
-   s'efface ET se replie ensemble, et rend sa place (sur mobile, ses 32 px
-   décidaient si la frise tenait dans l'écran) */
+/* la pilule « attrape-moi », SOUS la vue de l'espace (patron bulle-geste
+   des saisons) : rien ne recouvre jamais les canvas. Sur mobile elle est
+   transitoire — elle s'efface ET se replie ensemble, et rend sa place (ses
+   32 px décidaient si la frise tenait dans l'écran) */
 .astuce {
   margin: 8px 0 0; text-align: center; overflow: hidden;
   pointer-events: none; opacity: 1; max-height: 90px;
@@ -248,7 +248,8 @@ main, header.entete, footer.pied-serie {
   background: var(--surface-2); border: 1px solid var(--border);
   border-radius: 999px; padding: 6px 14px; color: var(--rose); font-weight: 600;
 }
-.astuce.cachee { opacity: 0; max-height: 0; margin-top: 0; }
+/* elle ne se replie que sur mobile (bloc plus bas) : sur ordinateur la place
+   ne manque pas, elle reste (décision utilisateur) */
 
 .phrase-soir {
   text-align: center;
@@ -710,6 +711,7 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   .entete-vue .hint { flex-basis: 100%; font-size: 0.72rem; }
   .astuce { margin-top: 4px; font-size: 0.78rem; }
   .astuce-pilule { padding: 4px 12px; }
+  .astuce.cachee { opacity: 0; max-height: 0; margin-top: 0; }
   .commande-mois { margin-top: 4px; }
   .commande-mois .entete-vue { margin-bottom: -2px; }
   .piste-emojis {

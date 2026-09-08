@@ -23,8 +23,8 @@ L'idée centrale, celle que l'enfant doit retenir :
 - **La vue « Depuis l'espace »** : la Terre et la Lune vues de très haut, le Soleil fixe à
   gauche, et une petite maison posée sur le côté nuit de la Terre — c'est de
   là qu'on regarde. Le geste-signature de l'épisode : **attraper la Lune au
-  doigt et la faire tourner** sur son orbite (la pilule « ✋ Attrape la Lune »
-  s'efface au premier geste). Les deux vues restent toujours synchronisées.
+  doigt et la faire tourner** sur son orbite (sur téléphone, la pilule « ✋ Attrape
+  la Lune » s'efface au premier geste). Les deux vues restent toujours synchronisées.
 - **Le grand curseur des soirs du mois** (0 → 29,5), juste sous les vues,
   pour faire défiler le cycle. Sur téléphone, les deux vues et le curseur
   tiennent ensemble dans l'écran.
