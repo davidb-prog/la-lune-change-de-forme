@@ -15,15 +15,19 @@ L'idée centrale, celle que l'enfant doit retenir :
 
 ## Fonctionnalités
 
-- **Le hublot « Ce soir, dans le ciel »**, en ouverture : la Lune vue du jardin
+- **Un seul bloc « Le même soir, deux regards »**, en ouverture, comme dans
+  les autres épisodes de la série : les deux vues et le curseur des soirs.
+- **Le hublot « Ce soir, dans le ciel »** : la Lune vue du jardin
   (la maison, l'enfant à la fenêtre allumée qui la regarde, les arbres), avec
   sa forme du soir et la petite phrase du soir en dessous.
 - **La vue « Depuis l'espace »** : la Terre et la Lune vues de très haut, le Soleil fixe à
   gauche, et une petite maison posée sur le côté nuit de la Terre — c'est de
   là qu'on regarde. Le geste-signature de l'épisode : **attraper la Lune au
-  doigt et la faire tourner** sur son orbite. Les deux vues restent toujours
-  synchronisées.
-- **Le grand curseur des soirs du mois** (0 → 29,5) pour faire défiler le cycle.
+  doigt et la faire tourner** sur son orbite (la pilule « ✋ Attrape la Lune »
+  s'efface au premier geste). Les deux vues restent toujours synchronisées.
+- **Le grand curseur des soirs du mois** (0 → 29,5), juste sous les vues,
+  pour faire défiler le cycle. Sur téléphone, les deux vues et le curseur
+  tiennent ensemble dans l'écran.
 - **4 boutons-scénarios « 🎲 Joue avec la Lune »** : nouvelle lune, premier
   croissant, pleine lune, dernier quartier — l'animation rejoint le moment
   choisi en douceur, toujours dans le vrai sens de l'orbite, puis une

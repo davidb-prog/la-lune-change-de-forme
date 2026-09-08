@@ -380,6 +380,18 @@ function coordonneesCanvas(canvas, e) {
   };
 }
 
+/* La pilule « ✋ Attrape la Lune… » est éphémère (patron bulle-geste de la
+ * famille) : 8 secondes, ou le premier geste sur la Lune, puis elle se replie
+ * et rend sa place — sur mobile, ce sont ses 32 px qui décident si la frise
+ * des soirs tient dans l'écran (voir le bloc mobile de style.css). Le halo
+ * « attrape-moi » de la vue, lui, continue de respirer. */
+var astuceGeste = document.getElementById('astuce-geste');
+
+function cacherAstuceGeste() {
+  if (astuceGeste) astuceGeste.classList.add('cachee');
+}
+window.setTimeout(cacherAstuceGeste, 8000);
+
 function brancherGesteLune(canvas, vue) {
   bloquerDefilementTactile(canvas);
 
@@ -394,6 +406,7 @@ function brancherGesteLune(canvas, vue) {
     if (!vue.attrapeLune(c.x, c.y, etat.jour)) return;
     pointeurTenant = e.pointerId;
     etat.glisse = true;
+    cacherAstuceGeste(); /* le geste est appris : la pilule s'en va */
     reprendreLaMainDoucement();
     surveillerHistoire(); /* une animation coupée loin de la forme : l'histoire s'en va */
     fixerLecture(false); /* attraper la Lune met en pause */

@@ -65,53 +65,61 @@
 
   <main>
 
-    <!-- Le cœur interactif : les deux vues, toujours synchronisées. -->
-    <section class="vues">
-      <div class="carte carte-hublot">
-        <div class="titre-avec-bouton">
-          <h2>🌙 Ce soir, dans le ciel</h2>
-        </div>
-        <p class="sous-titre">La Lune, vue depuis ton jardin.</p>
-        <div class="cadre-canvas">
-          <canvas id="canvas-hublot"
-            aria-label="La Lune telle qu’on la voit ce soir depuis le jardin : sa forme change selon sa position sur l’orbite. Utilise le curseur des soirs du mois pour changer de soir."></canvas>
-        </div>
-        <p class="phrase-soir" id="phrase-soir" aria-live="polite"></p>
+    <!-- Le cœur interactif : UN SEUL bloc « scène » au patron de la famille
+         (la-terre-est-penchee, ou-va-le-soleil) — les deux vues, toujours
+         synchronisées, et la frise des soirs juste dessous. -->
+    <section class="carte carte-scene" id="carte-scene" aria-labelledby="titre-scene">
+      <div class="entete-scene">
+        <span class="titre-scene" id="titre-scene">Le même soir, deux regards</span>
       </div>
 
-      <div class="carte carte-orbite">
-        <!-- le ⏸/▶ vit ICI, dans la rangée du titre de la vue qu'on regarde
-             tourner (acquis des saisons) : sur téléphone il se pose entre les
-             deux vues, sous le pouce, et l'écran montre le jardin, le bouton
-             et l'espace d'un coup ; sur grand écran les deux cartes sont côte
-             à côte, il reste en haut. Un seul bouton, un seul câblage. Les
-             deux libellés vivent empilés (grille 1×1) : largeur stable. -->
-        <div class="titre-avec-bouton">
-          <h2>🚀 Depuis l’espace</h2>
-          <button id="bouton-lecture" class="bouton-son play-btn" type="button" aria-pressed="true"
-            aria-label="Mettre en pause (la Lune avance toute seule)"><span
-              class="play-on" aria-hidden="true">⏸ Pause</span><span
-              class="play-off" aria-hidden="true">▶ Lecture</span></button>
+      <div class="grille-vues">
+        <div class="bloc-vue carte-hublot">
+          <h2 class="entete-vue entete-vue-jardin">🌙 Ce soir, dans le ciel</h2>
+          <div class="cadre-canvas">
+            <canvas id="canvas-hublot"
+              aria-label="La Lune telle qu’on la voit ce soir depuis le jardin : sa forme change selon sa position sur l’orbite. Utilise le curseur des soirs du mois pour changer de soir."></canvas>
+          </div>
+          <p class="phrase-soir" id="phrase-soir" aria-live="polite"></p>
         </div>
-        <p class="sous-titre">La même Lune, vue de très haut. Le Soleil éclaire depuis la gauche ; la petite maison, c’est chez nous, du côté nuit.</p>
-        <div class="cadre-canvas">
-          <canvas id="canvas-orbite"
-            aria-label="La Terre au centre, la Lune sur son orbite, le Soleil fixe à gauche. La moitié de la Lune tournée vers le Soleil est toujours éclairée. La petite maison sur la Terre montre où nous sommes, du côté nuit. Glisse la Lune avec le doigt ou la souris pour la faire tourner autour de la Terre."></canvas>
-        </div>
-        <p class="astuce" id="astuce-geste">✋ Attrape la Lune et fais-la tourner !</p>
-      </div>
-    </section>
 
-    <!-- Le grand curseur maître : les soirs du mois. -->
-    <section class="carte carte-curseur">
-      <h2 id="titre-curseur">📅 Les soirs du mois</h2>
-      <!-- les cinq Lunes de la frise (nouvelle, premier quartier, pleine,
-           dernier quartier, nouvelle) : des pictogrammes SVG posés par main.js
-           aux couleurs de la Lune du hublot — pas d'emoji système -->
-      <div class="piste-emojis" aria-hidden="true"></div>
-      <input type="range" id="curseur-jours" min="0" max="29.5" step="0.05" value="2.5"
-        aria-label="Choisis le soir du mois, de 0 à 29 : la Lune avance sur son orbite et change de forme.">
-      <p class="legende-curseur">Fais glisser pour passer les soirs, un par un ou d’un coup !</p>
+        <div class="bloc-vue carte-orbite">
+          <!-- le ⏸/▶ vit ICI, dans la ligne du titre de la vue qu'on regarde
+               tourner (acquis des saisons) : sur téléphone il se pose entre les
+               deux vues, sous le pouce ; sur grand écran le CSS le remonte en
+               haut à droite du bloc, dans la rangée « deux regards ». Un seul
+               bouton, un seul câblage, jamais déplacé en JS. Les deux libellés
+               vivent empilés (grille 1×1) : largeur stable. L'aide « la petite
+               maison… » (patron .hint de la famille) passe sous le titre sur
+               mobile. -->
+          <h2 class="entete-vue entete-vue-espace"><span>🚀 Depuis l’espace</span>
+            <button id="bouton-lecture" class="bouton-son play-btn" type="button" aria-pressed="true"
+              aria-label="Mettre en pause (la Lune avance toute seule)"><span
+                class="play-on" aria-hidden="true">⏸ Pause</span><span
+                class="play-off" aria-hidden="true">▶ Lecture</span></button>
+            <span class="hint">la petite maison&nbsp;: chez nous, du côté nuit</span></h2>
+          <div class="cadre-canvas">
+            <canvas id="canvas-orbite"
+              aria-label="La Terre au centre, la Lune sur son orbite, le Soleil fixe à gauche. La moitié de la Lune tournée vers le Soleil est toujours éclairée. La petite maison sur la Terre montre où nous sommes, du côté nuit. Glisse la Lune avec le doigt ou la souris pour la faire tourner autour de la Terre."></canvas>
+          </div>
+          <!-- la pilule « attrape-moi », SOUS le canvas et éphémère (8 s ou le
+               premier geste, main.js) : elle se replie et rend sa place — sur
+               mobile, c'est elle qui décidait si la frise tenait dans l'écran -->
+          <p class="astuce" id="astuce-geste"><span class="astuce-pilule">✋ Attrape la Lune et fais-la tourner !</span></p>
+        </div>
+      </div>
+
+      <!-- Le grand curseur maître : les soirs du mois, dans le même bloc. -->
+      <div class="commande-mois">
+        <h2 class="entete-vue entete-vue-curseur" id="titre-curseur">📅 Les soirs du mois</h2>
+        <!-- les cinq Lunes de la frise (nouvelle, premier quartier, pleine,
+             dernier quartier, nouvelle) : des pictogrammes SVG posés par main.js
+             aux couleurs de la Lune du hublot — pas d'emoji système -->
+        <div class="piste-emojis" aria-hidden="true"></div>
+        <input type="range" id="curseur-jours" min="0" max="29.5" step="0.05" value="2.5"
+          aria-label="Choisis le soir du mois, de 0 à 29 : la Lune avance sur son orbite et change de forme.">
+        <p class="legende-curseur">Fais glisser pour passer les soirs, un par un ou d’un coup !</p>
+      </div>
     </section>
 
     <!-- Les boutons-scénarios. -->
