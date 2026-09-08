@@ -196,6 +196,15 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
   `consigneDefi`/`bravoDefi` du modèle).
+- **Les deux vues du haut tombent PILE à la même hauteur sur grand écran**
+  (≥ 880 px) : les deux cartes partagent leurs quatre rangées (titre,
+  sous-titre, vue, phrase) par `subgrid`, avec `gap: 0 18px` (l'écart ne
+  s'insère pas entre les rangées partagées) et la vue du jardin sans ratio
+  (`aspect-ratio: auto`) pour qu'elle prenne la hauteur de la rangée, celle
+  de l'espace. Sans cela, un sous-titre d'une ligne contre deux faisait
+  démarrer les vues à 26 px d'écart, et le ratio 13/12 les faisait finir à
+  54 px. Repli sans subgrid : deux lignes de sous-titre et 32 px de rangée de
+  titre réservés (les hauts s'alignent, les bas non).
 - **Les deux vues du jeu tombent PILE à la même hauteur** : la largeur des
   colonnes et les ratios des cadres se répondent — orbite `1.25fr` en `9/7`,
   hublot `1fr` en `36/35` (= 1 / (1,25 × 7/9), repli `padding-bottom: 97.2%`)
