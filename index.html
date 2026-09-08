@@ -70,11 +70,6 @@
       <div class="carte carte-hublot">
         <div class="titre-avec-bouton">
           <h2>🌙 Ce soir, dans le ciel</h2>
-          <!-- libellés empilés (grille 1×1) : largeur stable, rien ne se décale -->
-          <button id="bouton-lecture" class="bouton-son play-btn" type="button" aria-pressed="true"
-            aria-label="Mettre en pause (la Lune avance toute seule)"><span
-              class="play-on" aria-hidden="true">⏸ Pause</span><span
-              class="play-off" aria-hidden="true">▶ Lecture</span></button>
         </div>
         <p class="sous-titre">La Lune, vue depuis ton jardin.</p>
         <div class="cadre-canvas">
@@ -85,7 +80,19 @@
       </div>
 
       <div class="carte carte-orbite">
-        <h2>🚀 Depuis l’espace</h2>
+        <!-- le ⏸/▶ vit ICI, dans la rangée du titre de la vue qu'on regarde
+             tourner (acquis des saisons) : sur téléphone il se pose entre les
+             deux vues, sous le pouce, et l'écran montre le jardin, le bouton
+             et l'espace d'un coup ; sur grand écran les deux cartes sont côte
+             à côte, il reste en haut. Un seul bouton, un seul câblage. Les
+             deux libellés vivent empilés (grille 1×1) : largeur stable. -->
+        <div class="titre-avec-bouton">
+          <h2>🚀 Depuis l’espace</h2>
+          <button id="bouton-lecture" class="bouton-son play-btn" type="button" aria-pressed="true"
+            aria-label="Mettre en pause (la Lune avance toute seule)"><span
+              class="play-on" aria-hidden="true">⏸ Pause</span><span
+              class="play-off" aria-hidden="true">▶ Lecture</span></button>
+        </div>
         <p class="sous-titre">La même Lune, vue de très haut. Le Soleil éclaire depuis la gauche ; la petite maison, c’est chez nous, du côté nuit.</p>
         <div class="cadre-canvas">
           <canvas id="canvas-orbite"

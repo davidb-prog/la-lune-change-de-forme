@@ -130,8 +130,13 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **La lecture auto** (harmonisation de la famille) : la Lune avance toute
   seule (`LECTURE_SECONDES_PAR_CYCLE` = 90 s par cycle, dans le modèle),
   commandée UNIQUEMENT par le **bouton ⏸/▶ à largeur stable** (libellés
-  « ⏸ Pause » / « ▶ Lecture » empilés) posé sur la PREMIÈRE carte
-  (« 🌙 Ce soir, dans le ciel ») — jamais par un tap sur une vue. Reprendre la main (attraper la Lune, bouger
+  « ⏸ Pause » / « ▶ Lecture » empilés) écrit dans la **rangée du titre
+  « 🚀 Depuis l'espace »** (acquis des saisons : sur téléphone il se pose
+  ENTRE les deux vues, sous le pouce, et un écran montre le jardin, le
+  bouton et l'espace d'un coup ; 36 px de haut dans cette rangée, pas 44 ;
+  sur grand écran les cartes sont côte à côte, il reste en haut) — un seul
+  bouton, un seul câblage, jamais déplacé en JS ; jamais commandée par un
+  tap sur une vue. Reprendre la main (attraper la Lune, bouger
   le curseur, choisir un scénario, ouvrir le jeu) met en pause ; **on ne gagne
   pas un défi pendant la lecture auto** (garde dans `surveillerDefi`) ;
   `prefers-reduced-motion` la désactive. Le bouton 🔇/🔊 partage le même

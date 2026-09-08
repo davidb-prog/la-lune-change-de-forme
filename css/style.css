@@ -587,6 +587,10 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
   /* des cibles tactiles d'au moins ~44 px pour les petits doigts */
   .play-btn, .scn-voice-btn { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+  /* le ⏸/▶ à droite du titre « Depuis l'espace », au format des autres
+     boutons mais 36 px de haut, pas 44 : la rangée du titre grandirait de
+     16 px (compromis validé sur les saisons) */
+  .carte-orbite .titre-avec-bouton .play-btn { min-height: 36px; padding: 4px 12px; font-size: 0.9rem; }
 
   /* LE MÉDAILLON S'ANCRE DANS L'EN-TÊTE DU JEU pendant le jeu (main.js l'y
      déplace tant que l'en-tête est à l'écran, et le rend à sa place flottante
