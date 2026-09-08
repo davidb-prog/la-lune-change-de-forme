@@ -99,10 +99,15 @@ var vueMedaillon = creerVueHublot(canvasMedaillon, { medaillon: true });
 function fixerJour(jour) {
   etat.jour = jourNormalise(jour);
   curseur.value = String(etat.jour);
-  /* deux lignes fixes (white-space: pre-line) : la hauteur de la carte ne
-     dépend plus de la police du téléphone */
+  /* deux lignes fixes, coupées par un <br> (la hauteur de la carte ne dépend
+     plus de la police du téléphone) : deux nœuds texte et un saut, jamais
+     d'innerHTML — et le médaillon, qui mesure les LIGNES de la phrase par un
+     Range, continue de voir deux rectangles de texte (le <br> n'en a pas) */
   var parties = phraseDuSoirParties(etat.jour);
-  phraseSoir.textContent = parties.soir + '\n' + parties.suite;
+  while (phraseSoir.firstChild) phraseSoir.removeChild(phraseSoir.firstChild);
+  phraseSoir.appendChild(document.createTextNode(parties.soir));
+  phraseSoir.appendChild(document.createElement('br'));
+  phraseSoir.appendChild(document.createTextNode(parties.suite));
 }
 
 /* La lecture auto (bouton ⏸/▶ harmonisé de la famille) : la Lune avance toute

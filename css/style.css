@@ -78,9 +78,14 @@ main, header.entete, footer.pied-serie {
 .note-parents summary { font-family: var(--titres); }
 /* la ligne de titre d'une vue (.entete-vue) porte aussi le ⏸/▶ et l'aide
    « la petite maison… » : ni un titre ni l'autre — bouton et aide reviennent
-   à la pile système (le font: inherit du bouton attraperait Baloo 2) */
-.entete-vue button, .entete-vue .hint {
+   à la pile système et à la graisse normale. Le bouton se règle par
+   `.bouton-son.play-btn { font: inherit }` (raccourci : famille ET graisse
+   du h2 en Baloo 800) — la règle ci-dessous doit donc lui être plus
+   spécifique, sinon le ⏸/▶ s'affiche en Baloo gras (retour utilisateur). */
+.entete-vue .hint,
+.entete-vue .bouton-son.play-btn {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight: 400;
 }
 
 /* ---------- En-tête ---------- */
@@ -166,7 +171,7 @@ main, header.entete, footer.pied-serie {
 .entete-vue-espace { color: var(--violet); }
 .entete-vue-curseur { color: var(--text); }
 .hint { color: var(--muted); font-weight: 400; font-size: 0.78em; }
-.entete-vue .play-btn { font-weight: 400; margin-left: auto; }
+.entete-vue .play-btn { margin-left: auto; }
 
 .grille-vues { display: grid; grid-template-columns: 1fr; gap: 6px; }
 
@@ -252,10 +257,11 @@ main, header.entete, footer.pied-serie {
   font-size: 1.05rem;
   color: var(--sun);
   /* Deux lignes FIXES (« Soir 14 — pleine lune. » ⏎ « La Lune est toute
-     ronde ! ») : la césure vit dans le texte, pas dans la largeur de la
-     police — sinon la carte changeait de hauteur d'un soir à l'autre sur
-     Android (une ligne, puis deux). La hauteur réservée les couvre. */
-  white-space: pre-line;
+     ronde ! ») : la césure vit dans le texte (un <br> posé par main.js, pas
+     un white-space: pre-line — le saut de ligne préservé se centrait mal
+     selon le navigateur), pas dans la largeur de la police — sinon la carte
+     changeait de hauteur d'un soir à l'autre sur Android (une ligne, puis
+     deux). La hauteur réservée les couvre. */
   line-height: 1.45;
   min-height: 2.9em;
 }
