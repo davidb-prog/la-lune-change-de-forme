@@ -16,8 +16,6 @@
 import { TAU, formeLune } from './model.js';
 import { creerCacheLune, dessinerDisqueLune, LUNE_SOMBRE } from './lune-disque.js';
 
-export { dessinerDisqueLune };
-
 var CIEL_MEDAILLON = '#0a1024';
 
 /* Étoiles décoratives, déterministes (petit générateur maison, graine fixe). */
@@ -479,5 +477,3 @@ export function creerVueHublot(canvas, options) {
   };
 }
 
-/* Réexporté pour les tests visuels : la couleur du côté nuit. */
-export { LUNE_SOMBRE };
