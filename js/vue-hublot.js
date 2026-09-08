@@ -451,15 +451,18 @@ export function creerVueHublot(canvas, options) {
 
       var geo = geometrieLune(w, h);
       var sol = h * SOL;
-      /* Le halo de la Lune, proportionnel à sa lumière, dans le ciel seulement. */
+      /* Le halo de la Lune, proportionnel à sa lumière, dans le ciel seulement —
+       * avec un plancher (comme une Lune à 30 %) : un croissant garde une
+       * lueur, sinon la Lune la plus fine du mois est aussi la plus terne. */
+      var lumiere = Math.max(forme.fraction, 0.3);
       if (forme.fraction > 0.02) {
         ctx.save();
         ctx.beginPath();
         ctx.rect(0, 0, w, sol);
         ctx.clip();
         var halo = ctx.createRadialGradient(geo.cx, geo.cy, geo.R * 0.8, geo.cx, geo.cy, geo.R * 2.6);
-        halo.addColorStop(0, 'rgba(242, 238, 223, ' + (0.28 * forme.fraction) + ')');
-        halo.addColorStop(0.4, 'rgba(242, 238, 223, ' + (0.08 * forme.fraction) + ')');
+        halo.addColorStop(0, 'rgba(242, 238, 223, ' + (0.28 * lumiere) + ')');
+        halo.addColorStop(0.4, 'rgba(242, 238, 223, ' + (0.08 * lumiere) + ')');
         halo.addColorStop(1, 'rgba(242, 238, 223, 0)');
         ctx.fillStyle = halo;
         ctx.fillRect(geo.cx - geo.R * 2.6, geo.cy - geo.R * 2.6, geo.R * 5.2, geo.R * 5.2);
