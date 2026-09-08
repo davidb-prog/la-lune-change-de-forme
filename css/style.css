@@ -78,7 +78,7 @@ main, header.entete, footer.pied-serie {
    montrait les vues et rien d'autre — la même vue qu'un téléphone). La
    largeur utile se plafonne par la HAUTEUR visible : en-tête + scène
    (vues + phrase + frise) doivent tenir en 100vh. Mesuré à 1140 px : la
-   scène fait 268 px de fixe (titres, phrase, frise, marges) + 0,432 × la
+   scène fait 278 px de fixe (titres, phrase, frise, marges) + 0,432 × la
    largeur utile (les vues, 9/7 sur 1,25 colonne sur 2,25), l'en-tête
    235 px (--entete-px, bas de l'en-tête = haut de la scène). Plancher 880 px :
    en dessous, l'orbite passerait sous 465 px — la vue qu'on manipule ne se
@@ -88,7 +88,7 @@ main, header.entete, footer.pied-serie {
 @media (min-width: 880px) {
   :root { --entete-px: 235px; }
   main, header.entete, footer.pied-serie {
-    max-width: clamp(880px, calc((100vh - 268px - var(--entete-px)) / 0.432), 1140px);
+    max-width: clamp(880px, calc((100vh - 278px - var(--entete-px)) / 0.432), 1140px);
   }
 }
 
@@ -327,7 +327,7 @@ input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 34px;
+  height: 44px;
   background: transparent;
   margin: 0;
 }
@@ -407,6 +407,7 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 /* « 🔊 Écouter l'histoire » : la pilule dorée de la famille (ou-va-le-soleil),
    qui vire au bleu nuit pendant la lecture */
 .bouton-ecouter {
+  font: inherit;
   font-weight: 700;
   padding: 8px 16px;
   background: linear-gradient(180deg, #4a3a0d, #332807);
@@ -439,6 +440,10 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 .grille-scenarios {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  /* les rangées partagent la hauteur de la plus haute : en 2 × 2 (mobile),
+     les quatre boutons restent identiques, quel que soit le nombre de lignes
+     de leurs libellés (patron des saisons) */
+  grid-auto-rows: 1fr;
   gap: 10px;
 }
 
@@ -540,15 +545,17 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 /* le patron .game-btn de la famille (ou-va-le-soleil) : dégradé teal sombre,
    la couleur du jeu — le rose reste à la Lune attrapable et aux accents */
 .bouton-jeu {
+  /* font: inherit (famille, interligne compris) : sans lui, le bouton gardait
+     l'interligne « normal » du navigateur — 37 px de haut au lieu de 43 sur
+     ordinateur, et une boîte d'emoji démesurée sur mobile */
+  font: inherit;
   background: linear-gradient(180deg, #14434a, #0d2f35);
   color: #8fe0cb;
   font-weight: 700;
   border: 1px solid var(--teal);
   border-radius: 999px;
   padding: 8px 18px;
-  font-size: 1rem;
   cursor: pointer;
-  font-family: inherit;
 }
 
 .consigne-jeu { color: var(--muted); }
@@ -664,7 +671,6 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   .bouton-son,
   .bouton-jeu { min-height: 44px; }
 
-  input[type="range"] { height: 44px; }
 
   input[type="range"]::-webkit-slider-thumb {
     width: 36px;
@@ -725,7 +731,11 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   .actions-jeu { flex-wrap: nowrap; max-width: 100%; }
   .actions-jeu .scn-voice-btn { flex: none; padding-left: 12px; padding-right: 12px; }
   .actions-jeu .scn-voice-btn .libelle { display: none; }
-  .carte-jeu.jeu-ouvert .actions-jeu .bouton-jeu {
+  /* jeu fermé aussi, la rangée prend toute la largeur sous le titre et
+     « 🎮 Jouer » s'étire comme « Ranger le jeu » (patron d'ou-va-le-soleil,
+     décision utilisateur) */
+  .carte-jeu .titre-avec-bouton > .actions-jeu { flex: 1 1 100%; margin-left: 0; }
+  .carte-jeu .actions-jeu .bouton-jeu {
     flex: 1 1 0;
     padding-left: 8px;
     padding-right: 8px;
