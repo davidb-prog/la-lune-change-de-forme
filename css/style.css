@@ -149,6 +149,26 @@ main, header.entete, footer.pied-serie {
     align-items: stretch;
   }
   .vues .carte { margin-bottom: 18px; }
+  /* Les deux cartes partagent leurs quatre rangées (titre, sous-titre, vue,
+     phrase) : le sous-titre de l'espace fait deux lignes, celui du jardin une
+     — sans cela les vues démarraient à 26 px d'écart et finissaient à 54.
+     Avec les rangées partagées, les deux vues démarrent ET s'arrêtent PILE à
+     la même hauteur : la vue du jardin prend la hauteur de celle de l'espace
+     (la vue qu'on manipule fige, l'autre suit — règle de méthode de la
+     famille, la même que pour le jeu). Repli sans subgrid : on réserve deux
+     lignes de sous-titre et la hauteur de la rangée du titre avec bouton. */
+  .vues .titre-avec-bouton { min-height: 32px; }
+  .vues .sous-titre { min-height: 3.1em; }
+  @supports (grid-template-rows: subgrid) {
+    /* gap en colonne seulement : l'écart de 18 px ne doit pas s'insérer entre
+       les rangées partagées */
+    .vues { grid-template-rows: auto auto auto auto; gap: 0 18px; }
+    .vues .carte { display: grid; grid-template-rows: subgrid; grid-row: span 4; }
+    .vues .sous-titre { min-height: 0; }
+    /* la vue du jardin prend la hauteur de la rangée, donc celle de l'espace
+       (son ratio 13/12 la laissait 28 px plus courte) */
+    .vues .carte-hublot .cadre-canvas { aspect-ratio: auto; }
+  }
 }
 
 .cadre-canvas {
@@ -587,6 +607,10 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
   /* des cibles tactiles d'au moins ~44 px pour les petits doigts */
   .play-btn, .scn-voice-btn { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+  /* le ⏸/▶ à droite du titre « Depuis l'espace », au format des autres
+     boutons mais 36 px de haut, pas 44 : la rangée du titre grandirait de
+     16 px (compromis validé sur les saisons) */
+  .carte-orbite .titre-avec-bouton .play-btn { min-height: 36px; padding: 4px 12px; font-size: 0.9rem; }
 
   /* LE MÉDAILLON S'ANCRE DANS L'EN-TÊTE DU JEU pendant le jeu (main.js l'y
      déplace tant que l'en-tête est à l'écran, et le rend à sa place flottante

@@ -142,23 +142,29 @@ export function dessinerDisqueLune(ctx, cx, cy, R, forme, cache) {
     poserLunePleine(ctx, image, cx, cy);
     ctx.restore();
 
-    /* Le terminateur adouci : quatre bandes de pénombre entre le terminateur
-     * k et un terminateur rapproché du côté éclairé. Chaque bande est
-     * « disque moins région(kk) » (règle evenodd), découpée dans région(k). */
+    /* Le terminateur adouci : des bandes de pénombre entre le terminateur k
+     * et un terminateur rapproché du côté éclairé. Chaque bande est « disque
+     * moins région(kk) » (règle evenodd), découpée dans région(k). Le nombre
+     * de bandes suit la taille : environ 2 px chacune (4 à 16), sinon sur la
+     * grande Lune d'un ordinateur quatre bandes de 10 px faisaient un
+     * escalier visible. La noirceur totale au terminateur reste la même
+     * (~31 %) quel que soit le nombre de bandes. */
     if (f < 0.995) {
       var dir = forme.cote === 'gauche' ? -1 : 1;
       /* la pénombre ne mange jamais plus de 30 % de la partie éclairée : un
        * croissant de 7 % (soir 3) garde son fil clair, sans rayures */
       var largeur = Math.min(0.14, 0.3 * (1 - Math.abs(forme.k)));
-      for (var b = 1; b <= 4; b++) {
-        var kk = forme.k + dir * (largeur * b) / 4;
+      var n = Math.max(4, Math.min(16, Math.round((largeur * R) / 2)));
+      var alpha = 1 - Math.pow(0.686, 1 / n);
+      ctx.fillStyle = 'rgba(20, 24, 40, ' + alpha.toFixed(4) + ')';
+      for (var b = 1; b <= n; b++) {
+        var kk = forme.k + dir * (largeur * b) / n;
         if (kk > 0.999 || kk < -0.999) continue;
         ctx.save();
         cheminEclaire(ctx, cx, cy, R, forme, forme.k);
         ctx.clip();
         cheminEclaire(ctx, cx, cy, R, forme, kk);
         ctx.arc(cx, cy, R + 1, 0, TAU);
-        ctx.fillStyle = 'rgba(20, 24, 40, 0.09)';
         ctx.fill('evenodd');
         ctx.restore();
       }

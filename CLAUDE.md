@@ -87,8 +87,10 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   à contraste modéré (à la pleine lune, sans ombre portée, ils accrochaient
   l'œil avant la forme ; pas de mers « réalistes » : à cette taille elles
   font des taches grises et jurent avec le jardin dessiné à plat),
-  terminateur adouci par quatre bandes dont la largeur est **bornée à 30 %
-  de la partie éclairée** (sinon elles mangeaient un croissant de 7 % et y
+  terminateur adouci par des bandes d'environ 2 px (4 à 16 selon la taille
+  de la Lune, noirceur totale constante — quatre bandes fixes faisaient un
+  escalier sur la grande Lune d'un ordinateur) dont la largeur totale est
+  **bornée à 30 % de la partie éclairée** (sinon elles mangeaient un croissant de 7 % et y
   laissaient des rayures), côté nuit deviné (lumière cendrée à 7 %). Le halo
   du hublot a un **plancher** (lueur d'une Lune à 30 %) pour que le croissant
   brille. Même disque dans le hublot et
@@ -130,8 +132,13 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **La lecture auto** (harmonisation de la famille) : la Lune avance toute
   seule (`LECTURE_SECONDES_PAR_CYCLE` = 90 s par cycle, dans le modèle),
   commandée UNIQUEMENT par le **bouton ⏸/▶ à largeur stable** (libellés
-  « ⏸ Pause » / « ▶ Lecture » empilés) posé sur la PREMIÈRE carte
-  (« 🌙 Ce soir, dans le ciel ») — jamais par un tap sur une vue. Reprendre la main (attraper la Lune, bouger
+  « ⏸ Pause » / « ▶ Lecture » empilés) écrit dans la **rangée du titre
+  « 🚀 Depuis l'espace »** (acquis des saisons : sur téléphone il se pose
+  ENTRE les deux vues, sous le pouce, et un écran montre le jardin, le
+  bouton et l'espace d'un coup ; 36 px de haut dans cette rangée, pas 44 ;
+  sur grand écran les cartes sont côte à côte, il reste en haut) — un seul
+  bouton, un seul câblage, jamais déplacé en JS ; jamais commandée par un
+  tap sur une vue. Reprendre la main (attraper la Lune, bouger
   le curseur, choisir un scénario, ouvrir le jeu) met en pause ; **on ne gagne
   pas un défi pendant la lecture auto** (garde dans `surveillerDefi`) ;
   `prefers-reduced-motion` la désactive. Le bouton 🔇/🔊 partage le même
@@ -191,6 +198,15 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
   `consigneDefi`/`bravoDefi` du modèle).
+- **Les deux vues du haut tombent PILE à la même hauteur sur grand écran**
+  (≥ 880 px) : les deux cartes partagent leurs quatre rangées (titre,
+  sous-titre, vue, phrase) par `subgrid`, avec `gap: 0 18px` (l'écart ne
+  s'insère pas entre les rangées partagées) et la vue du jardin sans ratio
+  (`aspect-ratio: auto`) pour qu'elle prenne la hauteur de la rangée, celle
+  de l'espace. Sans cela, un sous-titre d'une ligne contre deux faisait
+  démarrer les vues à 26 px d'écart, et le ratio 13/12 les faisait finir à
+  54 px. Repli sans subgrid : deux lignes de sous-titre et 32 px de rangée de
+  titre réservés (les hauts s'alignent, les bas non).
 - **Les deux vues du jeu tombent PILE à la même hauteur** : la largeur des
   colonnes et les ratios des cadres se répondent — orbite `1.25fr` en `9/7`,
   hublot `1fr` en `36/35` (= 1 / (1,25 × 7/9), repli `padding-bottom: 97.2%`)
