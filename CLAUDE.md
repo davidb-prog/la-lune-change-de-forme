@@ -214,7 +214,19 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   gauche » est parti : l'image le montre ; aucun de ces textes n'était
   parlé). La **largeur de page est celle de la famille** : 1180 px marges
   comprises, 1140 utiles (`max-width: 1140px` + 20 px de body ; la Lune
-  vivait à 1060). La **pilule « ✋ Attrape la Lune… » est éphémère sur mobile
+  vivait à 1060) — **plafonnée par la hauteur visible sur grand écran**
+  (retour utilisateur : sur un portable 13", la page dimensionnée par la
+  largeur seule montrait les vues et rien d'autre, la même vue qu'un
+  téléphone) : `max-width: clamp(880px, (100vh − 268px − --entete-px) /
+  0.432, 1140px)` sur `main`, l'en-tête et le pied, pour qu'en-tête + scène
+  (vues, phrase, frise) tiennent en 100vh. Constantes MESURÉES à 1140 px :
+  268 px de fixe dans la scène, 0,432 × largeur pour les vues (9/7 sur
+  1,25 colonne sur 2,25), `--entete-px` = en-tête + 20 px de marge du body.
+  Plancher 880 px (l'orbite ne descend pas sous 465 px : la vue qu'on
+  manipule ne se sacrifie pas). Mesuré : 24" 1080p → 984 px de large et
+  tout tient, 27" → 1140 inchangé, 13" → plancher. Sans `clamp()`, 1140.
+  Toute retouche des marges de la scène ou de l'en-tête se re-mesure et
+  se reporte dans ces constantes. La **pilule « ✋ Attrape la Lune… » est éphémère sur mobile
   seulement** (patron bulle-geste des saisons) : 8 s ou le premier geste
   sur la Lune (`cacherAstuceGeste`, main.js), puis elle se replie
   (`.astuce.cachee`, hauteur 0, règle du bloc mobile) et rend sa place ;

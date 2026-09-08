@@ -71,6 +71,25 @@ main, header.entete, footer.pied-serie {
   margin: 0 auto;
 }
 
+/* LE BLOC DE LA SCÈNE TIENT DANS L'ÉCRAN D'UN PORTABLE AUSSI (retour
+   utilisateur : sur un 13", la page dimensionnée par la largeur seule
+   montrait les vues et rien d'autre — la même vue qu'un téléphone). La
+   largeur utile se plafonne par la HAUTEUR visible : en-tête + scène
+   (vues + phrase + frise) doivent tenir en 100vh. Mesuré à 1140 px : la
+   scène fait 268 px de fixe (titres, phrase, frise, marges) + 0,432 × la
+   largeur utile (les vues, 9/7 sur 1,25 colonne sur 2,25), l'en-tête
+   237 px + 20 px de marge haute du body (--entete-px). Plancher 880 px :
+   en dessous, l'orbite passerait sous 465 px — la vue qu'on manipule ne se
+   sacrifie pas (règle de méthode de la famille). Sans clamp() (vieux
+   navigateurs), la ligne est ignorée et la largeur reste 1140. Rien sous
+   880 px : le mobile a son propre budget (bloc mobile plus bas). */
+@media (min-width: 880px) {
+  :root { --entete-px: 257px; }
+  main, header.entete, footer.pied-serie {
+    max-width: clamp(880px, calc((100vh - 268px - var(--entete-px)) / 0.432), 1140px);
+  }
+}
+
 /* la voix des titres : Baloo 2 sur tout ce qui titre la page — jamais sur le
    corps du texte ni sur les boutons (leur font: inherit doit rester la pile
    système, taille partagée par toute la famille) */
