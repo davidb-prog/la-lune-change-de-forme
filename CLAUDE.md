@@ -132,11 +132,12 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
 - **La lecture auto** (harmonisation de la famille) : la Lune avance toute
   seule (`LECTURE_SECONDES_PAR_CYCLE` = 90 s par cycle, dans le modèle),
   commandée UNIQUEMENT par le **bouton ⏸/▶ à largeur stable** (libellés
-  « ⏸ Pause » / « ▶ Lecture » empilés) écrit dans la **rangée du titre
+  « ⏸ Pause » / « ▶ Lecture » empilés) écrit dans la **ligne du titre
   « 🚀 Depuis l'espace »** (acquis des saisons : sur téléphone il se pose
   ENTRE les deux vues, sous le pouce, et un écran montre le jardin, le
-  bouton et l'espace d'un coup ; 36 px de haut dans cette rangée, pas 44 ;
-  sur grand écran les cartes sont côte à côte, il reste en haut) — un seul
+  bouton et l'espace d'un coup ; 36 px de haut dans cette ligne, pas 44 ;
+  sur grand écran le CSS le remonte en absolu en haut à droite du bloc,
+  dans la rangée « deux regards » — un seul bouton, deux places) — un seul
   bouton, un seul câblage, jamais déplacé en JS ; jamais commandée par un
   tap sur une vue. Reprendre la main (attraper la Lune, bouger
   le curseur, choisir un scénario, ouvrir le jeu) met en pause ; **on ne gagne
@@ -153,11 +154,13 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   ces liens ni d'éprouvette 🧪.
 - **Les scénarios vont au moment choisi en douceur, toujours vers l'avant**
   (le vrai sens de l'orbite) ; en `prefers-reduced-motion`, saut sec. Sur
-  mobile, taper une vignette **remonte doucement la page en calant la carte
-  du jardin en haut de l'écran** (`scroll-margin-top`) : le bandeau montre la
-  forme du soir et la vue de l'espace, juste dessous, montre le voyage en
-  même temps (défilement sec en mouvement réduit, rien sur grand écran où
-  les deux vues sont déjà sous les yeux).
+  mobile, taper une vignette **remonte doucement la page en calant le titre
+  « 🌙 Ce soir, dans le ciel » en haut de l'écran** (`scroll-margin-top` sur
+  le bloc du jardin, `.carte-hublot`) : le bandeau montre la forme du soir et
+  la vue de l'espace, juste dessous, montre le voyage en même temps
+  (défilement sec en mouvement réduit, rien sur grand écran où les deux
+  vues sont déjà sous les yeux). C'est de ce titre que se mesure le budget
+  d'écran du bloc (voir « Un seul bloc “scène” »).
 - **Reprendre la main ne coupe plus l'histoire au premier doigt** (acquis de
   la-terre-est-penchee) : glisser la Lune ou tirer le curseur
   (`reprendreLaMainDoucement`) laisse la micro-histoire à l'écran **tant que
@@ -198,15 +201,43 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   « Encore une ! » reste acquis. Le jeu est **sonore** via le même bouton
   🔇/🔊 que les scénarios (consigne au nouveau défi, bravo à la victoire —
   `consigneDefi`/`bravoDefi` du modèle).
+- **Un seul bloc « scène »** (harmonisation avec la-terre-est-penchee et
+  ou-va-le-soleil, décision utilisateur) : les deux vues ET la frise des
+  soirs vivent dans UNE carte `.carte-scene` (padding 12), sous l'en-tête
+  **« Le même soir, deux regards »** (`.titre-scene`, Baloo 700, gris,
+  0,92 rem — même phrase, même police, même place que les jumeaux). Chaque
+  vue a sa ligne de titre `.entete-vue` (h2, Baloo 800, 1,02 rem, teal
+  jardin / violet espace / blanc curseur) ; **les sous-titres ont
+  disparu** : la seule légende qui reste est l'aide `.hint` de la ligne
+  « 🚀 Depuis l'espace » — « la petite maison : chez nous, du côté nuit » —
+  visible partout, sous le titre sur mobile (« Le Soleil éclaire depuis la
+  gauche » est parti : l'image le montre ; aucun de ces textes n'était
+  parlé). La **largeur de page est celle de la famille** : 1180 px marges
+  comprises, 1140 utiles (`max-width: 1140px` + 20 px de body ; la Lune
+  vivait à 1060). La **pilule « ✋ Attrape la Lune… » est éphémère sur mobile
+  seulement** (patron bulle-geste des saisons) : 8 s ou le premier geste
+  sur la Lune (`cacherAstuceGeste`, main.js), puis elle se replie
+  (`.astuce.cachee`, hauteur 0, règle du bloc mobile) et rend sa place ;
+  **sur ordinateur elle reste** (décision utilisateur : la place ne manque
+  pas) — le halo « attrape-moi » de la vue, lui, continue de respirer. **Sur mobile, le bloc tient dans l'écran** : du
+  titre « 🌙 Ce soir, dans le ciel » (là où un tap-scénario cale l'écran) au
+  bas du curseur, **713 px pilule repliée** pour ~715 visibles sur un
+  iPhone 13 (746 tant qu'elle est affichée — accepté, comme sur les
+  saisons). Les économies se prennent là où les vues ne paient rien : la
+  légende du curseur s'en va, l'en-tête et l'aide se serrent, les
+  pictogrammes descendent de 6 px dans le vide au-dessus de la piste
+  (`pointer-events: none`, jamais SUR le ruban) ; le bandeau 13/6 et le
+  carré de l'espace ne bougent pas. Toujours re-mesurer au script
+  (`verif.js`, budget ≤ 715) avant de toucher à ces marges ou aux textes.
 - **Les deux vues du haut tombent PILE à la même hauteur sur grand écran**
-  (≥ 880 px) : les deux cartes partagent leurs quatre rangées (titre,
-  sous-titre, vue, phrase) par `subgrid`, avec `gap: 0 18px` (l'écart ne
-  s'insère pas entre les rangées partagées) et la vue du jardin sans ratio
+  (≥ 880 px) : les deux blocs-vues partagent leurs trois rangées (titre,
+  vue, phrase) par `subgrid`, avec `gap: 0 14px` (l'écart ne s'insère pas
+  entre les rangées partagées) et la vue du jardin sans ratio
   (`aspect-ratio: auto`) pour qu'elle prenne la hauteur de la rangée, celle
-  de l'espace. Sans cela, un sous-titre d'une ligne contre deux faisait
-  démarrer les vues à 26 px d'écart, et le ratio 13/12 les faisait finir à
-  54 px. Repli sans subgrid : deux lignes de sous-titre et 32 px de rangée de
-  titre réservés (les hauts s'alignent, les bas non).
+  de l'espace (9/7). Sans cela, une aide d'une ligne contre deux ferait
+  démarrer les vues en décalé, et le ratio 13/12 les faisait finir à 54 px
+  d'écart. Repli sans subgrid : 32 px de ligne de titre réservés (les hauts
+  s'alignent, les bas non).
 - **Les deux vues du jeu tombent PILE à la même hauteur** : la largeur des
   colonnes et les ratios des cadres se répondent — orbite `1.25fr` en `9/7`,
   hublot `1fr` en `36/35` (= 1 / (1,25 × 7/9), repli `padding-bottom: 97.2%`)
@@ -339,12 +370,17 @@ docs/               captures d'écran du README
 ## Vérification navigateur
 
 Suite Playwright maintenue **hors dépôt** (scratchpad de session,
-`test-site.js`) : trois passes — desktop 1200 px, `reducedMotion: 'reduce'`,
-mobile 390 px (`hasTouch`, `isMobile`). Vérifie la structure, le
-geste-signature (glisser simulé), la synchronisation des vues, l'effacement de
-l'histoire, le câblage du son, le jeu, zéro erreur console, pas de débordement
-horizontal, et des sondes de pixels (le Soleil doré fixe à gauche ; hublot
-lumineux à la pleine lune, sombre à la nouvelle). Servir avant :
+`test-site.js` / `verif.js`) : trois passes — desktop 1200 px,
+`reducedMotion: 'reduce'`, mobile 390 px (`hasTouch`, `isMobile`). Vérifie la
+structure, le geste-signature (glisser simulé — viser la Lune avec la
+géométrie de la vue : Terre à 0,56 w, orbite 0,33 ou 0,34 min(w, h) ; sur
+mobile, faire défiler la vue dans l'écran d'abord), la synchronisation des
+vues, l'effacement de l'histoire, le câblage du son, le jeu, zéro erreur
+console, pas de débordement horizontal, les deux vues à la même hauteur sur
+grand écran, la largeur utile (1140), la pilule repliée après le geste, le
+budget mobile du bloc (≤ 715 px pilule repliée), et des sondes de pixels (le
+Soleil doré fixe à gauche ; hublot lumineux à la pleine lune, sombre à la
+nouvelle). Servir avant :
 `python3 -m http.server 8123`. Régénérer les captures `docs/*.png` à chaque
 évolution visuelle (variable `CAPTURES=docs`).
 

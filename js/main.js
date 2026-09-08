@@ -99,10 +99,15 @@ var vueMedaillon = creerVueHublot(canvasMedaillon, { medaillon: true });
 function fixerJour(jour) {
   etat.jour = jourNormalise(jour);
   curseur.value = String(etat.jour);
-  /* deux lignes fixes (white-space: pre-line) : la hauteur de la carte ne
-     dépend plus de la police du téléphone */
+  /* deux lignes fixes, coupées par un <br> (la hauteur de la carte ne dépend
+     plus de la police du téléphone) : deux nœuds texte et un saut, jamais
+     d'innerHTML — et le médaillon, qui mesure les LIGNES de la phrase par un
+     Range, continue de voir deux rectangles de texte (le <br> n'en a pas) */
   var parties = phraseDuSoirParties(etat.jour);
-  phraseSoir.textContent = parties.soir + '\n' + parties.suite;
+  while (phraseSoir.firstChild) phraseSoir.removeChild(phraseSoir.firstChild);
+  phraseSoir.appendChild(document.createTextNode(parties.soir));
+  phraseSoir.appendChild(document.createElement('br'));
+  phraseSoir.appendChild(document.createTextNode(parties.suite));
 }
 
 /* La lecture auto (bouton ⏸/▶ harmonisé de la famille) : la Lune avance toute
@@ -380,6 +385,20 @@ function coordonneesCanvas(canvas, e) {
   };
 }
 
+/* La pilule « ✋ Attrape la Lune… » est éphémère SUR MOBILE (patron
+ * bulle-geste de la famille) : 8 secondes, ou le premier geste sur la Lune,
+ * puis elle se replie et rend sa place — ce sont ses 32 px qui décident si la
+ * frise des soirs tient dans l'écran. La classe est posée partout, mais seul
+ * le bloc mobile de style.css la replie : sur ordinateur la place ne manque
+ * pas, la pilule reste (décision utilisateur). Le halo « attrape-moi » de la
+ * vue, lui, continue de respirer partout. */
+var astuceGeste = document.getElementById('astuce-geste');
+
+function cacherAstuceGeste() {
+  if (astuceGeste) astuceGeste.classList.add('cachee');
+}
+window.setTimeout(cacherAstuceGeste, 8000);
+
 function brancherGesteLune(canvas, vue) {
   bloquerDefilementTactile(canvas);
 
@@ -394,6 +413,7 @@ function brancherGesteLune(canvas, vue) {
     if (!vue.attrapeLune(c.x, c.y, etat.jour)) return;
     pointeurTenant = e.pointerId;
     etat.glisse = true;
+    cacherAstuceGeste(); /* le geste est appris : la pilule s'en va */
     reprendreLaMainDoucement();
     surveillerHistoire(); /* une animation coupée loin de la forme : l'histoire s'en va */
     fixerLecture(false); /* attraper la Lune met en pause */

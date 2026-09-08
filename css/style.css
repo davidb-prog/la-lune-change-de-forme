@@ -60,19 +60,33 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.55;
   min-height: 100vh;
-  padding: 20px 14px 40px;
+  padding: 20px 20px 40px;
 }
 
+/* la largeur de la famille : 1180 px marges comprises, 1140 px utiles,
+   comme les saisons et ou-va-le-soleil (la Lune vivait à 1060, un cran plus
+   étroite que ses jumeaux) */
 main, header.entete, footer.pied-serie {
-  max-width: 1060px;
+  max-width: 1140px;
   margin: 0 auto;
 }
 
 /* la voix des titres : Baloo 2 sur tout ce qui titre la page — jamais sur le
    corps du texte ni sur les boutons (leur font: inherit doit rester la pile
    système, taille partagée par toute la famille) */
-.entete h1, .kicker, .carte h2, .defi,
+.entete h1, .kicker, .carte h2, .titre-scene, .defi,
 .note-parents summary { font-family: var(--titres); }
+/* la ligne de titre d'une vue (.entete-vue) porte aussi le ⏸/▶ et l'aide
+   « la petite maison… » : ni un titre ni l'autre — bouton et aide reviennent
+   à la pile système et à la graisse normale. Le bouton se règle par
+   `.bouton-son.play-btn { font: inherit }` (raccourci : famille ET graisse
+   du h2 en Baloo 800) — la règle ci-dessous doit donc lui être plus
+   spécifique, sinon le ⏸/▶ s'affiche en Baloo gras (retour utilisateur). */
+.entete-vue .hint,
+.entete-vue .bouton-son.play-btn {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight: 400;
+}
 
 /* ---------- En-tête ---------- */
 
@@ -130,44 +144,57 @@ main, header.entete, footer.pied-serie {
    parents), le teal se vit depuis chez toi (le ciel du soir, le jeu),
    le violet regarde depuis l'espace ; le blanc reste au h1 et aux
    titres-outils (curseur, scénarios). */
-.carte-hublot h2 { color: var(--teal); }
-.carte-orbite h2 { color: var(--violet); }
 .carte-jeu h2 { color: var(--teal); }
 .carte-explication h2 { color: var(--sun); }
 
-.sous-titre { color: var(--muted); font-size: 0.92rem; margin: 4px 0 12px; }
+/* ---------- La scène : les deux vues + la frise, UN seul bloc ---------- */
 
-/* ---------- Les deux vues ---------- */
+/* Le patron de la famille (la-terre-est-penchee, ou-va-le-soleil) : un
+   panneau serré (padding 12), l'en-tête « Le même soir, deux regards », les
+   deux vues, puis la frise des soirs — sur mobile, tout tient sous le pouce. */
+.carte-scene { padding: 12px; position: relative; }
+.bloc-vue { min-width: 0; }
 
-.vues { display: block; }
+.entete-scene {
+  display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap;
+  font-size: 0.92rem; color: var(--muted); margin: 2px 4px 6px;
+}
+.titre-scene { flex: 1 1 auto; font-weight: 700; }
+
+/* la ligne de titre d'une vue : titre coloré (teal = vécu depuis chez toi,
+   violet = regardé depuis l'espace), l'aide en petit gris à sa suite */
+.carte-scene h2.entete-vue {
+  font-weight: 800; font-size: 1.02rem; margin: 0 2px 7px;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.entete-vue-jardin { color: var(--teal); }
+.entete-vue-espace { color: var(--violet); }
+.entete-vue-curseur { color: var(--text); }
+.hint { color: var(--muted); font-weight: 400; font-size: 0.78em; }
+.entete-vue .play-btn { margin-left: auto; }
+
+.grille-vues { display: grid; grid-template-columns: 1fr; gap: 6px; }
 
 @media (min-width: 880px) {
-  .vues {
-    display: grid;
-    grid-template-columns: 1fr 1.25fr;
-    gap: 18px;
-    align-items: stretch;
+  /* le ⏸/▶ remonte dans la rangée « deux regards », en haut à droite du
+     bloc : un seul bouton, deux places (patron des saisons) */
+  .entete-vue .play-btn { position: absolute; top: 10px; right: 12px; }
+  .grille-vues {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 0 14px;
   }
-  .vues .carte { margin-bottom: 18px; }
-  /* Les deux cartes partagent leurs quatre rangées (titre, sous-titre, vue,
-     phrase) : le sous-titre de l'espace fait deux lignes, celui du jardin une
-     — sans cela les vues démarraient à 26 px d'écart et finissaient à 54.
-     Avec les rangées partagées, les deux vues démarrent ET s'arrêtent PILE à
-     la même hauteur : la vue du jardin prend la hauteur de celle de l'espace
-     (la vue qu'on manipule fige, l'autre suit — règle de méthode de la
-     famille, la même que pour le jeu). Repli sans subgrid : on réserve deux
-     lignes de sous-titre et la hauteur de la rangée du titre avec bouton. */
-  .vues .titre-avec-bouton { min-height: 32px; }
-  .vues .sous-titre { min-height: 3.1em; }
+  /* Les deux vues partagent leurs trois rangées (titre, vue, phrase) : elles
+     démarrent ET s'arrêtent PILE à la même hauteur — la vue du jardin prend
+     la hauteur de celle de l'espace (la vue qu'on manipule fige, l'autre
+     suit — règle de méthode de la famille, la même que pour le jeu). Repli
+     sans subgrid : la rangée du titre est réservée (l'aide de l'espace peut
+     passer sur deux lignes), les hauts s'alignent, les bas non. */
+  .carte-scene h2.entete-vue { min-height: 32px; }
   @supports (grid-template-rows: subgrid) {
-    /* gap en colonne seulement : l'écart de 18 px ne doit pas s'insérer entre
-       les rangées partagées */
-    .vues { grid-template-rows: auto auto auto auto; gap: 0 18px; }
-    .vues .carte { display: grid; grid-template-rows: subgrid; grid-row: span 4; }
-    .vues .sous-titre { min-height: 0; }
-    /* la vue du jardin prend la hauteur de la rangée, donc celle de l'espace
-       (son ratio 13/12 la laissait 28 px plus courte) */
-    .vues .carte-hublot .cadre-canvas { aspect-ratio: auto; }
+    .grille-vues { grid-template-rows: auto auto auto; }
+    .grille-vues .bloc-vue { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
+    .carte-scene h2.entete-vue { min-height: 0; }
+    .grille-vues .carte-hublot .cadre-canvas { aspect-ratio: auto; }
   }
 }
 
@@ -189,6 +216,8 @@ main, header.entete, footer.pied-serie {
   .carte-hublot .cadre-canvas { aspect-ratio: 13 / 12; }
 }
 
+.carte-scene .cadre-canvas { border-radius: 12px; }
+
 .cadre-canvas canvas {
   position: absolute;
   top: 0; left: 0;
@@ -204,12 +233,23 @@ main, header.entete, footer.pied-serie {
 .carte-orbite canvas { cursor: grab; }
 .carte-orbite canvas.attrape { cursor: grabbing; }
 
+/* la pilule « attrape-moi », SOUS la vue de l'espace (patron bulle-geste
+   des saisons) : rien ne recouvre jamais les canvas. Sur mobile elle est
+   transitoire — elle s'efface ET se replie ensemble, et rend sa place (ses
+   32 px décidaient si la frise tenait dans l'écran) */
 .astuce {
-  text-align: center;
-  color: var(--rose);
-  font-weight: 600;
-  margin-top: 10px;
+  margin: 8px 0 0; text-align: center; overflow: hidden;
+  pointer-events: none; opacity: 1; max-height: 90px;
+  font-size: 0.85rem;
+  transition: opacity 0.3s, max-height 0.35s ease 0.05s, margin 0.35s ease 0.05s;
 }
+.astuce-pilule {
+  display: inline-block; max-width: 100%;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 999px; padding: 6px 14px; color: var(--rose); font-weight: 600;
+}
+/* elle ne se replie que sur mobile (bloc plus bas) : sur ordinateur la place
+   ne manque pas, elle reste (décision utilisateur) */
 
 .phrase-soir {
   text-align: center;
@@ -218,17 +258,19 @@ main, header.entete, footer.pied-serie {
   font-size: 1.05rem;
   color: var(--sun);
   /* Deux lignes FIXES (« Soir 14 — pleine lune. » ⏎ « La Lune est toute
-     ronde ! ») : la césure vit dans le texte, pas dans la largeur de la
-     police — sinon la carte changeait de hauteur d'un soir à l'autre sur
-     Android (une ligne, puis deux). La hauteur réservée les couvre. */
-  white-space: pre-line;
+     ronde ! ») : la césure vit dans le texte (un <br> posé par main.js, pas
+     un white-space: pre-line — le saut de ligne préservé se centrait mal
+     selon le navigateur), pas dans la largeur de la police — sinon la carte
+     changeait de hauteur d'un soir à l'autre sur Android (une ligne, puis
+     deux). La hauteur réservée les couvre. */
   line-height: 1.45;
   min-height: 2.9em;
 }
 
-/* ---------- Curseur maître ---------- */
+/* ---------- Curseur maître (dans le bloc de la scène) ---------- */
 
-.carte-curseur h2 { margin-bottom: 6px; }
+.commande-mois { margin-top: 12px; padding: 0 4px 2px; }
+.commande-mois .entete-vue { margin-bottom: 0; }
 
 .piste-emojis {
   display: flex;
@@ -249,7 +291,7 @@ input[type="range"] {
   width: 100%;
   height: 34px;
   background: transparent;
-  margin: 2px 0 4px;
+  margin: 0;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
@@ -290,7 +332,7 @@ input[type="range"]::-moz-range-thumb {
 
 input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
 
-.legende-curseur { color: var(--muted); font-size: 0.9rem; text-align: center; }
+.legende-curseur { color: var(--muted); font-size: 0.82rem; text-align: center; margin-top: 4px; }
 
 /* ---------- Scénarios ---------- */
 
@@ -610,7 +652,7 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
   /* le ⏸/▶ à droite du titre « Depuis l'espace », au format des autres
      boutons mais 36 px de haut, pas 44 : la rangée du titre grandirait de
      16 px (compromis validé sur les saisons) */
-  .carte-orbite .titre-avec-bouton .play-btn { min-height: 36px; padding: 4px 12px; font-size: 0.9rem; }
+  .entete-vue-espace .play-btn { min-height: 36px; padding: 4px 12px; font-size: 0.9rem; }
 
   /* LE MÉDAILLON S'ANCRE DANS L'EN-TÊTE DU JEU pendant le jeu (main.js l'y
      déplace tant que l'en-tête est à l'écran, et le rend à sa place flottante
@@ -650,16 +692,40 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
     white-space: nowrap;
   }
 
+  /* LE BLOC DE LA SCÈNE TIENT DANS L'ÉCRAN (patron des saisons) : du titre
+     « Ce soir, dans le ciel » au bas du curseur, 713 px mesurés une fois la
+     pilule « attrape-moi » repliée, pour ~715 px visibles sur un iPhone 13
+     (746 tant qu'elle est affichée — les 8 premières secondes). Les
+     économies se prennent là où les vues ne paient rien : la légende du
+     curseur s'en va (la pilule enseigne déjà le geste), l'en-tête « deux
+     regards » et l'aide se serrent, la rangée des pictogrammes descend de
+     6 px dans le vide que le curseur garde au-dessus de sa piste — jamais
+     SUR le ruban. Les vues gardent leur taille : le bandeau 13/6 du jardin
+     et le carré de l'espace (la vue qu'on manipule ne se sacrifie pas). */
+  body { padding: 20px 14px 40px; }
+  .carte-scene { padding: 10px 12px 12px; }
+  .entete-scene { font-size: 0.82rem; margin-bottom: 4px; }
+  .grille-vues { gap: 4px; }
+  .carte-scene h2.entete-vue { margin-bottom: 2px; }
+  /* l'aide passe sous le titre, sur toute la largeur */
+  .entete-vue .hint { flex-basis: 100%; font-size: 0.72rem; }
+  .astuce { margin-top: 4px; font-size: 0.78rem; }
+  .astuce-pilule { padding: 4px 12px; }
+  .astuce.cachee { opacity: 0; max-height: 0; margin-top: 0; }
+  .commande-mois { margin-top: 4px; }
+  .commande-mois .entete-vue { margin-bottom: -2px; }
+  .piste-emojis {
+    font-size: 1rem; margin-bottom: -6px;
+    position: relative; z-index: 1; pointer-events: none;
+  }
+  .legende-curseur { display: none; }
+
   /* Le hublot se compacte en bandeau paysage (la Lune au-dessus du jardin) :
    * la vue de l'espace arrive plus tôt sous le pouce, et le médaillon-fenêtre
-   * prend le relais dès que le bandeau sort de l'écran. */
-  .carte-hublot { padding: 12px 14px 10px; scroll-margin-top: 10px; }
-
-  /* le titre du hublot garde la taille commune des .carte h2 : les deux vues
-     jumelles se titrent pareil (acquis de la famille — .view-head dans
-     ou-va-le-soleil, .canvas-title dans la-terre-tourne) ; le bandeau se
-     compacte par ses marges, pas en rapetissant son titre */
-  .carte-hublot .sous-titre { margin: 2px 0 8px; }
+   * prend le relais dès que le bandeau sort de l'écran. Un tap-scénario cale
+   * ce bloc (son titre) en haut de l'écran : c'est de là que se mesure le
+   * budget ci-dessus. */
+  .carte-hublot { scroll-margin-top: 10px; }
 
   .carte-hublot .cadre-canvas { padding-bottom: 46%; }
 
@@ -667,7 +733,7 @@ input[type="range"]:focus-visible { outline-offset: 4px; border-radius: 999px; }
     .carte-hublot .cadre-canvas { padding-bottom: 0; aspect-ratio: 13 / 6; }
   }
 
-  .phrase-soir { font-size: 0.95rem; margin-top: 8px; }
+  .phrase-soir { font-size: 0.88rem; margin-top: 3px; line-height: 1.3; min-height: 2.6em; }
 }
 
 /* Tout petits écrans (320 px) : la seconde ligne (« Chaque soir, la Lune
