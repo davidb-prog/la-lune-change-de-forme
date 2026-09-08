@@ -225,8 +225,14 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   Plancher 880 px (l'orbite ne descend pas sous 465 px : la vue qu'on
   manipule ne se sacrifie pas). Mesuré : 24" 1080p → 984 px de large et
   tout tient, 27" → 1140 inchangé, 13" → plancher. Sans `clamp()`, 1140.
-  Toute retouche des marges de la scène ou de l'en-tête se re-mesure et
-  se reporte dans ces constantes. La **pilule « ✋ Attrape la Lune… » est éphémère sur mobile
+  **L'en-tête se serre sur les écrans larges mais bas** (`min-width:
+  880px and max-height: 849px`, le portable) : titre 2,4 rem, accroche
+  0,95 rem sur deux lignes (largeur 860), respirations réduites — 237 →
+  149 px, rien de retiré (le H1 reste le H1, la consigne reste lue), et
+  `--entete-px` passe à 169. Mesuré : 13" 1440×900 → 887 px de large, tout
+  tient ; 13" 1280×800 → il reste ~100 px à faire défiler, accepté (le
+  plancher de largeur prime). Toute retouche des marges de la scène ou de
+  l'en-tête se re-mesure et se reporte dans ces constantes. La **pilule « ✋ Attrape la Lune… » est éphémère sur mobile
   seulement** (patron bulle-geste des saisons) : 8 s ou le premier geste
   sur la Lune (`cacherAstuceGeste`, main.js), puis elle se replie
   (`.astuce.cachee`, hauteur 0, règle du bloc mobile) et rend sa place ;

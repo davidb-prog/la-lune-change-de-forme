@@ -145,6 +145,21 @@ main, header.entete, footer.pied-serie {
 
 .tagline strong { color: var(--sun); }
 
+/* L'EN-TÊTE SE SERRE SUR LES ÉCRANS LARGES MAIS BAS (le portable) : 237 px
+   avant la première image, c'est un tiers d'un 13" pour un kicker, un titre
+   et trois lignes d'accroche. Rien n'est retiré — le H1 reste le H1, la
+   consigne « Attrape la Lune… » reste lue — tout se resserre : titre à
+   2,4 rem, accroche à 0,95 rem sur deux lignes (largeur 860 — à 720 elle en
+   faisait encore trois), respirations réduites. Mesuré : 237 → 149 px, et
+   --entete-px (149 + 20) suit pour le plafond de largeur (bloc ci-dessus). Une règle sur la HAUTEUR : un 24" ou un
+   téléphone gardent l'en-tête de la charte. */
+@media (min-width: 880px) and (max-height: 849px) {
+  :root { --entete-px: 169px; }
+  .entete { padding: 8px 0 14px; }
+  .entete h1 { font-size: 2.4rem; margin: 6px 0 8px; }
+  .tagline { font-size: 0.95rem; max-width: 860px; }
+}
+
 /* ---------- Cartes ---------- */
 
 .carte {
