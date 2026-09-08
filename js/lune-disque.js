@@ -32,12 +32,14 @@ export function dessinerLunePleine(ctx, cx, cy, R, nue) {
   ctx.beginPath();
   ctx.arc(cx, cy, R, 0, TAU);
   ctx.clip();
-  /* La pâte : ivoire, un peu plus chaude en haut à gauche, assombrie au bord
-   * (la Lune est une boule, pas un rond). */
+  /* La pâte : blanc chaud, un peu plus lumineux en haut à gauche, à peine
+   * assombri au bord (la Lune est une boule, pas un rond). Le bord reste
+   * CLAIR : un croissant est entièrement fait du bord — avec un bord beige,
+   * la Lune la plus fine du mois était aussi la plus terne. */
   var base = ctx.createRadialGradient(cx - R * 0.25, cy - R * 0.3, R * 0.1, cx, cy, R * 1.05);
-  base.addColorStop(0, '#fbf7ea');
-  base.addColorStop(0.55, '#ebe5d2');
-  base.addColorStop(1, '#bfb8a4');
+  base.addColorStop(0, '#fffdf5');
+  base.addColorStop(0.55, '#f4f0e4');
+  base.addColorStop(1, '#e2dcc9');
   ctx.fillStyle = base;
   ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
   if (!nue) {
@@ -46,17 +48,19 @@ export function dessinerLunePleine(ctx, cx, cy, R, nue) {
       var x = cx + c[0] * R;
       var y = cy + c[1] * R;
       var r = c[2] * R;
-      /* le fond, deux disques décalés pour l'ombre intérieure */
-      ctx.fillStyle = 'rgba(150, 150, 160, 0.30)';
+      /* le fond, deux disques décalés pour l'ombre intérieure — contraste
+       * modéré (60 % du premier jet) : à la pleine lune, sans ombre portée,
+       * les cratères accrochaient l'œil avant la forme */
+      ctx.fillStyle = 'rgba(150, 150, 160, 0.18)';
       ctx.beginPath();
       ctx.arc(x, y, r, 0, TAU);
       ctx.fill();
-      ctx.fillStyle = 'rgba(120, 120, 140, 0.22)';
+      ctx.fillStyle = 'rgba(120, 120, 140, 0.13)';
       ctx.beginPath();
       ctx.arc(x + r * 0.12, y + r * 0.14, r * 0.78, 0, TAU);
       ctx.fill();
       /* le rebord clair, côté lumière (en haut à gauche) */
-      ctx.strokeStyle = 'rgba(255, 253, 245, 0.7)';
+      ctx.strokeStyle = 'rgba(255, 253, 245, 0.42)';
       ctx.lineWidth = Math.max(1, r * 0.16);
       ctx.beginPath();
       ctx.arc(x, y, r * 0.98, Math.PI * 0.8, Math.PI * 1.7);
@@ -143,8 +147,11 @@ export function dessinerDisqueLune(ctx, cx, cy, R, forme, cache) {
      * « disque moins région(kk) » (règle evenodd), découpée dans région(k). */
     if (f < 0.995) {
       var dir = forme.cote === 'gauche' ? -1 : 1;
+      /* la pénombre ne mange jamais plus de 30 % de la partie éclairée : un
+       * croissant de 7 % (soir 3) garde son fil clair, sans rayures */
+      var largeur = Math.min(0.14, 0.3 * (1 - Math.abs(forme.k)));
       for (var b = 1; b <= 4; b++) {
-        var kk = forme.k + dir * (0.14 * b) / 4;
+        var kk = forme.k + dir * (largeur * b) / 4;
         if (kk > 0.999 || kk < -0.999) continue;
         ctx.save();
         cheminEclaire(ctx, cx, cy, R, forme, forme.k);

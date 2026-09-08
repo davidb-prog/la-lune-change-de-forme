@@ -81,10 +81,17 @@ Vérités verrouillées par `test/model.test.mjs` (à compléter, jamais supprim
   trente fois plus. Ne jamais redessiner le décor dans `rendre`.
 - **Primitives portables seulement** : arcs, dégradés, découpe par chemin,
   `fill('evenodd')`. Pas de `ctx.ellipse`, `filter`, `shadowBlur`, `Path2D`.
-- **La Lune** : boule ivoire assombrie au bord, six cratères cartoon (pas de
-  mers « réalistes » : à cette taille elles font des taches grises et jurent
-  avec le jardin dessiné à plat), terminateur adouci par quatre bandes,
-  côté nuit deviné (lumière cendrée à 7 %). Même disque dans le hublot et
+- **La Lune** : boule blanc chaud à peine assombrie au bord — le bord reste
+  CLAIR, car un croissant est entièrement fait du bord (avec un bord beige,
+  la Lune la plus fine du mois était la plus terne) —, six cratères cartoon
+  à contraste modéré (à la pleine lune, sans ombre portée, ils accrochaient
+  l'œil avant la forme ; pas de mers « réalistes » : à cette taille elles
+  font des taches grises et jurent avec le jardin dessiné à plat),
+  terminateur adouci par quatre bandes dont la largeur est **bornée à 30 %
+  de la partie éclairée** (sinon elles mangeaient un croissant de 7 % et y
+  laissaient des rayures), côté nuit deviné (lumière cendrée à 7 %). Le halo
+  du hublot a un **plancher** (lueur d'une Lune à 30 %) pour que le croissant
+  brille. Même disque dans le hublot et
   dans l'espace ; dans l'espace, la moitié nuit est un dégradé COURT (quelques
   pixels) pour que « la moitié » reste lisible — pas de lumières de villes.
 - **Le jardin** : collines, pré, maison à toit de tuiles et cheminée qui
