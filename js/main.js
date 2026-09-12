@@ -594,7 +594,7 @@ function phrasesDe(texte) {
 var narrateur = (function () {
   if (!synthesePossible) {
     return {
-      lire: function () {}, raconter: function () {},
+      lire: function () {}, raconter: function () {}, precharger: function () {},
       stop: function () {}, finirDoucement: function () {}
     };
   }
@@ -705,6 +705,45 @@ var narrateur = (function () {
    * Une histoire = UNE voix : si un seul bloc n'a pas son fichier (texte
    * changé, manifeste vide…), tout le récit passe à la synthèse — jamais de
    * voix chaleureuse interrompue par une phrase robotique. */
+  /* Les clips EN MÉMOIRE (acquis de la-terre-est-penchee). Safari iOS ne
+   * réutilise pas le cache d'un `fetch` pour un <audio> (les médias passent
+   * par des requêtes de plage, cache à part) : le « préchauffage » du bloc
+   * suivant ne servait à rien, chaque clip se retéléchargeait à son tour —
+   * silences de une à trois secondes entre deux phrases selon le réseau.
+   * Désormais, au départ d'une narration, tous ses clips se téléchargent EN
+   * PARALLÈLE en blobs et se jouent depuis ces blobs (gardés pour la
+   * session, rejouer est instantané). Le PREMIER clip part en src direct,
+   * dans le geste de l'utilisateur (iOS n'autorise le premier play() que
+   * là) — SAUF si son blob est DÉJÀ là (`clipsPrets`, lu de façon
+   * synchrone, donc toujours dans le geste) : le jeu ne parle qu'en
+   * narrations d'un seul bloc — consigne, bravo —, toujours « le premier »,
+   * qui partaient donc TOUJOURS à froid, même rejouées (retour
+   * utilisateur, iPhone : le bravo s'affichait une bonne seconde avant la
+   * voix). Le bravo, lui, part de la boucle d'animation, hors geste : il
+   * est préchargé au tirage du défi (`precharger`). Échec de
+   * téléchargement → src direct (comme avant). */
+  var clipsEnMemoire = {};
+  var clipsPrets = {};
+  function chargerClip(src) {
+    if (src.indexOf('data:') === 0 || !window.fetch || !window.URL || !window.URL.createObjectURL) {
+      return window.Promise.resolve(src);
+    }
+    if (!clipsEnMemoire[src]) {
+      clipsEnMemoire[src] = window.fetch(src)
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
+        .then(function (b) { clipsPrets[src] = window.URL.createObjectURL(b); return clipsPrets[src]; })
+        .catch(function () { delete clipsEnMemoire[src]; return src; });
+    }
+    return clipsEnMemoire[src];
+  }
+  function precharger(blocs) {
+    if (!window.Promise) return;
+    for (var i = 0; i < blocs.length; i++) {
+      var src = audioSrc(blocs[i].id, blocs[i].texte);
+      if (src) chargerClip(src);
+    }
+  }
+
   function lire(blocs, quandFini) {
     generation += 1;
     var gen = generation;
@@ -719,6 +758,7 @@ var narrateur = (function () {
     for (var i = 0; i < blocs.length; i++) {
       if (!audioSrc(blocs[i].id, blocs[i].texte)) { enregistre = false; break; }
     }
+    if (enregistre) precharger(blocs); /* tous les clips de la narration partent ensemble */
 
     function suivant(n) {
       if (gen !== generation) return;
@@ -736,23 +776,22 @@ var narrateur = (function () {
       var src = enregistre ? audioSrc(bloc.id, bloc.texte) : null;
       if (!src) { repli(); return; }
       var a = getLecteur();
-      /* pas de pause ajoutée : les clips enregistrés portent déjà leur
-       * respiration (~300 ms de queue + ~100 ms de tête du suivant) — en
-       * rajouter creusait un blanc d'une seconde entre les paragraphes */
-      a.onended = apres;
-      a.onerror = repli;
-      a.src = src;
-      var p = a.play();
-      if (p && p.then) p.then(null, repli);
-      /* pendant que ce bloc joue, préchauffer le fichier du suivant : son
-       * chargement se fait d'avance (cache HTTP) et ne s'ajoute plus au
-       * blanc entre les blocs au premier passage en ligne */
-      if (n + 1 < blocs.length && window.fetch) {
-        var nx = audioSrc(blocs[n + 1].id, blocs[n + 1].texte);
-        if (nx && nx.indexOf('data:') !== 0) {
-          window.fetch(nx).catch(function () { /* le lecteur retentera */ });
-        }
-      }
+      var jouer = function (url) {
+        if (gen !== generation) return;
+        if (finirApresLeBloc) { finir(); return; } /* demandé pendant le chargement */
+        /* pas de pause ajoutée : les clips enregistrés portent déjà leur
+         * respiration (~300 ms de queue + ~100 ms de tête du suivant) — en
+         * rajouter creusait un blanc d'une seconde entre les paragraphes */
+        a.onended = apres;
+        a.onerror = repli;
+        a.src = url;
+        var p = a.play();
+        if (p && p.then) p.then(null, repli);
+      };
+      /* le premier bloc part dans le geste : depuis la mémoire si son blob
+       * est déjà là, sinon en src direct ; les suivants attendent leur blob */
+      if (n === 0 || !window.Promise) jouer(clipsPrets[src] || src);
+      else chargerClip(src).then(jouer, function () { jouer(src); });
     }
     suivant(0);
   }
@@ -761,6 +800,8 @@ var narrateur = (function () {
     lire: lire,
     /* Un texte du modèle, en un seul bloc : id du fichier + version orale. */
     raconter: function (id, texte) { lire([{ id: id, texte: texteOral(texte) }]); },
+    /* Met un texte en mémoire sans le jouer (le bravo du défi tiré). */
+    precharger: function (id, texte) { precharger([{ id: id, texte: texteOral(texte) }]); },
     /* Ne vise que la narration dont le premier bloc porte ce préfixe d'id
      * (« scn- » : l'histoire d'un moment choisi) — la grande histoire du
      * bouton « Écouter » et les consignes du jeu ne se taisent pas pour un
@@ -846,6 +887,7 @@ if (synthesePossible) {
     } else if (etat.defi) {
       /* L'activer depuis le jeu relit la consigne du défi en cours. */
       narrateur.raconter('defi-' + etat.defi.cible + '-consigne', consigneDefi(etat.defi));
+      prechargerBravoDefi();
     }
   }
   boutonSonScenarios.addEventListener('click', basculerSon);
@@ -882,6 +924,16 @@ function nouveauDefi() {
   boutonEncore.hidden = true;
   /* La version sonore du jeu suit le même bouton 🔇/🔊 que les scénarios. */
   if (sonScenariosActif) narrateur.raconter('defi-' + etat.defi.cible + '-consigne', consigneDefi(etat.defi));
+  prechargerBravoDefi();
+}
+
+/* Le bravo part de la boucle d'animation, hors de tout geste et au moment
+ * où l'enfant réussit : son clip se télécharge dès le tirage du défi (et à
+ * la remise du son, jeu ouvert) pour jouer depuis la mémoire, sans le
+ * silence d'un src direct. La consigne, elle, est déjà mise en mémoire par
+ * sa propre narration : rejouer le défi la trouve prête. */
+function prechargerBravoDefi() {
+  if (etat.defi && sonScenariosActif) narrateur.precharger('defi-' + etat.defi.cible + '-bravo', bravoDefi(etat.defi));
 }
 
 function surveillerDefi(ms) {
