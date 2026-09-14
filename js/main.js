@@ -903,8 +903,9 @@ if (synthesePossible) {
   boutonSonScenarios.hidden = false;
   boutonSonJeu.hidden = false;
   boutonEcouter.addEventListener('click', function () {
-    if (lectureExplication) narrateur.stop();
-    else lireExplication();
+    if (lectureExplication) { narrateur.stop(); return; }
+    if (window.jalon) window.jalon('audio'); /* jalon d'engagement (mesure.js) */
+    lireExplication();
   });
 
   try {
@@ -933,6 +934,7 @@ if (synthesePossible) {
       narrateur.stop();
       return;
     }
+    if (window.jalon) window.jalon('audio'); /* le conteur des scénarios compte aussi */
     demanderRechauffement();
     if (etat.scenarioActif) {
       /* L'activer relit le moment affiché. */
@@ -1062,6 +1064,7 @@ function surveillerDefi(ms) {
   bravoJeu.hidden = false;
   if (!etat.defiGagne) {
     etat.defiGagne = true;
+    if (window.jalon) window.jalon('fin'); /* premier défi gagné : l'épisode est allé au bout */
     bravoJeu.textContent = '⭐ ' + bravoDefi(etat.defi);
     boutonEncore.hidden = false;
     if (sonScenariosActif) narrateur.raconter('defi-' + etat.defi.cible + '-bravo', bravoDefi(etat.defi));
